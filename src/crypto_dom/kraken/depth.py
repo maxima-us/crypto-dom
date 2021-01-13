@@ -80,7 +80,7 @@ class _OrderBookResp:
     -------
         `pair_name` : str
             Dict of `asks` and `bids`
-            Which are array of array entries(<price>, <volume>, <timestamp>)
+            Which are array of array entries(price, volume, timestamp)
     """
 
     def __new__(_cls, pair: str):

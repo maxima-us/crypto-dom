@@ -43,6 +43,6 @@ class Nstr(pydantic.ConstrainedStr):
 
 
 
-class PCount(NInt):
+class COUNT(NInt):
     ge=0
     strict=False

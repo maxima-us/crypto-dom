@@ -113,7 +113,7 @@ Pair = typing.TypeVar("Pair")
 class T_OhlcResp(typing.Generic[Pair]):
 
     def __init__(self, value: str):
-        self._value = make_kraken_model_ohlc(value)
+        self._value = make_model_ohlc(value)
 
 #! END ==================== 
 
@@ -124,7 +124,7 @@ class _OhlcResp:
     Fields:
     -------
         `pair_name` : str 
-            Array of array entries(<time>, <open>, <high>, <low>, <close>, <vwap>, <volume>, <count>)
+            Array of array entries(time, open, high, low, close, vwap, volume, count)
         last : int 
             id to be used as since when polling for new, committed OHLC data)
     """
