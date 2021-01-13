@@ -7,7 +7,7 @@ import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
-from definitions import TIMEFRAMES
+from definitions import TIMEFRAMES, TIMESTAMP_S
 
 
 
@@ -43,7 +43,7 @@ class _OhlcReq(pydantic.BaseModel):
     interval: TIMEFRAMES = 1
 
     # timestamp in seconds
-    since: typing.Optional[pydantic.PositiveInt]
+    since: typing.Optional[TIMESTAMP_S]
 
     @pydantic.validator('since')
     def check_year_from_timestamp(cls, v):
@@ -74,7 +74,7 @@ def make_model_ohlc(pair: str) -> typing.Type[pydantic.BaseModel]:
     class _BaseOhlcResp(pydantic.BaseModel):
 
         # timestamp received from kraken is in seconds
-        last: pydantic.PositiveInt
+        last: TIMESTAMP_S
 
         @pydantic.validator('last')
         def check_year_from_timestamp(cls, v):
@@ -85,9 +85,7 @@ def make_model_ohlc(pair: str) -> typing.Type[pydantic.BaseModel]:
             return v
 
     # Entries(<time>, <open>, <high>, <low>, <close>, <vwap>, <volume>, <count>)
-    _Candle = typing.Tuple[
-                Decimal, Decimal, Decimal, Decimal, Decimal, Decimal, Decimal, int
-            ]
+    _Candle = typing.Tuple[Decimal, Decimal, Decimal, Decimal, Decimal, Decimal, Decimal, int]
 
     kwargs = {
         pair: (
@@ -130,6 +128,5 @@ class _OhlcResp:
     """
 
     def __new__(_cls, pair: str):
-        print("calling new")
         model = make_model_ohlc(pair)
         return model

@@ -12,7 +12,7 @@ from definitions import TIMEFRAMES, COUNT
 
 
 # ============================================================
-# OHLC
+# ASSET PAIRS
 # ============================================================
 
 
@@ -84,6 +84,10 @@ def generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
         margin_call: pydantic.PositiveInt
         margin_stop: pydantic.PositiveInt
         ordermin: typing.Optional[Decimal]
+
+
+    # TODO this should be enough for mypy
+    _Sig = typing.Dict[str, _AssetPair]
 
 
     # we do not know the keys in advance, only the type of their value

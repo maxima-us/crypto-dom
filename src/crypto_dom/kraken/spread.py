@@ -7,47 +7,50 @@ import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
-from definitions import TIMEFRAMES, COUNT, TIMESTAMP_NS
+from definitions import (
+    TIMEFRAMES,
+    TIMESTAMP_S,
+    COUNT
+)
 
 
 
 # ============================================================
-# TRADES
+# SPREAD
 # ============================================================
 
 
-# doc: https://www.kraken.com/features/api#get-recent-trades 
+# doc: https://www.kraken.com/features/api#get-recent-spread-data 
 
-URL = "https://api.kraken.com/0/public/Trades"
+URL = "https://api.kraken.com/0/public/Spread"
 METHOD = "GET"
 
 # ------------------------------
 # Request
 # ------------------------------
 
-class _TradesReq(pydantic.BaseModel):
-    """Request Model for endpoint https://api.kraken.com/0/public/Trades
+class _SpreadReq(pydantic.BaseModel):
+    """Request Model for endpoint https://api.kraken.com/0/public/Spread
 
     Fields:
     -------
         pair : str 
-            Asset pair to get OHLC data for
+            Asset pair to get spread data for
         since : int 
+            Timestamp in seconds
             Return trade data since given id (optional)
     """
 
     pair: str
-    since: typing.Optional[TIMESTAMP_NS]
+    # timestamp in seconds
+    since: typing.Optional[TIMESTAMP_S]
 
     @pydantic.validator('since')
     def check_year_from_timestamp(cls, v):
         if v == 0 or v is None:
             return v
 
-        # convert from ns to s
-        v_s = v * 10**-9
-
-        y = date.fromtimestamp(v_s).year
+        y = date.fromtimestamp(v).year
         if not y > 2009 and y < 2050:
             err_msg = f"Year {y} for timestamp {v} not within [2009, 2050]"
             raise ValueError(err_msg)
@@ -63,31 +66,30 @@ def generate_model(pair: str) -> typing.Type[pydantic.BaseModel]:
     "dynamically create the model"
 
 
-    class _BaseTradesResp(pydantic.BaseModel):
+    class _BaseSpreadResp(pydantic.BaseModel):
 
-        # timestamp received from kraken in ns
-        last: TIMESTAMP_NS
+        # timestamp received from kraken in s
+        last: TIMESTAMP_S
 
         @pydantic.validator('last')
         def check_year_from_timestamp(cls, v, values):
             # convert from ns to s
-            v_s = v * 10**-9
 
-            y = date.fromtimestamp(v_s).year
+            y = date.fromtimestamp(v).year
             if not y > 2009 and y < 2050:
                 err_msg = f"Year {y} for timestamp {v} not within [2009, 2050]"
                 raise ValueError(err_msg)
             return v
 
-    _Trade = typing.Tuple[Decimal, Decimal, Decimal, Literal["b", "s"], Literal["m", "l"], typing.Any]
+    _Spread = typing.Tuple[Decimal, Decimal, Decimal]
 
     kwargs = {
-        pair: (typing.Tuple[_Trade, ...], ...),
-        "__base__": _BaseTradesResp
+        pair: (typing.Tuple[_Spread, ...], ...),
+        "__base__": _BaseSpreadResp
     }
 
     model = pydantic.create_model(
-        '_TradesResp',
+        '_SpreadResp',
         **kwargs    #type: ignore
     )
 
@@ -95,15 +97,16 @@ def generate_model(pair: str) -> typing.Type[pydantic.BaseModel]:
 
 
 
-class _TradesResp:
-    """Response Model for endpoint https://api.kraken.com/0/public/Trades
+class _SpreadResp:
+    """Response Model for endpoint https://api.kraken.com/0/public/Spread
 
     Fields:
     -------
         `pair_name` : str
-            Array of array entries(price, volume, time, buy/sell, market/limit, miscellaneous)
+            Array of array entries (time, bid, ask)
         last: int
-            Id to be used as since when polling for new trade dat
+            Timestamp in seconds
+            Id to be used as since when polling for new spread dat
     """
 
     def __new__(_cls, pair: str):

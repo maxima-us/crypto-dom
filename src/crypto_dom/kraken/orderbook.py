@@ -7,12 +7,12 @@ import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
-from definitions import TIMEFRAMES, COUNT
+from definitions import TIMEFRAMES, COUNT, TIMESTAMP_S
 
 
 
 # ============================================================
-# OHLC
+# ORDERBOOK
 # ============================================================
 
 
@@ -49,12 +49,11 @@ def make_model_orderbook(pair: str) -> typing.Type[pydantic.BaseModel]:
     "dynamically create the model"
 
 
-    _BidAskItem = typing.Tuple[Decimal, Decimal, Decimal]
+    _BidAskItem = typing.Tuple[Decimal, Decimal, TIMESTAMP_S]
 
     class Book(pydantic.BaseModel):
 
          # tuples of price, volume, time
-        # where timestamps are in s
         asks: typing.Tuple[_BidAskItem, ...]
         bids: typing.Tuple[_BidAskItem, ...]
 
@@ -84,6 +83,5 @@ class _OrderBookResp:
     """
 
     def __new__(_cls, pair: str):
-        print("calling new")
         model = make_model_orderbook(pair)
         return model

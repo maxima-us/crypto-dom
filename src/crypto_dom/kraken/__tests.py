@@ -3,6 +3,11 @@ import pydantic
 
 from ohlc import _OhlcReq, _OhlcResp, T_OhlcResp
 from asset_pairs import _AssetPairsResp
+from assets import _AssetsResp
+from ticker import _TickerResp
+from spread import _SpreadResp
+from account_balance import _AccountBalanceResp
+from trade_balance import _TradeBalanceResp
 
 
 #================================================================================
@@ -37,11 +42,31 @@ print("\nFirst call", test(**data2))
 # print("\nSecond call", test(**data1))
 
 
+#================================================================================
+# SPREAD
+#================================================================================
 
+print(40*"-")
+print("---- SPREAD")
+
+spread_data = {
+    "XXBTZUSD":[
+        [1610566166,"35813.40000","35823.90000"],
+        [1610566166,"35813.40000","35824.50000"]
+    ],
+    "last":1610566227
+}
+
+model = _SpreadResp("XXBTZUSD")
+sp_resp = model(**spread_data)
+print(sp_resp)
 
 #================================================================================
 # ASSET PAIRS
 #================================================================================
+
+print(40*"-")
+print("---- ASSETPAIRS")
 
 assetpairs = {
     "AAVEETH":
@@ -53,6 +78,89 @@ assetpairs = {
 model = _AssetPairsResp()
 ap_resp = model(**assetpairs)
 print(ap_resp)
+
+
+#================================================================================
+# TICKER
+#================================================================================
+
+print(40*"-")
+print("---- TICKER")
+
+tickerdata = {
+    "XXBTZUSD":
+        {"a":["34557.40000","1","1.000"],
+        "b":["34557.30000","1","1.000"],
+        "c":["34557.40000","0.00278000"],
+        "v":["7800.23835878","12026.07036968"],
+        "p":["33944.10537","34100.04530"],
+        "t":[46558,74999],
+        "l":["32349.90000","32349.90000"],
+        "h":["35250.00000","35500.00000"],
+        "o":"34038.20000"}
+}
+
+model = _TickerResp()
+tk_resp = model(**tickerdata)
+print(tk_resp) 
+
+
+#================================================================================
+# ASSETS
+#================================================================================
+print(40*"-")
+print("---- ASSETS")
+
+assets = {
+    "AAVE":{"aclass":"currency","altname":"AAVE","decimals":10,"display_decimals":5},
+    "ADA":{"aclass":"currency","altname":"ADA","decimals":8,"display_decimals":6},
+    "ALGO":{"aclass":"currency","altname":"ALGO","decimals":8,"display_decimals":5},
+}
+
+model = _AssetsResp()
+as_resp = model(**assets)
+print(as_resp)
+
+
+#================================================================================
+# ACCOUNT BALANCES
+#================================================================================
+print(40*"-")
+print("---- ACCOUNT BALANCES")
+
+acc_balances = {
+    "XBT": 3.5,
+    "DOT": 343.5,
+    "ETH": 32.535
+}
+
+
+model = _AccountBalanceResp()
+acc_b = model(**acc_balances)
+print(acc_b)
+
+
+#================================================================================
+# TRADE BALANCES
+#================================================================================
+print(40*"-")
+print("---- TRADE BALANCES")
+
+trd_balances = {
+    "eb": 100_000,
+    "tb": 90_000,
+    "m": 1.34,
+    "n": 35355.535,
+    "c": 34434,
+    "v": 3435.755,
+    "e": 346426234,
+    "mf": 0,
+    "ml": 234
+}
+
+model = _TradeBalanceResp()
+trd_b = model(**trd_balances)
+print(trd_b)
 
 
 #================================================================================

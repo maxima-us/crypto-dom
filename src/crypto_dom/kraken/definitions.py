@@ -16,6 +16,11 @@ ORDERSTATUS = Literal["pending", "open", "closed", "canceled", "expired"]
 import pydantic
 
 
+TIMESTAMP_S = pydantic.PositiveInt
+TIMESTAMP_MS = pydantic.PositiveInt
+TIMESTAMP_NS = pydantic.PositiveInt
+
+
 class NInt(pydantic.ConstrainedInt):
 
     def __init__(self, _value: int):
