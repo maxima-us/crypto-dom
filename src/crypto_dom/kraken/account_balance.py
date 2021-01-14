@@ -34,7 +34,8 @@ class _AccountBalanceReq(pydantic.BaseModel):
 
     Fields:
     -------
-    None
+        nonce: int
+            Always increasing unsigned 64 bit integer
     """
 
     nonce: pydantic.PositiveInt

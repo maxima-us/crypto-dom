@@ -23,7 +23,7 @@ from definitions import (
 # doc: https://www.kraken.com/features/api#get-trade-balance
 
 URL = "https://api.kraken.com/0/public/TradeBalance"
-METHOD = "GET"
+METHOD = "POST"
 
 # ------------------------------
 # Request
@@ -35,15 +35,18 @@ class _TradeBalanceReq(pydantic.BaseModel):
     Fields:
     -------
         aclass : str 
-            Asset Class
+            Asset Class (optional)
                 currency (default)
         asset : str 
             Base asset used to determine balance
                 (default = ZUSD)
+        nonce: int
+            Always increasing unsigned 64 bit integer
     """
 
-    aclass: str
-    asset: str
+    aclass: typing.Optional[str]
+    asset: str = "ZUSD"
+    nonce: pydantic.PositiveInt
 
 
 # ------------------------------
@@ -55,7 +58,7 @@ def generate_model(pair: str) -> typing.Type[pydantic.BaseModel]:
     "dynamically create the model"
 
 
-    class _TradeBalanceResp(pydantic.BaseModel):
+    class _BaseTradeBalanceResp(pydantic.BaseModel):
 
         # timestamp received from kraken in s
         last: TIMESTAMP_S
@@ -74,11 +77,11 @@ def generate_model(pair: str) -> typing.Type[pydantic.BaseModel]:
 
     kwargs = {
         pair: (typing.Tuple[_Spread, ...], ...),
-        "__base__": _BaseSpreadResp
+        "__base__": _BaseTradeBalanceResp
     }
 
     model = pydantic.create_model(
-        '_SpreadResp',
+        '_TradeBalanceResp',
         **kwargs    #type: ignore
     )
 

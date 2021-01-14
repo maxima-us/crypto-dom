@@ -21,6 +21,23 @@ from definitions import TIMEFRAMES, COUNT, TIMESTAMP_NS
 URL = "https://api.kraken.com/0/public/Trades"
 METHOD = "GET"
 
+
+# ------------------------------
+# Sample Response (ccxt)
+# ------------------------------
+
+
+#     {
+#         "error": [],
+#         "result": {
+#             "XETHXXBT": [
+#                 ["0.032310","4.28169434",1541390792.763,"s","l",""]
+#             ],
+#             "last": "1541439421200678657"
+#         }
+#     }
+
+
 # ------------------------------
 # Request
 # ------------------------------
@@ -34,6 +51,7 @@ class _TradesReq(pydantic.BaseModel):
             Asset pair to get OHLC data for
         since : int 
             Return trade data since given id (optional)
+            Timestamp in nanoseconds
     """
 
     pair: str

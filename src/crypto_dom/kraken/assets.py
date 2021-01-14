@@ -21,6 +21,21 @@ from definitions import TIMEFRAMES, COUNT
 URL = "https://api.kraken.com/0/public/Assets"
 METHOD = "GET"
 
+
+# ------------------------------
+# Sample Response
+# ------------------------------
+
+#     {
+#         "error": [],
+#         "result": {
+#             "ADA": {"aclass": "currency", "altname": "ADA", "decimals": 8, "display_decimals": 6},
+#             "BCH": {"aclass": "currency", "altname": "BCH", "decimals": 10, "display_decimals": 5},
+#             ...
+#         },
+#     }
+
+
 # ------------------------------
 # Request
 # ------------------------------

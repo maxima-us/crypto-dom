@@ -8,7 +8,9 @@ from ticker import _TickerResp
 from spread import _SpreadResp
 from account_balance import _AccountBalanceResp
 from trade_balance import _TradeBalanceResp
-
+from open_orders import _OpenOrdersResp
+from orders_info import _QueryOrdersResp
+from user_trades import _TradesHistoryResp
 
 #================================================================================
 # OHLC
@@ -78,6 +80,177 @@ assetpairs = {
 model = _AssetPairsResp()
 ap_resp = model(**assetpairs)
 print(ap_resp)
+
+
+#================================================================================
+# OPEN ORDERS
+#================================================================================
+print(40*"-")
+print("---- OPEN ORDERS")
+
+
+open_orders_resp = {
+    "open": {
+    "OTCJRA-SZYUP-LBLOTQ": {
+        "refid": None,
+        "userref": 0,
+        "status": "open",
+        "opentm": 1587243440.5982,
+        "starttm": 0,
+        "expiretm": 0,
+        "descr": {
+        "pair": "ETHUSD",
+        "type": "buy",
+        "ordertype": "limit",
+        "price": "98.58",
+        "price2": "0",
+        "leverage": "none",
+        "order": "buy 2.34154630 ETHUSD @ limit 98.58",
+        "close": ""
+        },
+        "vol": "2.34154630",
+        "vol_exec": "0.00000000",
+        "cost": "0.00000",
+        "fee": "0.00000",
+        "price": "0.00000",
+        "stopprice": "0.00000",
+        "limitprice": "0.00000",
+        "misc": "",
+        "oflags": "fciq"
+    },
+
+    "OS5GER-FI6DI-VWXUD4": {
+        "refid": None,
+        "userref": 0,
+        "status": "open",
+        "opentm": 1587242256.38,
+        "starttm": 0,
+        "expiretm": 0,
+        "descr": {
+        "pair": "ETHUSD",
+        "type": "buy",
+        "ordertype": "limit",
+        "price": "130.34",
+        "price2": "0",
+        "leverage": "none",
+        "order": "buy 5.00000000 ETHUSD @ limit 130.34",
+        "close": ""
+        },
+        "vol": "5.00000000",
+        "vol_exec": "0.00000000",
+        "cost": "0.00000",
+        "fee": "0.00000",
+        "price": "0.00000",
+        "stopprice": "0.00000",
+        "limitprice": "0.00000",
+        "misc": "",
+        "oflags": "fciq"
+    },
+
+    "O5TYA6-EC2HN-KJ65ZG": {
+        "refid": None,
+        "userref": 0,
+        "status": "open",
+        "opentm": 1587240556.5647,
+        "starttm": 0,
+        "expiretm": 0,
+        "descr": {
+        "pair": "ETHUSD",
+        "type": "buy",
+        "ordertype": "limit",
+        "price": "130.00",
+        "price2": "0",
+        "leverage": "none",
+        "order": "buy 5.00000000 ETHUSD @ limit 130.00",
+        "close": ""
+        },
+        "vol": "5.00000000",
+        "vol_exec": "0.00000000",
+        "cost": "0.00000",
+        "fee": "0.00000",
+        "price": "0.00000",
+        "stopprice": "0.00000",
+        "limitprice": "0.00000",
+        "misc": "",
+        "oflags": "fciq"
+    }}
+}
+
+model = _OpenOrdersResp()
+opo_resp = model(**open_orders_resp)
+print(opo_resp)
+
+
+
+#================================================================================
+# QUERY ORDER INFO
+#================================================================================
+print(40*"-")
+print("---- ORDER INFO")
+
+model = _QueryOrdersResp()
+oinf = model (**(open_orders_resp["open"]))
+print(oinf)
+
+
+#================================================================================
+# USER TRADES
+#================================================================================
+print(40*"-")
+print("---- USER TRADES")
+
+utr_data = {
+    "trades": {
+        "TZ63HS-YBD4M-3RDG7H": {
+            "ordertxid": "OXXRD7-L67OU-QWHJEZ",
+            "postxid": "TKH1SE-M7IF3-CFI4LT",
+            "pair": "XETHZUSD",
+            "time": 1588032030.4648,
+            "type": "buy",
+            "ordertype": "market",
+            "price": "196.94000",
+            "cost": "7395.50936",
+            "fee": "14.79101",
+            "vol": "37.55209384",
+            "margin": "0.00000",
+            "misc": ""
+        },
+        "TESD4J-6G7RU-K5C9TU": {
+            "ordertxid": "ORZGFF-GENRB-Z20HTV",
+            "postxid": "T6HT2W-ER1S7-5MVQGW",
+            "pair": "XETHZUSD",
+            "time": 1588032024.6599,
+            "type": "buy",
+            "ordertype": "market",
+            "price": "196.93124",
+            "cost": "6788.34719",
+            "fee": "13.57670",
+            "vol": "34.47064696",
+            "margin": "1697.08680",
+            "misc": "closing"
+        },
+        "TEF2TE-RRBVG-FLFHG6": {
+            "ordertxid": "OL1AHL-OOF5D-V3KKJM",
+            "postxid": "TKH0SE-M1IF3-CFI1LT",
+            "posstatus": "closed",
+            "pair": "XETHZUSD",
+            "time": 1585353611.261,
+            "type": "sell",
+            "ordertype": "market",
+            "price": "131.01581",
+            "cost": "7401.30239",
+            "fee": "17.76313",
+            "vol": "56.49167433",
+            "margin": "1850.32560",
+            "misc": ""
+        }
+    },
+    "count": 3
+}
+
+model = _TradesHistoryResp()
+utr_resp = model(**utr_data)
+print(utr_resp)
 
 
 #================================================================================
