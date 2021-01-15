@@ -7,7 +7,7 @@ import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
-from definitions import TIMEFRAMES, TIMESTAMP_S
+from crypto_dom.kraken.definitions import TIMEFRAMES, TIMESTAMP_S
 
 
 
@@ -86,7 +86,6 @@ class _OhlcReq(pydantic.BaseModel):
 #       ? benefits for type hinting / mypy ??
 
 
-
 def make_model_ohlc(pair: str) -> typing.Type[pydantic.BaseModel]:
     "dynamically create the model"
     
@@ -96,7 +95,7 @@ def make_model_ohlc(pair: str) -> typing.Type[pydantic.BaseModel]:
         # timestamp received from kraken is in seconds
         last: TIMESTAMP_S
 
-        @pydantic.validator('last')
+        @pydantic.validator('last', allow_reuse=True)
         def check_year_from_timestamp(cls, v):
             y = date.fromtimestamp(v).year
             if not y > 2009 and y < 2050:

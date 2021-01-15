@@ -1,3 +1,4 @@
+
 import asyncio
 
 import httpx
@@ -5,41 +6,6 @@ from pydantic import ValidationError
 from returns.io import IOFailure, IOSuccess
 
 from crypto_dom.kraken.ohlc import _OhlcReq, _OhlcResp, URL, METHOD
-
-
-
-async def get(client, url, method, headers, params):
-    r = await client.request(url, method, headers=headers, params=params)
-    return r
-
-
-async def req_hook(request):
-    print("Request URL is", request.url)
-    print("Aborting Request")
-
-
-
-client = httpx.AsyncClient(event_hooks={'request': [req_hook], "response": []})
-
-payload = {
-    "pair": "XXBTZUSD",
-    "interval": 60
-}
-
-
-# r = asyncio.run(
-#         get(
-#             client=httpx.AsyncClient(), 
-#             method=METHOD,
-#             url=URL,
-#             headers={},
-#             params=payload
-#     )
-# )
-# print(r)
-
-
-
 
 
 #================================================================================
@@ -137,7 +103,11 @@ class HttypeClient(httpx.AsyncClient):
                 # TODO this is specific to kraken (the result key)
                 result = rjson["result"]
                 valid_resp = t_out(**result)
+                print("Valid Resp", type(valid_resp))
                 _new_content = IOSuccess(valid_resp)
+                print("Updated content", type(_new_content))
+                print("Updated content inner value", type(_new_content._inner_value))
+                print("Updated content inner value **2", type(_new_content._inner_value._inner_value))
             except ValidationError as e:
                 return IOFailure(e)
             except Exception as e:
@@ -158,11 +128,18 @@ payload = {
 
 
 async def ohlc():
-    # r = await client.safe_request(METHOD, URL, t_in=_OhlcReq, t_out=_OhlcResp("XXBTZUSD"), params=payload)
-    r = await client.request(METHOD, URL, params=payload)
+    r = await client.safe_request(METHOD, URL, t_in=_OhlcReq, t_out=_OhlcResp("XXBTZUSD"), params=payload)
+    # r = await client.request(METHOD, URL, params=payload)
     return r
 
 ohlc = asyncio.run(ohlc())
 print(ohlc)
 # print(ohlc.unwrap())
-# print(ohlc.unwrap()._inner_value.safe_content)
+
+
+def show(result):
+    print(result)
+    return result
+
+print("Response type", type(ohlc))
+ohlc.apply(show)

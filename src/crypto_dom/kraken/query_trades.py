@@ -22,13 +22,13 @@ from crypto_dom.kraken.definitions import (
 
 
 # ============================================================
-# USER TRADES
+# QUERY TRADES
 # ============================================================
 
 
-# doc: https://www.kraken.com/features/api#get-trades-history
+# doc: https://www.kraken.com/features/api#query-trades-info 
 
-URL = "https://api.kraken.com/0/public/TradesHistory"
+URL = "https://api.kraken.com/0/public/QueryTrades"
 METHOD = "POST"
 
 
@@ -66,32 +66,21 @@ METHOD = "POST"
 # Request
 # ------------------------------
 
-class _TradesHistoryReq(pydantic.BaseModel):
-    """Request Model for endpoint https://api.kraken.com/0/public/TradesHistory
+class _QueryTradesReq(pydantic.BaseModel):
+    """Request Model for endpoint https://api.kraken.com/0/public/QueryTrades
 
     Fields:
     -------
-        type : Literal[all, any position, closed position, closing position, no position]
-            type of trade (optional)
-                default = all
+        txid : List[str]
+            Comma delimited list of transaction ids to query info about (20 maximum)
         trades: bool
             Whether or not to include trades in output (optional)
                 default = false
-        start : int
-            Starting unix timestamp (in seconds) or order tx id of results (optional)
-        end : int
-            Ending unix timestamp (in seconds) or order tx id of results (optional)
-        ofs : int 
-            Result offset
         nonce: int
             Always increasing unsigned 64 bit integer
     """
-
-    type: typing.Optional[Literal["all", "any position", "closed position", "closing position", "no position"]]
+    txid: typing.List[TRADEID]
     trades: typing.Optional[bool]
-    start: typing.Optional[TIMESTAMP_S]
-    end: typing.Optional[TIMESTAMP_S]
-    ofs: typing.Optional[int]
     nonce: pydantic.PositiveInt
 
 
@@ -125,21 +114,21 @@ class _Trade(pydantic.BaseModel):
     trades: typing.Optional[typing.Tuple[typing.Any, ...]]
 
 
-class _TradesHistory(pydantic.BaseModel):
+class _QueryTrades(pydantic.BaseModel):
     trades: typing.Mapping[TRADEID, _Trade]
     count: COUNT
 
 
 #  this class is just to be consistent with our API
 # TODO fill fields in docstring
-class _TradesHistoryResp(pydantic.BaseModel):
-    """Response Model for endpoint https://api.kraken.com/0/public/TradesHistory
+class _QueryTradesResp(pydantic.BaseModel):
+    """Response Model for endpoint https://api.kraken.com/0/public/QueryTrades
 
     Fields:
     -------
    """
 
     def __new__(cls):
-        return _TradesHistory
+        return _QueryTrades
 
 

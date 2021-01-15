@@ -7,7 +7,7 @@ import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
-from definitions import TIMEFRAMES, COUNT, TIMESTAMP_S
+from crypto_dom.kraken.definitions import TIMEFRAMES, COUNT, TIMESTAMP_S
 
 
 

@@ -1,22 +1,22 @@
 import hypothesis
 import pydantic
 
-from ohlc import _OhlcReq, _OhlcResp, T_OhlcResp
-from asset_pairs import _AssetPairsResp
-from assets import _AssetsResp
-from ticker import _TickerResp
-from spread import _SpreadResp
-from account_balance import _AccountBalanceResp
-from trade_balance import _TradeBalanceResp
-from open_orders import _OpenOrdersResp
-from orders_info import _QueryOrdersResp
-from user_trades import _TradesHistoryResp
+from crypto_dom.kraken.ohlc import _OhlcReq, _OhlcResp, T_OhlcResp
+from crypto_dom.kraken.asset_pairs import _AssetPairsResp
+from crypto_dom.kraken.assets import _AssetsResp
+from crypto_dom.kraken.ticker import _TickerResp
+from crypto_dom.kraken.spread import _SpreadResp
+from crypto_dom.kraken.account_balance import _AccountBalanceResp
+from crypto_dom.kraken.trade_balance import _TradeBalanceResp
+from crypto_dom.kraken.open_orders import _OpenOrdersResp
+from crypto_dom.kraken.orders_info import _QueryOrdersResp
+from crypto_dom.kraken.user_trades import _TradesHistoryResp
 
 #================================================================================
 # OHLC
 #================================================================================
 
-generictype = T_OhlcResp["XXBTZUSD"]
+# generictype = T_OhlcResp["XXBTZUSD"]
 
 test = _OhlcResp("XXBTZUSD")
 
