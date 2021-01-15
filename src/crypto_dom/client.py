@@ -120,26 +120,31 @@ class HttypeClient(httpx.AsyncClient):
         return IOSuccess(r)
 
 
-client = HttypeClient()
-payload = {
-    "pair": "XXBTZUSD",
-    "interval": 60
-}
 
 
-async def ohlc():
-    r = await client.safe_request(METHOD, URL, t_in=_OhlcReq, t_out=_OhlcResp("XXBTZUSD"), params=payload)
-    # r = await client.request(METHOD, URL, params=payload)
-    return r
 
-ohlc = asyncio.run(ohlc())
-print(ohlc)
-# print(ohlc.unwrap())
+if __name__ == "__main__":
+
+    client = HttypeClient()
+    payload = {
+        "pair": "XXBTZUSD",
+        "interval": 60
+    }
 
 
-def show(result):
-    print(result)
-    return result
+    async def ohlc():
+        r = await client.safe_request(METHOD, URL, t_in=_OhlcReq, t_out=_OhlcResp("XXBTZUSD"), params=payload)
+        # r = await client.request(METHOD, URL, params=payload)
+        return r
 
-print("Response type", type(ohlc))
-ohlc.apply(show)
+    ohlc = asyncio.run(ohlc())
+    print(ohlc)
+    # print(ohlc.unwrap())
+
+
+    def show(result):
+        print(result)
+        return result
+
+    print("Response type", type(ohlc))
+    ohlc.apply(show)
