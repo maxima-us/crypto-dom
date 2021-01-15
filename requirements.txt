@@ -1,3 +1,4 @@
+aiohttp
 httpx
 pydantic
 pytest-asyncio
