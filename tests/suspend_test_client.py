@@ -10,6 +10,8 @@ from returns.io import IOResult, IOSuccess
 from crypto_dom.client import HttypeClient
 from crypto_dom.kraken.ohlc import _OhlcReq, _OhlcResp, METHOD, URL
 
+
+
 client = HttypeClient()
 payload = {
     "pair": "XXBTZUSD",

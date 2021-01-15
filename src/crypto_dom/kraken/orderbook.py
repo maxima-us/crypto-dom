@@ -7,7 +7,7 @@ import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
-from crypto_dom.kraken.definitions import TIMEFRAMES, COUNT, TIMESTAMP_S
+from crypto_dom.definitions import COUNT, TIMESTAMP_S
 
 
 
@@ -51,7 +51,7 @@ METHOD = "GET"
 # Request
 # ------------------------------
 
-class _OrderbookReq(pydantic.BaseModel):
+class _OrderBookReq(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/public/Depth
 
     Fields:

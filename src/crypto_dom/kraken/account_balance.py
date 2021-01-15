@@ -7,12 +7,6 @@ import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
-from crypto_dom.kraken.definitions import (
-    TIMEFRAMES,
-    TIMESTAMP_S,
-    COUNT
-)
-
 
 
 # ============================================================
@@ -25,9 +19,11 @@ from crypto_dom.kraken.definitions import (
 URL = "https://api.kraken.com/0/public/Balance"
 METHOD = "GET"
 
+
 # ------------------------------
 # Request
 # ------------------------------
+
 
 class _AccountBalanceReq(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/public/Balance
@@ -39,8 +35,6 @@ class _AccountBalanceReq(pydantic.BaseModel):
     """
 
     nonce: pydantic.PositiveInt
-
-
 
 
 # ------------------------------
@@ -63,7 +57,6 @@ def generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
     )
 
     return model
-
 
 
 class _AccountBalanceResp:

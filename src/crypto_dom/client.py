@@ -1,4 +1,3 @@
-
 import asyncio
 
 import httpx
@@ -16,10 +15,10 @@ from crypto_dom.kraken.ohlc import _OhlcReq, _OhlcResp, URL, METHOD
 class UnsetType:
     pass  # pragma: nocover
 
-
 UNSET = UnsetType()
 
 
+# TODO type the client args (see httpx repo)
 
 
 class HttypeClient(httpx.AsyncClient):
