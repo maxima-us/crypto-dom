@@ -1,0 +1,19 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pytest = "*"
+crypto-dom = {editable = true, path = "."}
+
+[packages]
+httpx = "*"
+pydantic = "*"
+pytest-asyncio = "*"
+stackprinter = "*"
+typing-extensions = "*"
+returns = "*"
+
+[requires]
+python_version = "3.9"
