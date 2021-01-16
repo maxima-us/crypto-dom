@@ -7,6 +7,7 @@ import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
+from crypto_dom.definitions import ASSET
 
 
 # ============================================================
@@ -24,6 +25,7 @@ METHOD = "GET"
 # Sample Response
 # ------------------------------
 
+
 #     {
 #         "error": [],
 #         "result": {
@@ -35,13 +37,14 @@ METHOD = "GET"
 
 
 # ------------------------------
-# Request
+# Request Model
 # ------------------------------
 
-class _AssetsReq(pydantic.BaseModel):
+
+class AssetsReq(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/public/Assets
 
-    Fields:
+    Model Fields:
     -------
         info: str
             info to retrieve (optional):
@@ -56,17 +59,16 @@ class _AssetsReq(pydantic.BaseModel):
 
     info: typing.Optional[Literal["info"]]
     aclass: typing.Optional[Literal["currency"]]
-    asset: typing.Optional[typing.List[str]]
-
+    asset: typing.Optional[typing.List[ASSET]]
 
 
 # ------------------------------
-# Response
+# Response Model
 # ------------------------------
 
 
-def generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
-    """dynamically create the model
+def _generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
+    """dynamically create the model. Returns a new pydantic model class
     
     Args:
     ----
@@ -97,11 +99,10 @@ def generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
     return model
 
 
-
-class _AssetsResp:
+class AssetsResp:
     """Response Model for endpoint https://api.kraken.com/0/public/Assets
 
-    Fields:
+    Model Fields:
     -------
         `asset_name` : dict
             Array of asset name and corresponding info
@@ -112,6 +113,6 @@ class _AssetsResp:
     """
 
     def __call__(self, **kwargs):
-        model = generate_model(list(kwargs.keys()))
+        model = _generate_model(list(kwargs.keys()))
         print("\nFields", model.__fields__, "\n")
         return model(**kwargs)

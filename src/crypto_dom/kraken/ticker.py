@@ -7,6 +7,7 @@ import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
+from crypto_dom.kraken.definitions import PAIR
 
 
 # ============================================================
@@ -19,31 +20,32 @@ stackprinter.set_excepthook(style="darkbg2")
 URL = "https://api.kraken.com/0/public/Ticker"
 METHOD = "GET"
 
+
 # ------------------------------
-# Request
+# Request Model
 # ------------------------------
 
-class _TickerReq(pydantic.BaseModel):
+class TickerReq(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/public/Ticker
 
-    Fields:
+    Model Fields:
     -------
         pair : List[str]
             comma delimited list of asset pairs to get info on (optional)
             default = all
     """
 
-    pair: typing.Optional[typing.List[str]]
+    pair: typing.Optional[typing.List[PAIR]]
 
 
 
 # ------------------------------
-# Response
+# Response Model
 # ------------------------------
 
 
-def generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
-    """dynamically create the model
+def _generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
+    """dynamically create the model. Returns a new pydantic model class.
     
     Args:
     ----
@@ -81,10 +83,10 @@ def generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
 
 
 
-class _TickerResp:
+class TickerResp:
     """Response Model for endpoint https://api.kraken.com/0/public/Ticker
 
-    Fields:
+    Model Fields:
     -------
         `pair_name` : dict
             Array of pair name and corresponding info
@@ -101,6 +103,6 @@ class _TickerResp:
     """
 
     def __call__(self, **kwargs):
-        model = generate_model(list(kwargs.keys()))
+        model = _generate_model(list(kwargs.keys()))
         print("\nFields", model.__fields__, "\n")
         return model(**kwargs)

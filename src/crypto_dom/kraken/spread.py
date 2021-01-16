@@ -7,12 +7,7 @@ import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
-from crypto_dom.kraken.definitions import (
-    TIMEFRAMES,
-    TIMESTAMP_S,
-    COUNT
-)
-
+from crypto_dom.kraken.definitions import TIMESTAMP_S, PAIR
 
 
 # ============================================================
@@ -25,14 +20,15 @@ from crypto_dom.kraken.definitions import (
 URL = "https://api.kraken.com/0/public/Spread"
 METHOD = "GET"
 
+
 # ------------------------------
-# Request
+# Request Model
 # ------------------------------
 
-class _SpreadReq(pydantic.BaseModel):
+class SpreadReq(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/public/Spread
 
-    Fields:
+    Model Fields:
     -------
         pair : str 
             Asset pair to get spread data for
@@ -41,8 +37,7 @@ class _SpreadReq(pydantic.BaseModel):
             Return trade data since given id (optional)
     """
 
-    pair: str
-    # timestamp in seconds
+    pair: PAIR
     since: typing.Optional[TIMESTAMP_S]
 
     @pydantic.validator('since')
@@ -58,13 +53,12 @@ class _SpreadReq(pydantic.BaseModel):
 
 
 # ------------------------------
-# Response
+# Response Model
 # ------------------------------
 
 
-def generate_model(pair: str) -> typing.Type[pydantic.BaseModel]:
-    "dynamically create the model"
-
+def _generate_model(pair: str) -> typing.Type[pydantic.BaseModel]:
+    "dynamically create the model. Returns a new pydantic model class"
 
     class _BaseSpreadResp(pydantic.BaseModel):
 
@@ -97,10 +91,18 @@ def generate_model(pair: str) -> typing.Type[pydantic.BaseModel]:
 
 
 
-class _SpreadResp:
+class SpreadResp:
     """Response Model for endpoint https://api.kraken.com/0/public/Spread
+   
+    Args:
+    -----
+        pair : str 
 
-    Fields:
+    Returns:
+    --------
+        Spread Response Model
+    
+    Model Fields:
     -------
         `pair_name` : str
             Array of array entries (time, bid, ask)
@@ -110,5 +112,5 @@ class _SpreadResp:
     """
 
     def __new__(_cls, pair: str):
-        model = generate_model(pair)
+        model = _generate_model(pair)
         return model

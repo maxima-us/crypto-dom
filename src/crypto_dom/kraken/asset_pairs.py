@@ -8,7 +8,7 @@ import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import COUNT
-
+from crypto_dom.definitions import PAIR
 
 
 # ============================================================
@@ -25,6 +25,7 @@ METHOD = "GET"
 # ------------------------------
 # Sample Response
 # ------------------------------
+
 
 #     {
 #         "error":[],
@@ -75,13 +76,14 @@ METHOD = "GET"
 
 
 # ------------------------------
-# Request
+# Request Model
 # ------------------------------
 
-class _AssetPairsReq(pydantic.BaseModel):
+
+class AssetPairsReq(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/public/AssetPairs
 
-    Fields:
+    Model Fields:
     -------
         info : Literal["info", "leverage", "fees"]
             info to retrieve (optional)
@@ -94,18 +96,16 @@ class _AssetPairsReq(pydantic.BaseModel):
     """
 
     info: Literal["info", "leverage", "fees"]
-    pair: typing.Optional[typing.List[str]]
-
-
+    pair: typing.Optional[typing.List[PAIR]]
 
 
 # ------------------------------
-# Response
+# Response Model
 # ------------------------------
 
 
-def generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
-    """dynamically create the model
+def _generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
+    """dynamically create the model. Returns a new pydantic model class
     
     Args:
     ----
@@ -139,10 +139,6 @@ def generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
         ordermin: typing.Optional[Decimal]
 
 
-    # TODO this should be enough for mypy
-    _Sig = typing.Dict[str, _AssetPair]
-
-
     # we do not know the keys in advance, only the type of their value
     kwargs = {
         **{k: (_AssetPair, ...) for k in keys},
@@ -157,11 +153,10 @@ def generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
     return model
 
 
-
-class _AssetPairsResp:
+class AssetPairsResp:
     """Response Model for endpoint https://api.kraken.com/0/public/Trades
 
-    Fields:
+    Model Fields:
     -------
         `pair_name` : dict
             Array of pair name and corresponding info
@@ -187,6 +182,6 @@ class _AssetPairsResp:
     """
 
     def __call__(self, **kwargs):
-        model = generate_model(list(kwargs.keys()))
+        model = _generate_model(list(kwargs.keys()))
         print("\nFields", model.__fields__, "\n")
         return model(**kwargs)

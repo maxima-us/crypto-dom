@@ -7,8 +7,7 @@ import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
-from crypto_dom.definitions import COUNT, TIMESTAMP_NS
-
+from crypto_dom.definitions import TIMESTAMP_NS, PAIR
 
 
 # ============================================================
@@ -39,13 +38,14 @@ METHOD = "GET"
 
 
 # ------------------------------
-# Request
+# Request Model
 # ------------------------------
 
-class _TradesReq(pydantic.BaseModel):
+
+class TradesReq(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/public/Trades
 
-    Fields:
+    Model Fields:
     -------
         pair : str 
             Asset pair to get OHLC data for
@@ -54,7 +54,7 @@ class _TradesReq(pydantic.BaseModel):
             Timestamp in nanoseconds
     """
 
-    pair: str
+    pair: PAIR
     since: typing.Optional[TIMESTAMP_NS]
 
     @pydantic.validator('since')
@@ -73,12 +73,12 @@ class _TradesReq(pydantic.BaseModel):
 
 
 # ------------------------------
-# Response
+# Response Model
 # ------------------------------
 
 
-def generate_model(pair: str) -> typing.Type[pydantic.BaseModel]:
-    "dynamically create the model"
+def _generate_model(pair: str) -> typing.Type[pydantic.BaseModel]:
+    "dynamically create the model. Returns a new pydantic model class"
 
 
     class _BaseTradesResp(pydantic.BaseModel):
@@ -112,11 +112,18 @@ def generate_model(pair: str) -> typing.Type[pydantic.BaseModel]:
     return model
 
 
-
-class _TradesResp:
+class TradesResp:
     """Response Model for endpoint https://api.kraken.com/0/public/Trades
 
-    Fields:
+    Args:
+    -----
+        pair : str 
+
+    Returns:
+    --------
+        Trades Response Model
+
+    Model Fields:
     -------
         `pair_name` : str
             Array of array entries(price, volume, time, buy/sell, market/limit, miscellaneous)
@@ -125,5 +132,5 @@ class _TradesResp:
     """
 
     def __new__(_cls, pair: str):
-        model = generate_model(pair)
+        model = _generate_model(pair)
         return model

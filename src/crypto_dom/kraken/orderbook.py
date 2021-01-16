@@ -8,6 +8,7 @@ import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import COUNT, TIMESTAMP_S
+from crypto_dom.kraken.definitions import PAIR
 
 
 
@@ -46,15 +47,14 @@ METHOD = "GET"
 #
 
 
-
 # ------------------------------
-# Request
+# Request Model
 # ------------------------------
 
-class _OrderBookReq(pydantic.BaseModel):
+class OrderBookReq(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/public/Depth
 
-    Fields:
+    Model Fields:
     -------
         pair : str 
             Asset pair to get OHLC data for
@@ -62,22 +62,21 @@ class _OrderBookReq(pydantic.BaseModel):
             maximum number of asks/bids (optional) 
     """
 
-    pair: str
+    pair: PAIR
     count: typing.Optional[COUNT]
 
 
 # ------------------------------
-# Response
+# Response Model
 # ------------------------------
 
 
-def make_model_orderbook(pair: str) -> typing.Type[pydantic.BaseModel]:
-    "dynamically create the model"
-
+def _generate_model(pair: str) -> typing.Type[pydantic.BaseModel]:
+    "dynamically create the model. Returns a new pydantic model class"
 
     _BidAskItem = typing.Tuple[Decimal, Decimal, TIMESTAMP_S]
 
-    class Book(pydantic.BaseModel):
+    class _Book(pydantic.BaseModel):
 
          # tuples of price, volume, time
         asks: typing.Tuple[_BidAskItem, ...]
@@ -85,7 +84,7 @@ def make_model_orderbook(pair: str) -> typing.Type[pydantic.BaseModel]:
 
     
     kwargs = {
-        pair: (Book, ...),
+        pair: (_Book, ...),
         "__base__": pydantic.BaseModel
     }
 
@@ -98,10 +97,18 @@ def make_model_orderbook(pair: str) -> typing.Type[pydantic.BaseModel]:
 
 
 
-class _OrderBookResp:
+class OrderBookResp:
     """Response Model for endpoint https://api.kraken.com/0/public/Depth
+    
+    Args:
+    -----
+        pair : str 
 
-    Fields:
+    Returns:
+    --------
+        OrderBook Response Model
+
+    Model Fields:
     -------
         `pair_name` : str
             Dict of `asks` and `bids`
@@ -109,5 +116,5 @@ class _OrderBookResp:
     """
 
     def __new__(_cls, pair: str):
-        model = make_model_orderbook(pair)
+        model = _generate_model(pair)
         return model

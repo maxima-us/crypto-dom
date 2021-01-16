@@ -197,6 +197,8 @@ class _TypedAioHttpClient(aiohttp.ClientSession):
                 except Exception as e:
                     return IOFailure(e)
 
+            # TODO do we have to handle json kwarg as well ???
+
         try:
             r = await self.request(
                 method,

@@ -2,13 +2,13 @@ import typing
 from datetime import date
 from decimal import Decimal
 
-from typing_extensions import Literal
+from typing_extensions import Literal, TypedDict
 import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import TIMESTAMP_S
-from crypto_dom.kraken.definitions import TIMEFRAMES
+from crypto_dom.kraken.definitions import TIMEFRAME, PAIR
 
 
 
@@ -43,13 +43,13 @@ METHOD = "GET"
 
 
 # ------------------------------
-# Request
+# Request Model
 # ------------------------------
 
-class _OhlcReq(pydantic.BaseModel):
+class OhlcReq(pydantic.BaseModel):
     """Request model for endpoint https://api.kraken.com/0/public/OHLC"
 
-    Fields:
+    Model Fields:
     -------
         pair : str 
             Asset pair to get OHLC data for
@@ -59,8 +59,8 @@ class _OhlcReq(pydantic.BaseModel):
             Return committed OHLC data since given id (optional)
     """
 
-    pair: str
-    interval: TIMEFRAMES = 1
+    pair: PAIR
+    interval: typing.Optional[TIMEFRAME]
 
     # timestamp in seconds
     since: typing.Optional[TIMESTAMP_S]
@@ -78,18 +78,21 @@ class _OhlcReq(pydantic.BaseModel):
         return v
 
 
+
 # ------------------------------
-# Response
+# Response Model
 # ------------------------------
+
 
 # TODO should this be a generic type instead ? ie _OhlcResp["XXBTZUSD"] instead of _OhlcResp("XXBTZUSD")
 #       ? benefits for type hinting / mypy ??
 
 
-def make_model_ohlc(pair: str) -> typing.Type[pydantic.BaseModel]:
-    "dynamically create the model"
+def _generate_model(pair: str) -> typing.Type[pydantic.BaseModel]:
+    "dynamically create the model. Returns a new pydantic model class"
     
 
+    # TODO put in validators.py
     class _BaseOhlcResp(pydantic.BaseModel):
 
         # timestamp received from kraken is in seconds
@@ -122,23 +125,19 @@ def make_model_ohlc(pair: str) -> typing.Type[pydantic.BaseModel]:
     return model
 
 
-#! GENERIC FOR TYPE HINTS == NOT WORKING YET 
 
-Pair = typing.TypeVar("Pair")
-
-
-class T_OhlcResp(typing.Generic[Pair]):
-
-    def __init__(self, value: str):
-        self._value = make_model_ohlc(value)
-
-#! END ==================== 
-
-
-class _OhlcResp:
+class OhlcResp:
     """Response model for endpoint https://api.kraken.com/0/public/OHLC"
 
-    Fields:
+    Args:
+    -----
+        pair : str 
+
+    Returns:
+    --------
+        OHLC Response Model
+    
+    Model Fields:
     -------
         `pair_name` : str 
             Array of array entries(time, open, high, low, close, vwap, volume, count)
@@ -147,5 +146,6 @@ class _OhlcResp:
     """
 
     def __new__(_cls, pair: str):
-        model = make_model_ohlc(pair)
+        model = _generate_model(pair)
         return model
+
