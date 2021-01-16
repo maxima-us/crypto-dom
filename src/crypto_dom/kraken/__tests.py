@@ -1,11 +1,14 @@
 import hypothesis
 import pydantic
 
-from crypto_dom.kraken.ohlc import _OhlcReq, _OhlcResp, T_OhlcResp
-from crypto_dom.kraken.asset_pairs import _AssetPairsResp
-from crypto_dom.kraken.assets import _AssetsResp
-from crypto_dom.kraken.ticker import _TickerResp
-from crypto_dom.kraken.spread import _SpreadResp
+# public
+from crypto_dom.kraken.ohlc import OhlcReq, OhlcResp
+from crypto_dom.kraken.asset_pairs import AssetPairsResp
+from crypto_dom.kraken.assets import AssetsResp
+from crypto_dom.kraken.ticker import TickerResp
+from crypto_dom.kraken.spread import SpreadResp
+
+# private
 from crypto_dom.kraken.account_balance import _AccountBalanceResp
 from crypto_dom.kraken.trade_balance import _TradeBalanceResp
 from crypto_dom.kraken.open_orders import _OpenOrdersResp
@@ -16,9 +19,8 @@ from crypto_dom.kraken.user_trades import _TradesHistoryResp
 # OHLC
 #================================================================================
 
-# generictype = T_OhlcResp["XXBTZUSD"]
 
-test = _OhlcResp("XXBTZUSD")
+test = OhlcResp("XXBTZUSD")
 
 
 data1 = {
@@ -59,7 +61,7 @@ spread_data = {
     "last":1610566227
 }
 
-model = _SpreadResp("XXBTZUSD")
+model = SpreadResp("XXBTZUSD")
 sp_resp = model(**spread_data)
 print(sp_resp)
 
@@ -77,7 +79,7 @@ assetpairs = {
         {"altname":"AAVEEUR","wsname":"AAVE\/EUR","aclass_base":"currency","base":"AAVE","aclass_quote":"currency","quote":"ZEUR","lot":"unit","pair_decimals":2,"lot_decimals":8,"lot_multiplier":1,"leverage_buy":[],"leverage_sell":[],"fees":[[0,0.26],[50000,0.24],[100000,0.22],[250000,0.2],[500000,0.18],[1000000,0.16],[2500000,0.14],[5000000,0.12],[10000000,0.1]],"fees_maker":[[0,0.16],[50000,0.14],[100000,0.12],[250000,0.1],[500000,0.08],[1000000,0.06],[2500000,0.04],[5000000,0.02],[10000000,0]],"fee_volume_currency":"ZUSD","margin_call":80,"margin_stop":40,"ordermin":"0.1"}
 }
 
-model = _AssetPairsResp()
+model = AssetPairsResp()
 ap_resp = model(**assetpairs)
 print(ap_resp)
 
@@ -273,7 +275,7 @@ tickerdata = {
         "o":"34038.20000"}
 }
 
-model = _TickerResp()
+model = TickerResp()
 tk_resp = model(**tickerdata)
 print(tk_resp) 
 
@@ -290,7 +292,7 @@ assets = {
     "ALGO":{"aclass":"currency","altname":"ALGO","decimals":8,"display_decimals":5},
 }
 
-model = _AssetsResp()
+model = AssetsResp()
 as_resp = model(**assets)
 print(as_resp)
 
@@ -360,12 +362,12 @@ def test_me(person: User):
 
 
 #!!!! constrained types dont work properly, see: https://github.com/samuelcolvin/pydantic/pull/2097#issuecomment-748596129
-@hypothesis.given(hypothesis.strategies.from_type(_OhlcReq))
-def test_request(generated: _OhlcReq):
+@hypothesis.given(hypothesis.strategies.from_type(OhlcReq))
+def test_request(generated: OhlcReq):
 
     print (generated)
 
-    request = _OhlcReq(
+    request = OhlcReq(
         pair=generated.pair,
         interval=generated.interval,
         #! since there is no way to test this for now we will leave it at 1
@@ -373,7 +375,7 @@ def test_request(generated: _OhlcReq):
         since=1
     )
 
-    assert isinstance(request, _OhlcReq)
+    assert isinstance(request, OhlcReq)
 
 # test_request()
 

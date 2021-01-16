@@ -8,7 +8,7 @@ import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import COUNT
-from crypto_dom.definitions import PAIR
+from crypto_dom.kraken.definitions import PAIR
 
 
 # ============================================================

@@ -3,7 +3,7 @@ import random
 import pytest
 import httpx
 
-from crypto_dom.kraken.trades import _TradesReq, _TradesResp, METHOD, URL
+from crypto_dom.kraken.trades import TradesReq, TradesResp, METHOD, URL
 
 
 
@@ -26,5 +26,5 @@ async def test_manual_trades():
     assert rjson["error"] == []
 
     # TODO update once we have a full Result model for Kraken
-    model = _TradesResp("XXBTZUSD")
+    model = TradesResp("XXBTZUSD")
     model(**(rjson["result"]))

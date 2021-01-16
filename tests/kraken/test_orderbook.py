@@ -3,7 +3,7 @@ import random
 import pytest
 import httpx
 
-from crypto_dom.kraken.orderbook import _OrderBookReq, _OrderBookResp, METHOD, URL
+from crypto_dom.kraken.orderbook import OrderBookReq, OrderBookResp, METHOD, URL
 
 
 
@@ -27,5 +27,5 @@ async def test_manual_book():
     assert rjson["error"] == []
 
     # TODO update once we have a full Result model for Kraken
-    model = _OrderBookResp("XXBTZUSD")
+    model = OrderBookResp("XXBTZUSD")
     model(**(rjson["result"]))

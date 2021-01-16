@@ -7,7 +7,8 @@ import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
-from crypto_dom.kraken.definitions import TIMESTAMP_S, PAIR
+from crypto_dom.definitions import TIMESTAMP_S
+from crypto_dom.kraken.definitions import PAIR
 
 
 # ============================================================
@@ -88,7 +89,6 @@ def _generate_model(pair: str) -> typing.Type[pydantic.BaseModel]:
     )
 
     return model
-
 
 
 class SpreadResp:

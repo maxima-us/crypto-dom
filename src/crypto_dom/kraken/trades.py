@@ -7,7 +7,8 @@ import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
-from crypto_dom.definitions import TIMESTAMP_NS, PAIR
+from crypto_dom.definitions import TIMESTAMP_NS
+from crypto_dom.kraken.definitions import PAIR
 
 
 # ============================================================
