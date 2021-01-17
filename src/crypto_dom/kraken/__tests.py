@@ -15,6 +15,10 @@ from crypto_dom.kraken.open_orders import _OpenOrdersResp
 from crypto_dom.kraken.orders_info import _QueryOrdersResp
 from crypto_dom.kraken.user_trades import _TradesHistoryResp
 
+
+#! IMPORTS HAVE NOT BEEN UPDATED
+
+
 #================================================================================
 # OHLC
 #================================================================================

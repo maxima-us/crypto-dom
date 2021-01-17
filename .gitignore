@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Recorded http cassettes
+tests/kraken/cassettes/*

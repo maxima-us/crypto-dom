@@ -81,36 +81,42 @@ async def _httpx_request(method, url, payload, response_model):
 
 
 @pytest.mark.asyncio
+@pytest.mark.vcr()
 async def test_ohlc_response_model():
     payload = {"pair": pair}
     await _httpx_request("GET", OHLCURL, payload, OhlcResp(pair))
 
 
 @pytest.mark.asyncio
+@pytest.mark.vcr()
 async def test_orderbook_response_model():
     payload = {"pair": pair}
     await _httpx_request("GET", OBURL, payload, OrderBookResp(pair))
 
 
 @pytest.mark.asyncio
+@pytest.mark.vcr()
 async def test_assetpairs_response_model():
     payload = {"pair": pairs}
     await _httpx_request("GET", APURL, payload, AssetPairsResp())
 
 
 @pytest.mark.asyncio
+@pytest.mark.vcr()
 async def test_assets_response_model():
     payload = {"asset": assets}
     await _httpx_request("GET", AURL, payload, AssetsResp())
 
 
 @pytest.mark.asyncio
+@pytest.mark.vcr()
 async def test_ticker_response_model():
     payload = {"pair": pairs}
     await _httpx_request("GET", TURL, payload, TickerResp())
 
 
 @pytest.mark.asyncio
+@pytest.mark.vcr()
 async def test_spread_response_model():
     payload = {"pair": pair}
     await _httpx_request("GET", SURL, payload, SpreadResp(pair))
@@ -122,30 +128,35 @@ async def test_spread_response_model():
 
 
 @pytest.mark.asyncio
+@pytest.mark.vcr()
 async def test_accountbalance_response_model():
     payload = {"nonce": make_nonce()}
     await _httpx_request("POST", ABURL, payload, AccountBalanceResp())
 
 
 @pytest.mark.asyncio
+@pytest.mark.vcr()
 async def test_tradebalance_response_model():
     payload = {"nonce": make_nonce(), "asset": asset}
     await _httpx_request("POST", TBURL, payload, TradeBalanceResp())
 
 
 @pytest.mark.asyncio
+@pytest.mark.vcr()
 async def test_closedorders_response_model():
     payload = {"nonce": make_nonce()}
     await _httpx_request("POST", COURL, payload, ClosedOrdersResp())
 
 
 @pytest.mark.asyncio
+@pytest.mark.vcr()
 async def test_openpositions_response_model():
     payload = {"nonce": make_nonce()}
     await _httpx_request("POST", OPURL, payload, OpenPositionsResp())
 
 
 @pytest.mark.asyncio
+@pytest.mark.vcr()
 async def test_openorders_response_model():
     payload = {"nonce": make_nonce()}
     await _httpx_request("POST", OOURL, payload, OpenOrdersResp())
@@ -153,6 +164,7 @@ async def test_openorders_response_model():
 
 # TODO which IDs to query ?
 # @pytest.mark.asyncio
+# @pytest.mark.vcr()
 # async def test_queryorders_response_model():
 #     payload = {"nonce": make_nonce()}
 #     await _httpx_request("POST", QOURL, payload, QueryOrdersResp())
@@ -160,6 +172,7 @@ async def test_openorders_response_model():
 
 # TODO which IDs to query ?
 # @pytest.mark.asyncio
+# @pytest.mark.vcr()
 # async def test_queryledgers_response_model():
 #     payload = {"nonce": make_nonce()}
 #     await _httpx_request("POST", QLURL, payload, QueryLedgersResp())
@@ -167,12 +180,25 @@ async def test_openorders_response_model():
 
 # # TODO which IDs to query ?
 # @pytest.mark.asyncio
+# @pytest.mark.vcr()
 # async def test_querytrades_response_model():
 #     payload = {"nonce": make_nonce()}
 #     await _httpx_request("POST", QTURL, payload, QueryTradessResp()
 
 
 @pytest.mark.asyncio
+@pytest.mark.vcr()
 async def test_tradeshistory_response_model():
     payload = {"nonce": make_nonce()}
     await _httpx_request("POST", THURL, payload, TradesHistoryResp())
+
+
+#------------------------------------------------------------
+# Record Cassettes
+#------------------------------------------------------------
+
+
+if __name__ == '__main__':
+    pytest.main(['-s', __file__, '--block-network'])
+    # To record cassettes uncomment below line
+    # pytest.main(['-s', __file__, '--record-mode=new_episodes'])
