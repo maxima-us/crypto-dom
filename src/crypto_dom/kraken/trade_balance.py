@@ -88,7 +88,7 @@ class TradeBalanceResp:
         mf: Decimal
             free margin = equity - initial margin (maximum margin available to open new positions)
         ml: Decimal
-            margin level = (equity / initial margin) * 100
+            margin level = (equity / initial margin) * 100 (optional)
    """
 
     def __new__(cls):

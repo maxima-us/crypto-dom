@@ -145,11 +145,10 @@ async def test_openpositions_response_model():
     await _httpx_request("POST", OPURL, payload, OpenPositionsResp())
 
 
-# FIXME FLAGS definition is incorrect, will error until we fix it (see definitions)
-# @pytest.mark.asyncio
-# async def test_openorders_response_model():
-#     payload = {"nonce": make_nonce()}
-#     await _httpx_request("POST", OOURL, payload, OpenOrdersResp())
+@pytest.mark.asyncio
+async def test_openorders_response_model():
+    payload = {"nonce": make_nonce()}
+    await _httpx_request("POST", OOURL, payload, OpenOrdersResp())
 
 
 # TODO which IDs to query ?

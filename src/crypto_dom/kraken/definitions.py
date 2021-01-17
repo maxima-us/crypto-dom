@@ -39,12 +39,9 @@ TIMEFRAME = Literal[1, 5, 15, 30, 60, 240, 1440, 10080, 21600]
 #------------------------------------------------------------
 
 
-# FIXME comma delimited list of order flags == can be multiple
-FLAGS = Literal["viqc", "fcib", "fciq", "nompp"]
-
-# class FLAGS(Nstr):
-#     regex = re.compile(r'^[[viqc|fcib|fciq|nompp|post],]+$')
-#     strict = True
+class FLAGS(Nstr):
+    regex = re.compile(r'((viqc|fcib|fciq|nompp|post)+?)(?:,|$)')
+    strict = True
 
 
 #------------------------------------------------------------
