@@ -10,6 +10,7 @@ ERRORS = Literal[
     'EGeneral:Invalid arguments',
     'EGeneral:Internal error',
     'EGeneral:Permission denied',
+    'EGeneral:Unknown method',      # when the URL is invalid
     'EAPI:Invalid key',
     'EAPI:Invalid signature',
     'EAPI:Invalid nonce',

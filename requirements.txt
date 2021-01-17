@@ -2,5 +2,6 @@ aiohttp
 httpx
 pydantic
 pytest-asyncio
+python-dotenv
 stackprinter
 typing_extensions

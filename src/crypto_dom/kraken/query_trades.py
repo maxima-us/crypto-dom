@@ -59,13 +59,14 @@ METHOD = "POST"
 
 
 # ------------------------------
-# Request
+# Request Model
 # ------------------------------
 
-class _QueryTradesReq(pydantic.BaseModel):
+
+class QueryTradesReq(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/public/QueryTrades
 
-    Fields:
+    Model Fields:
     -------
         txid : List[str]
             Comma delimited list of transaction ids to query info about (20 maximum)
@@ -81,7 +82,7 @@ class _QueryTradesReq(pydantic.BaseModel):
 
 
 # ------------------------------
-# Response
+# Response Model
 # ------------------------------
 
 
@@ -117,10 +118,10 @@ class _QueryTrades(pydantic.BaseModel):
 
 #  this class is just to be consistent with our API
 # TODO fill fields in docstring
-class _QueryTradesResp(pydantic.BaseModel):
+class QueryTradesResp(pydantic.BaseModel):
     """Response Model for endpoint https://api.kraken.com/0/public/QueryTrades
 
-    Fields:
+    Model Fields:
     -------
    """
 

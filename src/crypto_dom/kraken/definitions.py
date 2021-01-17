@@ -39,7 +39,12 @@ TIMEFRAME = Literal[1, 5, 15, 30, 60, 240, 1440, 10080, 21600]
 #------------------------------------------------------------
 
 
+# FIXME comma delimited list of order flags == can be multiple
 FLAGS = Literal["viqc", "fcib", "fciq", "nompp"]
+
+# class FLAGS(Nstr):
+#     regex = re.compile(r'^[[viqc|fcib|fciq|nompp|post],]+$')
+#     strict = True
 
 
 #------------------------------------------------------------
@@ -58,13 +63,18 @@ ORDERSTATUS = Literal["pending", "open", "closed", "canceled", "expired"]
 # IDs
 #------------------------------------------------------------
 
-class TRADEID(Nstr):
+
+class KrakenID(Nstr):
     regex = re.compile(r'^[A-Z0-9]{6}-[A-Z0-9]{5}-[A-Z0-9]{6}$')
     strict = True
 
 
-class ORDERID(Nstr):
-    regex = re.compile(r'^[A-Z0-9]{6}-[A-Z0-9]{5}-[A-Z0-9]{6}$')
-    strict = True
+class TRADEID(KrakenID): pass
+
+class ORDERID(KrakenID): pass
+
+class LEDGERID(KrakenID): pass
+
+
 
 

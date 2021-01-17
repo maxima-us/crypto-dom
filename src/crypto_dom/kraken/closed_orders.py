@@ -17,9 +17,8 @@ from crypto_dom.kraken.definitions import (
     ORDERSIDE,
     ORDERTYPE,
     ORDERSTATUS,
-    ORDERID
+    ORDERID,
 )
-
 
 
 # ============================================================
@@ -29,7 +28,7 @@ from crypto_dom.kraken.definitions import (
 
 # doc: https://www.kraken.com/features/api#get-closed-orders
 
-URL = "https://api.kraken.com/0/public/ClosedOrders"
+URL = "https://api.kraken.com/0/private/ClosedOrders"
 METHOD = "POST"
 
 
@@ -77,13 +76,13 @@ METHOD = "POST"
 
 
 # ------------------------------
-# Request
+# Request Model
 # ------------------------------
 
-class _ClosedOrdersReq(pydantic.BaseModel):
-    """Request Model for endpoint https://api.kraken.com/0/public/ClosedOrders
+class ClosedOrdersReq(pydantic.BaseModel):
+    """Request Model for endpoint https://api.kraken.com/0/private/ClosedOrders
 
-    Fields:
+    Model Fields:
     -------
         trades : bool
             Whether or not to include trades in output (optional)
@@ -103,7 +102,7 @@ class _ClosedOrdersReq(pydantic.BaseModel):
     
     """
 
-    trades: typing.Optional[bool] = False
+    trades: typing.Optional[bool]
     userref: typing.Optional[int]
     start: typing.Optional[TIMESTAMP_S]
     end: typing.Optional[TIMESTAMP_S]
@@ -112,11 +111,12 @@ class _ClosedOrdersReq(pydantic.BaseModel):
 
 
 # ------------------------------
-# Response
+# Response Model
 # ------------------------------
 
 class _Descr(pydantic.BaseModel):
-    pair: str
+    
+    pair: str # different format than assetpairs keys (see example: ETHUSDT vs XETHZUSD)
     type: ORDERSIDE
     ordertype: ORDERTYPE 
     price: Decimal
@@ -126,7 +126,6 @@ class _Descr(pydantic.BaseModel):
 
 
 class _ClosedOrder(pydantic.BaseModel):
-
 
     #  shared with open order info
     refid: typing.Optional[str] #references order ID (string)
@@ -158,10 +157,10 @@ class _ClosedOrders(pydantic.BaseModel):
 
 
 #  this class is just to be consistent with our API
-class _ClosedOrdersResp(pydantic.BaseModel):
-    """Response Model for endpoint https://api.kraken.com/0/public/ClosedOrders
+class ClosedOrdersResp(pydantic.BaseModel):
+    """Response Model for endpoint https://api.kraken.com/0/private/ClosedOrders
 
-    Fields:
+    Model Fields:
     -------
         closed: dict
             mapping of txid to their order info

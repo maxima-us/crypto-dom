@@ -8,7 +8,7 @@ import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import TIMESTAMP_S
-from crypto_dom.kraken.definitions import ORDERID
+from crypto_dom.kraken.definitions import LEDGERID, ASSET
   
 
 
@@ -40,13 +40,14 @@ METHOD = "POST"
 
 
 # ------------------------------
-# Request
+# Request Model
 # ------------------------------
 
-class _QueryLedgersReq(pydantic.BaseModel):
+
+class QueryLedgersReq(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/public/QueryLedgers
 
-    Fields:
+    Model Fields:
     -------
         id : List[str]
             Comma delimited list of ledger ids to query info about (20 maximum)
@@ -54,26 +55,26 @@ class _QueryLedgersReq(pydantic.BaseModel):
             Always increasing unsigned 64 bit integer
     """
 
-    id: typing.List[str]
+    id: typing.List[LEDGERID]
     nonce: pydantic.PositiveInt
 
 
 # ------------------------------
-# Response
+# Response Model
 # ------------------------------
 
 
-def generate_model(keys: typing.List[ORDERID]) -> typing.Type[pydantic.BaseModel]:
-    "dynamically create the model"
+def _generate_model(keys: typing.List[LEDGERID]) -> typing.Type[pydantic.BaseModel]:
+    "dynamically create the model. Returns a new pydantic model class"
 
 
     class _Ledger(pydantic.BaseModel):
 
-        refid: typing.Optional[str]
+        refid: typing.Optional[str] # TODO is this also in the KrakenID format ??
         time: TIMESTAMP_S
         type: str
         aclass: str
-        asset: str
+        asset: ASSET
         amount: Decimal
         fee: Decimal
         balance: Decimal
@@ -92,10 +93,10 @@ def generate_model(keys: typing.List[ORDERID]) -> typing.Type[pydantic.BaseModel
     return model
 
 
-class _QueryLedgersResp(pydantic.BaseModel):
+class QueryLedgersResp(pydantic.BaseModel):
     """Response Model for endpoint https://api.kraken.com/0/public/QueryLedgers
 
-    Fields:
+    Model Fields:
     -------
         `Ledger d` : leger info
             mapping of ledger id to their info
@@ -123,8 +124,7 @@ class _QueryLedgersResp(pydantic.BaseModel):
                 Resulting balance
    """
 
-
     def __call__(self, **kwargs):
-        model = generate_model(list(kwargs.keys()))
+        model = _generate_model(list(kwargs.keys()))
         print("\nFields", model.__fields__, "\n")
         return model(**kwargs)

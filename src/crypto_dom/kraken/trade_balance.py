@@ -8,27 +8,29 @@ import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import TIMESTAMP_S
-
+from crypto_dom.kraken.definitions import ASSET
 
 
 # ============================================================
-# SPREAD
+# TRADE BALANCE
 # ============================================================
 
 
 # doc: https://www.kraken.com/features/api#get-trade-balance
 
-URL = "https://api.kraken.com/0/public/TradeBalance"
+URL = "https://api.kraken.com/0/private/TradeBalance"
 METHOD = "POST"
 
+
 # ------------------------------
-# Request
+# Request Model
 # ------------------------------
 
-class _TradeBalanceReq(pydantic.BaseModel):
-    """Request Model for endpoint https://api.kraken.com/0/public/TradeBalance
 
-    Fields:
+class TradeBalanceReq(pydantic.BaseModel):
+    """Request Model for endpoint https://api.kraken.com/0/private/TradeBalance
+
+    Model Fields:
     -------
         aclass : str 
             Asset Class (optional)
@@ -41,52 +43,31 @@ class _TradeBalanceReq(pydantic.BaseModel):
     """
 
     aclass: typing.Optional[str]
-    asset: str = "ZUSD"
+    asset: ASSET = "ZUSD"
     nonce: pydantic.PositiveInt
 
 
 # ------------------------------
-# Response
+# Response Model
 # ------------------------------
 
 
-def generate_model(pair: str) -> typing.Type[pydantic.BaseModel]:
-    "dynamically create the model"
-
-
-    class _BaseTradeBalanceResp(pydantic.BaseModel):
-
-        # timestamp received from kraken in s
-        last: TIMESTAMP_S
-
-        @pydantic.validator('last')
-        def check_year_from_timestamp(cls, v, values):
-            # convert from ns to s
-
-            y = date.fromtimestamp(v).year
-            if not y > 2009 and y < 2050:
-                err_msg = f"Year {y} for timestamp {v} not within [2009, 2050]"
-                raise ValueError(err_msg)
-            return v
-
-    _Spread = typing.Tuple[Decimal, Decimal, Decimal]
-
-    kwargs = {
-        pair: (typing.Tuple[_Spread, ...], ...),
-        "__base__": _BaseTradeBalanceResp
-    }
-
-    model = pydantic.create_model(
-        '_TradeBalanceResp',
-        **kwargs    #type: ignore
-    )
-
-    return model
-
-
-
 class _TradeBalance(pydantic.BaseModel):
-    """Response Model for endpoint https://api.kraken.com/0/public/TradeBalance
+
+    eb: Decimal
+    tb: Decimal
+    m: Decimal
+    n: Decimal
+    c: Decimal
+    v: Decimal
+    e: Decimal
+    mf: Decimal
+    ml: typing.Optional[Decimal]
+
+
+#  this class is just to be consistent with our API
+class TradeBalanceResp:
+    """Response Model for endpoint https://api.kraken.com/0/private/TradeBalance
 
     Fields:
     -------
@@ -109,20 +90,6 @@ class _TradeBalance(pydantic.BaseModel):
         ml: Decimal
             margin level = (equity / initial margin) * 100
    """
-
-    eb: Decimal
-    tb: Decimal
-    m: Decimal
-    n: Decimal
-    c: Decimal
-    v: Decimal
-    e: Decimal
-    mf: Decimal
-    ml: Decimal
-
-
-#  this class is just to be consistent with our API
-class _TradeBalanceResp:
 
     def __new__(cls):
         return _TradeBalance

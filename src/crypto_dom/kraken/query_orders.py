@@ -17,15 +17,14 @@ from crypto_dom.kraken.definitions import (
 )
 
 
-
 # ============================================================
-# ORDERS INFO
+# QUERY ORDERS INFO
 # ============================================================
 
 
 # doc: https://www.kraken.com/features/api#query-orders-info
 
-URL = "https://api.kraken.com/0/public/QueryOrders"
+URL = "https://api.kraken.com/0/private/QueryOrders"
 METHOD = "POST"
 
 
@@ -72,13 +71,14 @@ METHOD = "POST"
 
 
 # ------------------------------
-# Request
+# Request Model
 # ------------------------------
 
-class _OrdersInfoReq(pydantic.BaseModel):
-    """Request Model for endpoint https://api.kraken.com/0/public/QueryOrders
 
-    Fields:
+class QueryOrdersReq(pydantic.BaseModel):
+    """Request Model for endpoint https://api.kraken.com/0/private/QueryOrders
+
+    Model Fields:
     -------
         trades: bool
             Whether or not to include trades in output (optional)
@@ -98,16 +98,16 @@ class _OrdersInfoReq(pydantic.BaseModel):
 
 
 # ------------------------------
-# Response
+# Response Model
 # ------------------------------
 
 
-def generate_model(keys: typing.List[ORDERID]) -> typing.Type[pydantic.BaseModel]:
-    "dynamically create the model"
+def _generate_model(keys: typing.List[ORDERID]) -> typing.Type[pydantic.BaseModel]:
+    "dynamically create the model. Returns a new pydantic model class"
 
 
     class _Descr(pydantic.BaseModel):
-        pair: str
+        pair: str   # not necessarily of the same format as assetpairs keys
         type: ORDERSIDE
         ordertype: ORDERTYPE 
         price: Decimal
@@ -157,15 +157,14 @@ def generate_model(keys: typing.List[ORDERID]) -> typing.Type[pydantic.BaseModel
 
 
 # TODO fill fields in docstring
-class _QueryOrdersResp(pydantic.BaseModel):
+class QueryOrdersResp(pydantic.BaseModel):
     """Response Model for endpoint https://api.kraken.com/0/public/QueryOrders
 
-    Fields:
+    Model Fields:
     -------
    """
 
-
     def __call__(self, **kwargs):
-        model = generate_model(list(kwargs.keys()))
+        model = _generate_model(list(kwargs.keys()))
         print("\nFields", model.__fields__, "\n")
         return model(**kwargs)

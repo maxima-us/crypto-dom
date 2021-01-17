@@ -8,7 +8,6 @@ import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
 
-
 # ============================================================
 # ACCOUNT BALANCES
 # ============================================================
@@ -16,19 +15,19 @@ stackprinter.set_excepthook(style="darkbg2")
 
 # doc: https://www.kraken.com/features/api#get-account-balance 
 
-URL = "https://api.kraken.com/0/public/Balance"
+URL = "https://api.kraken.com/0/private/Balance"
 METHOD = "GET"
 
 
 # ------------------------------
-# Request
+# Request Model
 # ------------------------------
 
 
-class _AccountBalanceReq(pydantic.BaseModel):
-    """Request Model for endpoint https://api.kraken.com/0/public/Balance
+class AccountBalanceReq(pydantic.BaseModel):
+    """Request Model for endpoint https://api.kraken.com/0/private/Balance
 
-    Fields:
+    Model Fields:
     -------
         nonce: int
             Always increasing unsigned 64 bit integer
@@ -38,12 +37,12 @@ class _AccountBalanceReq(pydantic.BaseModel):
 
 
 # ------------------------------
-# Response
+# Response Model
 # ------------------------------
 
 
-def generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
-    "dynamically create the model"
+def _generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
+    "dynamically create the model. Returns new pydantic model class"
 
 
     kwargs = {
@@ -59,16 +58,16 @@ def generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
     return model
 
 
-class _AccountBalanceResp:
-    """Response Model for endpoint https://api.kraken.com/0/public/Balance
+class AccountBalanceResp:
+    """Response Model for endpoint https://api.kraken.com/0/private/Balance
 
-    Fields:
+    Model Fields:
     -------
         `asset name` : Decimal
             Array of asset name and corresponding balance amount
     """
 
     def __call__(self, **kwargs):
-        model = generate_model(list(kwargs.keys()))
+        model = _generate_model(list(kwargs.keys()))
         print("\nFields", model.__fields__, "\n")
         return model(**kwargs)

@@ -16,25 +16,26 @@ from crypto_dom.kraken.definitions import (
 )
 
 
-
 # ============================================================
-# SPREAD
+# OPEN POSITIONS
 # ============================================================
 
 
 # doc: https://www.kraken.com/features/api#get-open-positions
 
-URL = "https://api.kraken.com/0/public/OpenPositions"
+URL = "https://api.kraken.com/0/private/OpenPositions"
 METHOD = "POST"
 
+
 # ------------------------------
-# Request
+# Request Model
 # ------------------------------
 
-class _OpenPositionsReq(pydantic.BaseModel):
-    """Request Model for endpoint https://api.kraken.com/0/public/OpenPositions
 
-    Fields:
+class OpenPositionsReq(pydantic.BaseModel):
+    """Request Model for endpoint https://api.kraken.com/0/private/OpenPositions
+
+    Model Fields:
     -------
         txid : List[str]
             Comma delimited list of transaction ids to restrict output to 
@@ -55,11 +56,11 @@ class _OpenPositionsReq(pydantic.BaseModel):
 
 
 # ------------------------------
-# Response
+# Response Model
 # ------------------------------
 
 
-def generate_model(keys: typing.List[ORDERID]) -> typing.Type[pydantic.BaseModel]:
+def _generate_model(keys: typing.List[ORDERID]) -> typing.Type[pydantic.BaseModel]:
     "dynamically create the model"
 
 
@@ -100,10 +101,10 @@ def generate_model(keys: typing.List[ORDERID]) -> typing.Type[pydantic.BaseModel
     return model
 
 
-class _OpenPositionsResp(pydantic.BaseModel):
-    """Response Model for endpoint https://api.kraken.com/0/public/OpenPositions
+class OpenPositionsResp(pydantic.BaseModel):
+    """Response Model for endpoint https://api.kraken.com/0/private/OpenPositions
 
-    Fields:
+    Model Fields:
     -------
         `Position TxId`: open position info
             mapping of position txid to their info
@@ -145,8 +146,7 @@ class _OpenPositionsResp(pydantic.BaseModel):
             rollovertm: Decimal
    """
 
-
     def __call__(self, **kwargs):
-        model = generate_model(list(kwargs.keys()))
+        model = _generate_model(list(kwargs.keys()))
         print("\nFields", model.__fields__, "\n")
         return model(**kwargs)

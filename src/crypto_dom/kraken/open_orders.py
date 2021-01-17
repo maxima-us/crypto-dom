@@ -17,25 +17,26 @@ from crypto_dom.kraken.definitions import (
 )
 
 
-
 # ============================================================
-# SPREAD
+# OPEN ORDERS
 # ============================================================
 
 
 # doc: https://www.kraken.com/features/api#get-open-orders
 
-URL = "https://api.kraken.com/0/public/OpenOrders"
+URL = "https://api.kraken.com/0/private/OpenOrders"
 METHOD = "POST"
 
+
 # ------------------------------
-# Request
+# Request Model
 # ------------------------------
+
 
 class _OpenOrdersReq(pydantic.BaseModel):
-    """Request Model for endpoint https://api.kraken.com/0/public/OpenOrders
+    """Request Model for endpoint https://api.kraken.com/0/private/OpenOrders
 
-    Fields:
+    Model Fields:
     -------
         trades : bool
             Whether or not to include trades in output (optional)
@@ -47,19 +48,19 @@ class _OpenOrdersReq(pydantic.BaseModel):
     
     """
 
-    trades: typing.Optional[bool] = False
+    trades: typing.Optional[bool]
     userref: typing.Optional[int]
     nonce: pydantic.PositiveInt
 
 
 # ------------------------------
-# Response
+# Response Model
 # ------------------------------
 
 
-
 class _Descr(pydantic.BaseModel):
-    pair: str
+    
+    pair: str # different format than assetpairs keys (see example: ETHUSDT vs XETHZUSD)
     type: ORDERSIDE
     ordertype: ORDERTYPE 
     price: Decimal
@@ -93,12 +94,11 @@ class _OpenOrders(pydantic.BaseModel):
     open: typing.Mapping[ORDERID, _OpenOrder]
 
 
-
 #  this class is just to be consistent with our API
-class _OpenOrdersResp(pydantic.BaseModel):
-    """Response Model for endpoint https://api.kraken.com/0/public/OpenOrders
+class OpenOrdersResp(pydantic.BaseModel):
+    """Response Model for endpoint https://api.kraken.com/0/private/OpenOrders
 
-    Fields:
+    Model Fields:
     -------
         open: dict
             mapping of txid to their order info
