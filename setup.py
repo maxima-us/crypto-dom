@@ -37,7 +37,7 @@ setup(
     package_dir={'': 'src'},  # Optional
     packages=find_packages(where='src'),  # Required
     python_requires='>=3.7, <4',
-    install_requires=required,
+    # install_requires=required,    # not need since we use pipenv
     entry_points={  # Optional
     },
 )

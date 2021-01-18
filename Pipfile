@@ -4,16 +4,19 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-pytest = "*"
 crypto-dom = {editable = true, path = "."}
+pytest = "*"
+pytest-asyncio = "*"
+pytest-recording = "*"
+python-dotenv = "*"
 
 [packages]
+aiohttp = "*"
 httpx = "*"
 pydantic = "*"
-pytest-asyncio = "*"
+returns = "*"
 stackprinter = "*"
 typing-extensions = "*"
-returns = "*"
 
 [requires]
 python_version = "3.9"
