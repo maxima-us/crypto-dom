@@ -15,8 +15,8 @@ class EmptyEnv(Exception):
 def get_keys():
     
     environ = {k: v for k, v in dict(os.environ).items()}
-    creds = {k: v for k, v in environ.items() if any(i in k for i in ["KEY", "SECRET"])}
-    # print("Env Creds", creds)
+    creds = {k: v for k, v in environ.items() if any(i in k for i in ["API_KEY", "API_SECRET"])}
+    print("Env Creds", creds)
 
     if not creds:
         raise EmptyEnv("Missing credentiels in .env file")
@@ -29,7 +29,7 @@ def get_keys():
             # TODO length for api-key is always the same (56 iirc), same for api-secret
             # TODO we should test for the length to make sure the user has pasted the full key
             # print("Length of key/secret", v, len(v))
-            pair = (v, creds[k.replace("KEY", "SECRET")])
+            pair = (v, creds[k.replace("API_KEY", "API_SECRET")])
             key_pairs.add(pair)
 
     # print('Returned set', key_pairs)
