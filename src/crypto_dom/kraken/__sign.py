@@ -14,8 +14,11 @@ class EmptyEnv(Exception):
 
 def get_keys():
     
-    creds = {k: v for k, v in dict(os.environ).items()}
-    if creds is None:
+    environ = {k: v for k, v in dict(os.environ).items()}
+    creds = {k: v for k, v in environ.items() if any(i in k for i in ["KEY", "SECRET"])}
+    # print("Env Creds", creds)
+
+    if not creds:
         raise EmptyEnv("Missing credentiels in .env file")
 
     # we need to match each api-key to its api-secret
@@ -29,7 +32,8 @@ def get_keys():
             pair = (v, creds[k.replace("KEY", "SECRET")])
             key_pairs.add(pair)
 
-    print('Returned set', key_pairs)
+    # print('Returned set', key_pairs)
+    
     # returns a set of tuples (key, secret)
     return key_pairs
 

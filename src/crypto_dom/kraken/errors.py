@@ -1,6 +1,6 @@
 from typing_extensions import Literal
 
-ERRORS = Literal[
+ERROR = Literal[
     'EOrder:Rate limit exceeded',
     'EGeneral:Temporary lockout',
     'EAPI:Rate limit exceeded',

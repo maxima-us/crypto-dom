@@ -1,0 +1,54 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.kraken.com
+      user-agent:
+      - python-httpx/0.16.1
+    method: GET
+    uri: https://api.kraken.com/0/public/AssetPairs?pair=XXBTZUSD&pair=XETHZUSD&pair=XZECZUSD
+  response:
+    content: '{"error":[],"result":{"XZECZUSD":{"altname":"ZECUSD","wsname":"ZEC\/USD","aclass_base":"currency","base":"XZEC","aclass_quote":"currency","quote":"ZUSD","lot":"unit","pair_decimals":2,"lot_decimals":8,"lot_multiplier":1,"leverage_buy":[2],"leverage_sell":[2],"fees":[[0,0.26],[50000,0.24],[100000,0.22],[250000,0.2],[500000,0.18],[1000000,0.16],[2500000,0.14],[5000000,0.12],[10000000,0.1]],"fees_maker":[[0,0.16],[50000,0.14],[100000,0.12],[250000,0.1],[500000,0.08],[1000000,0.06],[2500000,0.04],[5000000,0.02],[10000000,0]],"fee_volume_currency":"ZUSD","margin_call":80,"margin_stop":40,"ordermin":"0.03"}}}'
+    headers:
+      CF-Cache-Status:
+      - EXPIRED
+      CF-RAY:
+      - 613aa0caab1d0476-CDG
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Mon, 18 Jan 2021 19:12:32 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d87c5697b3ea34eede187b0b824cbc4cd1610997152; expires=Wed, 17-Feb-21
+        19:12:32 GMT; path=/; domain=.kraken.com; HttpOnly; SameSite=Lax
+      - __cf_bm=1d755ba1aede093464585029f3e2afad417af1aa-1610997152-1800-AUWmZxZt6hv9TkAIoHz4/9Oa9TLA5FexdyfQer9WqAUAO4i3iMxxSNMJU/rXD8WxYYgLTohohp510zqi5rzHW5o=;
+        path=/; expires=Mon, 18-Jan-21 19:42:32 GMT; domain=.kraken.com; HttpOnly;
+        Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      cache-control:
+      - public,max-age=60,smaxage=60
+      cf-request-id:
+      - 07b882d2a4000004765e05c000000001
+      content-encoding:
+      - gzip
+      strict-transport-security:
+      - max-age=15768000
+      vary:
+      - Accept-Encoding
+    http_version: HTTP/1.1
+    status_code: 200
+version: 1

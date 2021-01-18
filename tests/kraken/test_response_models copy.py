@@ -81,60 +81,53 @@ async def _httpx_request(method, url, payload, response_model):
 
 
 @pytest.mark.asyncio
-@pytest.mark.default_cassette("public/test_ohlc_response_model.yaml")
-@pytest.mark.vcr()
+# @pytest.mark.vcr()
 async def test_ohlc_response_model():
     payload = {"pair": pair}
     await _httpx_request("GET", OHLCURL, payload, OhlcResp(pair))
 
 
 @pytest.mark.asyncio
-@pytest.mark.default_cassette("public/test_orderbook_response_model.yaml")
-@pytest.mark.vcr()
+# @pytest.mark.vcr()
 async def test_orderbook_response_model():
     payload = {"pair": pair}
     await _httpx_request("GET", OBURL, payload, OrderBookResp(pair))
 
 
 @pytest.mark.asyncio
-@pytest.mark.default_cassette("public/test_assetpairs_response_model.yaml")
-@pytest.mark.vcr()
+# @pytest.mark.vcr()
 async def test_assetpairs_response_model():
     payload = {"pair": pairs}
     await _httpx_request("GET", APURL, payload, AssetPairsResp())
 
 
 @pytest.mark.asyncio
-@pytest.mark.default_cassette("public/test_assets_response_model.yaml")
-@pytest.mark.vcr()
+# @pytest.mark.vcr()
 async def test_assets_response_model():
     payload = {"asset": assets}
     await _httpx_request("GET", AURL, payload, AssetsResp())
 
 
 @pytest.mark.asyncio
-@pytest.mark.default_cassette("public/test_ticker_response_model.yaml")
-@pytest.mark.vcr()
+# @pytest.mark.vcr()
 async def test_ticker_response_model():
     payload = {"pair": pairs}
     await _httpx_request("GET", TURL, payload, TickerResp())
 
 
 @pytest.mark.asyncio
-@pytest.mark.default_cassette("public/test_spread_response_model.yaml")
-@pytest.mark.vcr()
+# @pytest.mark.vcr()
 async def test_spread_response_model():
     payload = {"pair": pair}
     await _httpx_request("GET", SURL, payload, SpreadResp(pair))
 
 
 #------------------------------------------------------------
-# Private Endpoints 
+# Private Endpoints
 #------------------------------------------------------------
 
 
 @pytest.mark.asyncio
-# @pytest.mark.default_cassette("private/test_accountbalance_response_model.yaml")
 # @pytest.mark.vcr()
 async def test_accountbalance_response_model():
     payload = {"nonce": make_nonce()}
@@ -142,7 +135,6 @@ async def test_accountbalance_response_model():
 
 
 @pytest.mark.asyncio
-# @pytest.mark.default_cassette("private/test_tradebalance_response_model.yaml")
 # @pytest.mark.vcr()
 async def test_tradebalance_response_model():
     payload = {"nonce": make_nonce(), "asset": asset}
@@ -150,7 +142,6 @@ async def test_tradebalance_response_model():
 
 
 @pytest.mark.asyncio
-# @pytest.mark.default_cassette("private/test_closedorders_response_model.yaml")
 # @pytest.mark.vcr()
 async def test_closedorders_response_model():
     payload = {"nonce": make_nonce()}
@@ -158,7 +149,6 @@ async def test_closedorders_response_model():
 
 
 @pytest.mark.asyncio
-# @pytest.mark.default_cassette("private/test_openpositions_response_model.yaml")
 # @pytest.mark.vcr()
 async def test_openpositions_response_model():
     payload = {"nonce": make_nonce()}
@@ -166,7 +156,6 @@ async def test_openpositions_response_model():
 
 
 @pytest.mark.asyncio
-# @pytest.mark.default_cassette("private/test_openorders_response_model.yaml")
 # @pytest.mark.vcr()
 async def test_openorders_response_model():
     payload = {"nonce": make_nonce()}
@@ -175,7 +164,6 @@ async def test_openorders_response_model():
 
 # TODO which IDs to query ?
 # @pytest.mark.asyncio
-# @pytest.mark.default_cassette("private/test_queryorders_response_model.yaml")
 # @pytest.mark.vcr()
 # async def test_queryorders_response_model():
 #     payload = {"nonce": make_nonce()}
@@ -184,7 +172,6 @@ async def test_openorders_response_model():
 
 # TODO which IDs to query ?
 # @pytest.mark.asyncio
-# @pytest.mark.default_cassette("private/test_queryledgers_response_model.yaml")
 # @pytest.mark.vcr()
 # async def test_queryledgers_response_model():
 #     payload = {"nonce": make_nonce()}
@@ -193,7 +180,6 @@ async def test_openorders_response_model():
 
 # # TODO which IDs to query ?
 # @pytest.mark.asyncio
-# @pytest.mark.default_cassette("private/test_querytrades_response_model.yaml")
 # @pytest.mark.vcr()
 # async def test_querytrades_response_model():
 #     payload = {"nonce": make_nonce()}
@@ -201,8 +187,7 @@ async def test_openorders_response_model():
 
 
 @pytest.mark.asyncio
-# @pytest.mark.default_cassette("private/test_tradeshistory_response_model.yaml")
-# @pytest.mark.vcr()
+@pytest.mark.vcr()
 async def test_tradeshistory_response_model():
     payload = {"nonce": make_nonce()}
     await _httpx_request("POST", THURL, payload, TradesHistoryResp())

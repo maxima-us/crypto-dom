@@ -41,7 +41,7 @@ class SpreadReq(pydantic.BaseModel):
     pair: PAIR
     since: typing.Optional[TIMESTAMP_S]
 
-    @pydantic.validator('since')
+    @pydantic.validator('since', allow_reuse=True)
     def check_year_from_timestamp(cls, v):
         if v == 0 or v is None:
             return v
@@ -66,7 +66,7 @@ def _generate_model(pair: str) -> typing.Type[pydantic.BaseModel]:
         # timestamp received from kraken in s
         last: TIMESTAMP_S
 
-        @pydantic.validator('last')
+        @pydantic.validator('last', allow_reuse=True)
         def check_year_from_timestamp(cls, v, values):
             # convert from ns to s
 

@@ -1,0 +1,54 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.kraken.com
+      user-agent:
+      - python-httpx/0.16.1
+    method: GET
+    uri: https://api.kraken.com/0/public/Assets?asset=XXBT&asset=XETH&asset=XTZ
+  response:
+    content: '{"error":[],"result":{"XXBT":{"aclass":"currency","altname":"XBT","decimals":10,"display_decimals":5}}}'
+    headers:
+      CF-Cache-Status:
+      - EXPIRED
+      CF-RAY:
+      - 613aa0cf4d6fefae-NRT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Mon, 18 Jan 2021 19:12:33 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d192e0bc1dbeff9b3459d3f71b5b55efd1610997153; expires=Wed, 17-Feb-21
+        19:12:33 GMT; path=/; domain=.kraken.com; HttpOnly; SameSite=Lax
+      - __cf_bm=14d170bfd16f58a03bae30dd13d665cd0296f335-1610997153-1800-Adt0v1WkNOku+Q8Fb/7YLas+3ICNpPF0AYFWrVUxfHp9fTGAtHXsePRh1njKGODVxkvGP8LMriHy0ggWezuCT4w=;
+        path=/; expires=Mon, 18-Jan-21 19:42:33 GMT; domain=.kraken.com; HttpOnly;
+        Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      cache-control:
+      - public,max-age=26,smaxage=26
+      cf-request-id:
+      - 07b882d5910000efaef817e000000001
+      content-encoding:
+      - gzip
+      strict-transport-security:
+      - max-age=15768000
+      vary:
+      - Accept-Encoding
+    http_version: HTTP/1.1
+    status_code: 200
+version: 1
