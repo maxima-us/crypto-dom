@@ -6,7 +6,7 @@ import pydantic
 #------------------------------------------------------------
 
 
-class NFloat(pydantic.ConstrainedInt):
+class NFloat(pydantic.ConstrainedFloat):
 
     def __init__(self, _value: float):
         self._value = _value
@@ -63,7 +63,10 @@ class Gt0Float(NFloat):
     ge=0.0
     strict=False
 
+class _Timestamp(Gt0Float):
+    pass
 
-TIMESTAMP_S = Gt0Float
-TIMESTAMP_MS = Gt0Float
-TIMESTAMP_NS = Gt0Float
+
+TIMESTAMP_S = _Timestamp 
+TIMESTAMP_MS = _Timestamp
+TIMESTAMP_NS = _Timestamp
