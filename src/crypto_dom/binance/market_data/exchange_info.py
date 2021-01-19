@@ -1,12 +1,13 @@
 import typing
 from decimal import Decimal
-from crypto_dom.binance.definitions import ORDER_TYPE, RATE_LIMITE_TYPE, SYMBOL_PERMISSIONS, SYMBOL_STATUS
-from crypto_dom.definitions import TIMESTAMP_MS
 
 import pydantic
 import stackprinter
 from typing_extensions import Literal
 stackprinter.set_excepthook(style="darkbg2")
+
+from crypto_dom.definitions import TIMESTAMP_MS
+from crypto_dom.binance.definitions import ORDER_TYPE, RATE_LIMITE_TYPE, SYMBOL_PERMISSIONS, SYMBOL_STATUS
 
 
 # ============================================================
@@ -112,7 +113,7 @@ class _SymbolsInfo(pydantic.BaseModel):
     permissions: typing.List[SYMBOL_PERMISSIONS]
 
 
-class _SymbolsResp(pydantic.BaseModel):
+class _ExchangeInfoResp(pydantic.BaseModel):
 
     timezone: Literal["UTC"]
     serverTime: TIMESTAMP_MS
@@ -156,6 +157,6 @@ class Response:
     """
 
     def __new__(_cls):
-        return _SymbolsResp
+        return _ExchangeInfoResp
         
 

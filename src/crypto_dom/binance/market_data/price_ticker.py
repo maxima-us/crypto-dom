@@ -65,7 +65,7 @@ class Request(pydantic.BaseModel):
 
     """
 
-    symbol: str # TODO replace with PAIR
+    symbol: typing.Optional[str] # TODO replace with PAIR
 
 
 # ------------------------------
