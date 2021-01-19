@@ -38,7 +38,7 @@ class TradeBalanceReq(pydantic.BaseModel):
         asset : str 
             Base asset used to determine balance
                 (default = ZUSD)
-        nonce: int
+        nonce : int
             Always increasing unsigned 64 bit integer
     """
 
@@ -67,27 +67,29 @@ class _TradeBalance(pydantic.BaseModel):
 
 #  this class is just to be consistent with our API
 class TradeBalanceResp:
-    """Response Model for endpoint https://api.kraken.com/0/private/TradeBalance
+    """Validated Response for endpoint https://api.kraken.com/0/private/TradeBalance
 
-    Fields:
-    -------
+    Type: pydantic.BaseModel
+
+    Model Fields:
+    -------------
         eb : Decimal
             equivalent balance (combined balance of all currencies))
-        tb: Decimal
+        tb : Decimal
             trade balance (combined balance of all equity currencies)s
-        m: Decimal
+        m : Decimal
             margin amount of open positions
-        n: Decimal
+        n : Decimal
             unrealized net profit/loss of open positions
-        c: Decimal
+        c : Decimal
             cost basis of open positions
-        v: Decimal
+        v : Decimal
             current floating valuation of open positions
-        e: Decimal
+        e : Decimal
             equity = trade balance + unrealized net profit/loss
-        mf: Decimal
+        mf : Decimal
             free margin = equity - initial margin (maximum margin available to open new positions)
-        ml: Decimal
+        ml : Decimal
             margin level = (equity / initial margin) * 100 (optional)
    """
 

@@ -6,7 +6,7 @@ import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
-from crypto_dom.definitions import TIMESTAMP_S
+from crypto_dom.definitions import COUNT, TIMESTAMP_MS
 from crypto_dom.binance.definitions import TIMEFRAME
 
 
@@ -19,6 +19,7 @@ from crypto_dom.binance.definitions import TIMEFRAME
 
 URL = "https://api.binance.com/api/v3/klines"
 METHOD = "GET"
+WEIGHT = 1
 
 
 # ------------------------------
@@ -52,16 +53,16 @@ class Request(pydantic.BaseModel):
     """Request model for endpoint https://api.binance.com/api/v3/klines
 
     Model Fields:
-    -------
+    -------------
         symbol : str 
             Asset pair to get OHLC data for
         interval : int 
             Time frame interval in minutes (optional)
         startTime : float
-            Timestamp (optional)
-        endTIme: float
-            Timestamp (optional)
-        limit: int
+            Timestamp in milliseconds (optional)
+        endTIme : float
+            Timestamp in milliseconds (optional)
+        limit : int
             default = 500, max = 1000 (optional)
     """
 
@@ -69,8 +70,8 @@ class Request(pydantic.BaseModel):
     interval: typing.Optional[TIMEFRAME]
 
     # timestamp in seconds
-    startTime: typing.Optional[TIMESTAMP_S]
-    endTime: typing.Optional[TIMESTAMP_S]
+    startTime: typing.Optional[TIMESTAMP_MS]
+    endTime: typing.Optional[TIMESTAMP_MS]
 
     limit: typing.Optional[pydantic.conint(ge=0, le=1000)]
 
@@ -116,12 +117,12 @@ class Request(pydantic.BaseModel):
 
 
 _Candle = typing.Tuple[
-        int, #open time
+        TIMESTAMP_MS, #open time
         Decimal, Decimal, Decimal, Decimal, # open high low close
         Decimal, #volume
-        int, #close time
+        TIMESTAMP_MS, #close time
         Decimal, #asset volume
-        int, #number of trades
+        COUNT, #number of trades
         Decimal, #taker buy base asset volume
         Decimal, #taker buy quote asset volume
         Decimal, #ignore
@@ -129,13 +130,44 @@ _Candle = typing.Tuple[
 
 
 class _KlinesResp(pydantic.BaseModel):
-    
 
     # placeholder
     data: typing.Tuple[_Candle, ...]
 
 
 class Response:
+    """Validated Response for endpoint https://api.binance.com/api/v3/klines
+
+    Type: Tuple of Tuples
+
+    Tuple Fields:
+    -------------
+        index 0 : float
+            Candle Open timestamp in milliseconds
+        index 1 : Decimal
+            Open Price
+        index 2 : Decimal
+            High Price
+        index 3 : Decimal
+            Low Price
+        index 4 : Decimal
+            Close Price
+        index 5 : Decimal
+            Volume
+        index 6 : float
+            Candle Close timestamp in milliseconds
+        index 7 : Decimal
+            Asset volume
+        index 8 : int
+            Number of Trades
+        index 9 : Decimal
+            Taker buy base asset volume
+        index 10 : Decimal
+            Tker buy quote asset volume
+        index 11 : Decimal
+            ? (Doc says to ignore)
+
+    """
 
     def __call__(self, response):
         # print("Calling with response", response, "`\n")
