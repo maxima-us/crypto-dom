@@ -31,8 +31,8 @@ setup(
         'Development Status :: 1 - Planning',
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8'
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9'
     ],
     package_dir={'': 'src'},  # Optional
     packages=find_packages(where='src'),  # Required

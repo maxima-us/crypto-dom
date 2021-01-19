@@ -2,7 +2,6 @@ import typing
 from datetime import date
 from decimal import Decimal
 
-from typing_extensions import Literal, TypedDict
 import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
