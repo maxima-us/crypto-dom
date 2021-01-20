@@ -7,6 +7,7 @@ import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import TIMESTAMP_MS
+from crypto_dom.binance.definitions import RECV_WINDOW, ASSET
 
 
 # ============================================================
@@ -65,7 +66,7 @@ class Request(pydantic.BaseModel):
        
     """
 
-    coin: str  #TODO replace with Asset 
+    coin: ASSET
     address: str
     amount: Decimal
     withdrawOrderId: typing.Optional[str]
@@ -74,9 +75,8 @@ class Request(pydantic.BaseModel):
     transactionFeeFlag: typing.Optional[bool]
     name: typing.Optional[str]
 
-    timestamp: TIMESTAMP_MS     #FIXME what is this ?
-    recvWindow: typing.Optional[pydantic.conint(le=60000)] # TODO add to definitions
-
+    timestamp: TIMESTAMP_MS
+    recvWindow: typing.Optional[RECV_WINDOW]
 
 # ------------------------------
 # Response Model

@@ -7,6 +7,7 @@ import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import TIMESTAMP_MS
+from crypto_dom.binance.definitions import RECV_WINDOW, ASSET
 
 
 # ============================================================
@@ -82,7 +83,7 @@ class Request(pydantic.BaseModel):
        
     """
 
-    coin: str # TODO add asset type
+    coin: ASSET 
     status: typing.Optional[Literal[0, 1, 2, 3, 4, 5, 6]]
     offset: typing.Optional[int]
     limit: typing.Optional[int]
@@ -90,7 +91,7 @@ class Request(pydantic.BaseModel):
     endTime: typing.Optional[TIMESTAMP_MS]
 
     timestamp: TIMESTAMP_MS     #FIXME what is this ?
-    recvWindow: typing.Optional[pydantic.conint(le=60000)] # TODO add to definitions
+    recvWindow: typing.Optional[RECV_WINDOW]
 
 
 # ------------------------------
@@ -101,7 +102,7 @@ class Request(pydantic.BaseModel):
 class _Deposit(pydantic.BaseModel):
     
     amount: Decimal
-    coin: str   # TODO replace with assets
+    coin: ASSET 
     network: str
     status: Literal[0,1,2,3,4,5,6]
     address: str

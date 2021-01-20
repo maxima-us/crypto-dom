@@ -2,18 +2,18 @@ import re
 
 from typing_extensions import Literal
 
-from crypto_dom.definitions import Nstr
+from crypto_dom.definitions import NInt, Nstr
 
 
 #------------------------------------------------------------
-# Pairs
+# Symbols (Pairs)
 #------------------------------------------------------------
 
-# try:
-#     from ._definitions_assetpairs import PAIR
-#     PAIR = PAIR
-# except ImportError:
-#     PAIR = str
+
+try:
+    from ._definitions_symbols import SYMBOL
+except ImportError:
+    SYMBOL = str
 
 
 #------------------------------------------------------------
@@ -21,10 +21,10 @@ from crypto_dom.definitions import Nstr
 #------------------------------------------------------------
 
 
-# try: 
-#     from ._definitions_assets import ASSET
-# except ImportError:
-#     ASSET = str
+try: 
+    from ._definitions_assets import ASSET
+except ImportError:
+    ASSET = str
 
 
 #------------------------------------------------------------
@@ -79,21 +79,14 @@ RATE_LIMITE_INTERVAL = Literal["SECOND", "MINUTE", "DAY"]
 
 
 #------------------------------------------------------------
-# IDs
+# Recv Window
 #------------------------------------------------------------
 
 
-class KrakenID(Nstr):
-    regex = re.compile(r'^[A-Z0-9]{6}-[A-Z0-9]{5}-[A-Z0-9]{6}$')
-    strict = True
-
-
-class TRADEID(KrakenID): pass
-
-class ORDERID(KrakenID): pass
-
-class LEDGERID(KrakenID): pass
-
+class RECV_WINDOW(NInt):
+    ge=0
+    le=60000
+    strict=False
 
 
 

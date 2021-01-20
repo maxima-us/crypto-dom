@@ -6,6 +6,7 @@ import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import TIMESTAMP_MS
+from crypto_dom.binance.definitions import SYMBOL
 
 
 # ============================================================
@@ -49,12 +50,12 @@ class Request(pydantic.BaseModel):
     Model Fields:
     -------------
         symbol : str 
-            Asset pair to get OHLC data for
+            Assetpair to get OHLC data for
         limit : int
             default = 500, max = 1000 (optional)
     """
 
-    symbol: str # TODO replace with PAIR
+    symbol: SYMBOL
     limit: typing.Optional[pydantic.conint(ge=0, le=1000)]
 
 

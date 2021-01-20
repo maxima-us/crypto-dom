@@ -1,9 +1,10 @@
-import typing
 from decimal import Decimal
 
 import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
+
+from crypto_dom.binance.definitions import SYMBOL
 
 
 # ============================================================
@@ -43,7 +44,7 @@ class Request(pydantic.BaseModel):
             Asset pair to get price ticker data for
     """
 
-    symbol: str # TODO replace with PAIR
+    symbol: SYMBOL 
 
 
 # ------------------------------

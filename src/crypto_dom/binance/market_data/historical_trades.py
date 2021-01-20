@@ -6,6 +6,7 @@ import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import TIMESTAMP_MS
+from crypto_dom.binance.definitions import ASSET
 
 
 # ============================================================
@@ -56,7 +57,7 @@ class Request(pydantic.BaseModel):
             Trade Id to fatch from. Default gets most recent trades (optional)
     """
 
-    symbol: str # TODO replace with PAIR
+    symbol: ASSET
     limit: typing.Optional[pydantic.conint(ge=0, le=1000)]
     fromId: typing.Optional[pydantic.conint(ge=0)]
 

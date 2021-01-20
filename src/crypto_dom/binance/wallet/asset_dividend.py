@@ -8,6 +8,7 @@ import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import TIMESTAMP_MS, COUNT
+from crypto_dom.binance.definitions import ASSET, RECV_WINDOW
 
 
 # ============================================================
@@ -72,14 +73,14 @@ class Request(pydantic.BaseModel):
        
     """
 
-    asset: str # TODO add asset type
+    asset: ASSET 
   
     limit: typing.Optional[int]
     startTime: typing.Optional[TIMESTAMP_MS]
     endTime: typing.Optional[TIMESTAMP_MS]
 
     timestamp: TIMESTAMP_MS     #FIXME what is this ?
-    recvWindow: typing.Optional[pydantic.conint(le=60000)] # TODO add to definitions
+    recvWindow: typing.Optional[RECV_WINDOW]
 
 
 # ------------------------------
@@ -90,7 +91,7 @@ class Request(pydantic.BaseModel):
 class _Dividend(pydantic.BaseModel):
     
     amount: Decimal
-    asset: str # TODO replace with Asset
+    asset: str  # FFIXME not sure if this is restricted to ASSET (BHFT is not in ASSET) 
     divTime: TIMESTAMP_MS
     enInfo: str
     tranId: int
@@ -98,7 +99,7 @@ class _Dividend(pydantic.BaseModel):
 
 class _AssetDividendResp(pydantic.BaseModel):
 
-    row: typing.Tuple[_Dividend, ...]
+    rows: typing.Tuple[_Dividend, ...]
     total: COUNT
 
 

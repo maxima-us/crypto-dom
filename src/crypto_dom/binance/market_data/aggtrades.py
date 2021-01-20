@@ -6,8 +6,8 @@ import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
-from crypto_dom.definitions import COUNT, TIMESTAMP_MS
-from crypto_dom.binance.definitions import TIMEFRAME
+from crypto_dom.definitions import TIMESTAMP_MS
+from crypto_dom.binance.definitions import SYMBOL
 
 
 # ============================================================
@@ -62,7 +62,7 @@ class Request(pydantic.BaseModel):
             default = 500, max = 1000 (optional)
     """
 
-    symbol: str # TODO replace with PAIR
+    symbol: SYMBOL 
     fromId: typing.Optional[int]
 
     # timestamp in seconds

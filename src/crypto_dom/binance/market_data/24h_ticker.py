@@ -6,6 +6,7 @@ import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import COUNT, TIMESTAMP_MS
+from crypto_dom.binance.definitions import SYMBOL
 
 
 # ============================================================
@@ -98,7 +99,7 @@ class Request(pydantic.BaseModel):
 
     """
 
-    symbol: typing.Optional[str] # TODO replace with PAIR
+    symbol: typing.Optional[SYMBOL]
 
 
 # ------------------------------
@@ -108,7 +109,7 @@ class Request(pydantic.BaseModel):
 
 class _24hTicker(pydantic.BaseModel):
     
-    symbol: str
+    symbol: SYMBOL
     priceChange: Decimal
     priceChangePercent: Decimal
     weightedAvgPrice: Decimal

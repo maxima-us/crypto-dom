@@ -1,4 +1,3 @@
-
 import typing
 
 from typing_extensions import Literal
@@ -7,6 +6,7 @@ import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import TIMESTAMP_MS
+from crypto_dom.binance.definitions import RECV_WINDOW, ASSET
 
 
 # ============================================================
@@ -87,9 +87,9 @@ class Request(pydantic.BaseModel):
         "MINING_UMFUTURE",
         "MINING_C2C"
     ] 
-    asset: str # TODO type Asset
-    timestamp: TIMESTAMP_MS     #FIXME what is this ?
-    recvWindow: typing.Optional[pydantic.conint(le=60000)] # TODO add to definitions
+    asset: ASSET 
+    timestamp: TIMESTAMP_MS
+    recvWindow: typing.Optional[RECV_WINDOW]
 
 
 # ------------------------------

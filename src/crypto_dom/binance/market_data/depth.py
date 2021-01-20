@@ -6,7 +6,7 @@ import stackprinter
 from typing_extensions import Literal
 stackprinter.set_excepthook(style="darkbg2")
 
-from crypto_dom.binance.definitions import TIMEFRAME
+from crypto_dom.binance.definitions import TIMEFRAME, SYMBOL
 
 
 # ============================================================
@@ -60,7 +60,7 @@ class Request(pydantic.BaseModel):
             (Optional)
     """
 
-    symbol: str # TODO replace with PAIR
+    symbol: SYMBOL
     interval: typing.Optional[TIMEFRAME]
 
     limit: typing.Optional[Literal[5, 10, 20, 50, 100, 500, 1000, 5000]]

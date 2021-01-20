@@ -7,7 +7,7 @@ from typing_extensions import Literal
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import TIMESTAMP_MS
-from crypto_dom.binance.definitions import ORDER_TYPE, RATE_LIMITE_TYPE, SYMBOL_PERMISSIONS, SYMBOL_STATUS
+from crypto_dom.binance.definitions import ORDER_TYPE, RATE_LIMITE_TYPE, SYMBOL_PERMISSIONS, SYMBOL_STATUS, SYMBOL, ASSET
 
 
 # ============================================================
@@ -95,11 +95,11 @@ class Request(pydantic.BaseModel):
 
 class _SymbolsInfo(pydantic.BaseModel):
 
-    symbol: str
+    symbol: SYMBOL
     status: SYMBOL_STATUS
-    baseAsset: str
+    baseAsset: ASSET
     baseAssetPrecision: pydantic.PositiveInt
-    quoteAsset: str
+    quoteAsset: ASSET # TODO not sure if ASSET covers all quoteAssets
     quoteAssetPrecision: pydantic.PositiveInt
     baseCommissionPrecision: pydantic.PositiveInt
     quoteCommissionPrecision: pydantic.PositiveInt

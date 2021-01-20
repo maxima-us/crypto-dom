@@ -5,6 +5,8 @@ import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
+from crypto_dom.binance.definitions import SYMBOL
+
 
 # ============================================================
 # SYMBOL PRICE TICKER 
@@ -65,7 +67,7 @@ class Request(pydantic.BaseModel):
 
     """
 
-    symbol: typing.Optional[str] # TODO replace with PAIR
+    symbol: typing.Optional[SYMBOL] # TODO replace with PAIR
 
 
 # ------------------------------
@@ -75,7 +77,7 @@ class Request(pydantic.BaseModel):
 
 class _PriceTicker(pydantic.BaseModel):
     
-    symbol: str
+    symbol: SYMBOL
     price: Decimal
 
 
