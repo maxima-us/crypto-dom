@@ -1,0 +1,69 @@
+interactions:
+- request:
+    body: nonce=1610997157846
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      api-key:
+      - prX1saD0PLpkFpSaWQs6Iy0sl5JpDvSXQerh5rZ3Z6r4qvlMMZ5JzZPz
+      api-sign:
+      - qo9Xn0/LWdwi06/D6ghyTxfTmCobncQZerujks+KWh4tgONEgyRMIO1ITS5E2dATCgIPlJ/pcGnF2HCzL/9G3w==
+      connection:
+      - keep-alive
+      content-length:
+      - '19'
+      content-type:
+      - application/x-www-form-urlencoded
+      host:
+      - api.kraken.com
+      user-agent:
+      - python-httpx/0.16.1
+    method: POST
+    uri: https://api.kraken.com/0/private/OpenOrders
+  response:
+    content: '{"error":[],"result":{"open":{"OXYZXR-CTISF-KSQAPJ":{"refid":null,"userref":1234567,"status":"open","opentm":1609946385.5606,"starttm":0,"expiretm":0,"descr":{"pair":"DOTUSD","type":"buy","ordertype":"limit","price":"1.2323","price2":"0","leverage":"none","order":"buy
+      1.23159900 DOTUSD @ limit 1.2323","close":""},"vol":"1.23159900","vol_exec":"0.00000000","cost":"0.00000","fee":"0.00000","price":"0.00000","stopprice":"0.00000","limitprice":"0.00000","misc":"","oflags":"fciq,post"},"OY5I63-4XCR3-N3CUIO":{"refid":null,"userref":1234567,"status":"open","opentm":1609876639.1788,"starttm":0,"expiretm":0,"descr":{"pair":"DOTUSD","type":"buy","ordertype":"limit","price":"1.2323","price2":"0","leverage":"none","order":"buy
+      1.23159900 DOTUSD @ limit 1.2323","close":""},"vol":"1.23159900","vol_exec":"0.00000000","cost":"0.00000","fee":"0.00000","price":"0.00000","stopprice":"0.00000","limitprice":"0.00000","misc":"","oflags":"fciq,post"},"OFK7LJ-3Y2WC-3WXSXR":{"refid":null,"userref":1234567,"status":"open","opentm":1609876076.5103,"starttm":0,"expiretm":0,"descr":{"pair":"DOTUSD","type":"buy","ordertype":"limit","price":"1.2323","price2":"0","leverage":"none","order":"buy
+      1.23159900 DOTUSD @ limit 1.2323","close":""},"vol":"1.23159900","vol_exec":"0.00000000","cost":"0.00000","fee":"0.00000","price":"0.00000","stopprice":"0.00000","limitprice":"0.00000","misc":"","oflags":"fciq,post"},"OW4BK6-PRP72-CRYYRR":{"refid":null,"userref":1234567,"status":"open","opentm":1609836599.8783,"starttm":0,"expiretm":0,"descr":{"pair":"DOTUSD","type":"buy","ordertype":"limit","price":"1.2323","price2":"0","leverage":"none","order":"buy
+      1.23159900 DOTUSD @ limit 1.2323","close":""},"vol":"1.23159900","vol_exec":"0.00000000","cost":"0.00000","fee":"0.00000","price":"0.00000","stopprice":"0.00000","limitprice":"0.00000","misc":"","oflags":"fciq,post"},"OJLZQL-PB44P-AH6T25":{"refid":null,"userref":1234567,"status":"open","opentm":1609786058.5603,"starttm":0,"expiretm":0,"descr":{"pair":"DOTUSD","type":"buy","ordertype":"limit","price":"1.2323","price2":"0","leverage":"none","order":"buy
+      1.23159900 DOTUSD @ limit 1.2323","close":""},"vol":"1.23159900","vol_exec":"0.00000000","cost":"0.00000","fee":"0.00000","price":"0.00000","stopprice":"0.00000","limitprice":"0.00000","misc":"","oflags":"fciq,post"},"ORCYJ3-V37WA-6BWUWQ":{"refid":null,"userref":1234567,"status":"open","opentm":1609786037.6095,"starttm":0,"expiretm":0,"descr":{"pair":"DOTUSD","type":"buy","ordertype":"limit","price":"1.2323","price2":"0","leverage":"none","order":"buy
+      1.23159900 DOTUSD @ limit 1.2323","close":""},"vol":"1.23159900","vol_exec":"0.00000000","cost":"0.00000","fee":"0.00000","price":"0.00000","stopprice":"0.00000","limitprice":"0.00000","misc":"","oflags":"fciq,post"},"OPUJ2Y-4KDTJ-TB76N6":{"refid":null,"userref":1234567,"status":"open","opentm":1609785958.4085,"starttm":0,"expiretm":0,"descr":{"pair":"DOTUSD","type":"buy","ordertype":"limit","price":"1.2323","price2":"0","leverage":"none","order":"buy
+      1.23159900 DOTUSD @ limit 1.2323","close":""},"vol":"1.23159900","vol_exec":"0.00000000","cost":"0.00000","fee":"0.00000","price":"0.00000","stopprice":"0.00000","limitprice":"0.00000","misc":"","oflags":"fciq,post"},"OQOURH-L7FT5-R3B3RN":{"refid":null,"userref":0,"status":"open","opentm":1609769135.8301,"starttm":0,"expiretm":0,"descr":{"pair":"DOTUSD","type":"buy","ordertype":"limit","price":"1.0000","price2":"0","leverage":"none","order":"buy
+      1.00000000 DOTUSD @ limit 1.0000","close":""},"vol":"1.00000000","vol_exec":"0.00000000","cost":"0.00000","fee":"0.00000","price":"0.00000","stopprice":"0.00000","limitprice":"0.00000","misc":"","oflags":"fciq,post"},"OBEK25-H7B7T-A7C755":{"refid":null,"userref":0,"status":"open","opentm":1609768854.0018,"starttm":0,"expiretm":0,"descr":{"pair":"DOTUSD","type":"buy","ordertype":"limit","price":"1.0000","price2":"0","leverage":"none","order":"buy
+      1.00000000 DOTUSD @ limit 1.0000","close":""},"vol":"1.00000000","vol_exec":"0.00000000","cost":"0.00000","fee":"0.00000","price":"0.00000","stopprice":"0.00000","limitprice":"0.00000","misc":"","oflags":"fciq,post"}}}}'
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 613aa0f4ffc00afc-NRT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Mon, 18 Jan 2021 19:12:39 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d88769017001daea6ab744e159269ff9a1610997159; expires=Wed, 17-Feb-21
+        19:12:39 GMT; path=/; domain=.kraken.com; HttpOnly; SameSite=Lax
+      - __cf_bm=7bd7fa198b9cdea3547cd613cdf6ff0a7c009fb5-1610997159-1800-ATvgU9WNURbqcyJZG0/shADJSE7zBK8coIYsLx283nXbIvUJsQevZsnlFRBs0v/QuYMaZY7kRNshNBFvMm3L7lM=;
+        path=/; expires=Mon, 18-Jan-21 19:42:39 GMT; domain=.kraken.com; HttpOnly;
+        Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      cf-request-id:
+      - 07b882ed1e00000afc27a97000000001
+      content-encoding:
+      - gzip
+      strict-transport-security:
+      - max-age=15768000
+      vary:
+      - Accept-Encoding
+    http_version: HTTP/1.1
+    status_code: 200
+version: 1

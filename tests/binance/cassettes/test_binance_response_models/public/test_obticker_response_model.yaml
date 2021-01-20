@@ -1,0 +1,70 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.binance.com
+      user-agent:
+      - python-httpx/0.16.1
+    method: GET
+    uri: https://api.binance.com/api/v3/ticker/bookTicker?symbol=BTCUSDT
+  response:
+    content: '{"symbol":"BTCUSDT","bidPrice":"35080.82000000","bidQty":"0.33905800","askPrice":"35080.83000000","askQty":"0.32518700"}'
+    headers:
+      Access-Control-Allow-Methods:
+      - GET, HEAD, OPTIONS
+      Access-Control-Allow-Origin:
+      - '*'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '120'
+      Content-Security-Policy:
+      - default-src 'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 20 Jan 2021 14:03:40 GMT
+      Expires:
+      - '0'
+      Pragma:
+      - no-cache
+      Server:
+      - nginx
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+      Via:
+      - 1.1 d4a3f04c47d13487e5266b80020b9e0d.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - fQFFdaTYKlJBTO3fJrQO88vZ3MglZRxySM6C7m8gH7LT-3LOD3Y6RA==
+      X-Amz-Cf-Pop:
+      - NRT12-C4
+      X-Cache:
+      - Miss from cloudfront
+      X-Content-Security-Policy:
+      - default-src 'self'
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-WebKit-CSP:
+      - default-src 'self'
+      X-Xss-Protection:
+      - 1; mode=block
+      x-mbx-used-weight:
+      - '6'
+      x-mbx-used-weight-1m:
+      - '6'
+      x-mbx-uuid:
+      - 93390842-c0ef-47c8-b670-413ebcda6a74
+    http_version: HTTP/1.1
+    status_code: 200
+version: 1

@@ -56,7 +56,7 @@ class Request(pydantic.BaseModel):
     -------------
         symbol : str 
             Asset pair to get OHLC data for
-        interval : int 
+        interval : str 
             Time frame interval in minutes (optional)
         startTime : float
             Timestamp in milliseconds (optional)

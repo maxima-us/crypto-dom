@@ -12,13 +12,15 @@ async def _write_binance_assets():
         r = await client.get(URL)
         rjson = r.json()
         symbols_data = rjson["symbols"]
-        assets_list = set([k["baseAsset"] for k in symbols_data])
+        baseassets = set([k["baseAsset"] for k in symbols_data])
+        quoteassets = set(k["quoteAsset"] for k in symbols_data)
+        assets = baseassets.union(quoteassets)
 
         with open("_definitions_assets.py", "w") as file:
             file.write("# This file is auto-generated\n\n")
             file.write("from typing_extensions import Literal\n\n")
             file.write("ASSET = Literal[\n")
-            file.writelines(map(lambda x: f"{4*' '}'{str(x)}',\n", assets_list))
+            file.writelines(map(lambda x: f"{4*' '}'{str(x)}',\n", assets))
             file.write("]")
 
 

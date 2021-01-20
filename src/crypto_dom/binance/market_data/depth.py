@@ -61,8 +61,6 @@ class Request(pydantic.BaseModel):
     """
 
     symbol: SYMBOL
-    interval: typing.Optional[TIMEFRAME]
-
     limit: typing.Optional[Literal[5, 10, 20, 50, 100, 500, 1000, 5000]]
 
 

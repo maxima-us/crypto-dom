@@ -1,0 +1,60 @@
+interactions:
+- request:
+    body: nonce=1610997155378&asset=XETH
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      api-key:
+      - prX1saD0PLpkFpSaWQs6Iy0sl5JpDvSXQerh5rZ3Z6r4qvlMMZ5JzZPz
+      api-sign:
+      - U2AqBFRrSpDguriOjfzvzRuEhQMfvoI3oi291WAdbDr1SJlsY5H0RUFGRlNyBMVPJ43iplAe6S6pV7f/frLxDw==
+      connection:
+      - keep-alive
+      content-length:
+      - '30'
+      content-type:
+      - application/x-www-form-urlencoded
+      host:
+      - api.kraken.com
+      user-agent:
+      - python-httpx/0.16.1
+    method: POST
+    uri: https://api.kraken.com/0/private/TradeBalance
+  response:
+    content: '{"error":[],"result":{"eb":"0.0000000923","tb":"0.0000000855","m":"0.0000000000","n":"0.0000000000","c":"0.0000000000","v":"0.0000000000","e":"0.0000000855","mf":"0.0000000855"}}'
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 613aa0e5adee0aa0-NRT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Mon, 18 Jan 2021 19:12:36 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d46488f51f9f7a265a0708dfefd1c8d291610997156; expires=Wed, 17-Feb-21
+        19:12:36 GMT; path=/; domain=.kraken.com; HttpOnly; SameSite=Lax
+      - __cf_bm=c816a34addcb5e1c05718f357c1056242e88178f-1610997156-1800-AWmIWuAnSJ61hTBR74IWSarSOtoO9Bk65p2orhdT4Vl6BBYUsX0pl0DSz7igV+XRpGAL85woHigOYVjeqXwaAfk=;
+        path=/; expires=Mon, 18-Jan-21 19:42:36 GMT; domain=.kraken.com; HttpOnly;
+        Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      cf-request-id:
+      - 07b882e38400000aa018220000000001
+      content-encoding:
+      - gzip
+      strict-transport-security:
+      - max-age=15768000
+      vary:
+      - Accept-Encoding
+    http_version: HTTP/1.1
+    status_code: 200
+version: 1

@@ -1,0 +1,66 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.binance.com
+      user-agent:
+      - python-httpx/0.16.1
+    method: GET
+    uri: https://api.binance.com/api/v3/historicalTrades?symbol=BTCUSDT
+  response:
+    content: '{"code":-2014,"msg":"API-key format invalid."}'
+    headers:
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '46'
+      Content-Security-Policy:
+      - default-src 'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 20 Jan 2021 14:03:38 GMT
+      Expires:
+      - '0'
+      Pragma:
+      - no-cache
+      Server:
+      - nginx
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains
+      Via:
+      - 1.1 322aee8aa5d1b8e91a9db30a8244f179.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - 4nVA5qpmrAPmRYMLcFKw0fq_lC95y7uufJxWW7xUZEmwRo988yDxkQ==
+      X-Amz-Cf-Pop:
+      - CDG3-C1
+      X-Cache:
+      - Error from cloudfront
+      X-Content-Security-Policy:
+      - default-src 'self'
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-WebKit-CSP:
+      - default-src 'self'
+      X-Xss-Protection:
+      - 1; mode=block
+      x-mbx-used-weight:
+      - '5'
+      x-mbx-used-weight-1m:
+      - '5'
+      x-mbx-uuid:
+      - 96ba1dab-c7aa-4a24-996e-1460c006caaa
+    http_version: HTTP/1.1
+    status_code: 401
+version: 1

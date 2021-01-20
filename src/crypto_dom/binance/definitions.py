@@ -45,7 +45,7 @@ SYMBOL_STATUS = Literal["PRE_TRADING", "TRADING", "POST_TRADING", "END_OF_DAY", 
 # ? can this also be None ?
 SYMBOL_TYPE = Literal["SPOT"] 
 
-SYMBOL_PERMISSIONS = Literal["SPOT", "MARGIN"]
+SYMBOL_PERMISSIONS = Literal["SPOT", "MARGIN", "LEVERAGED"]
 
 
 #------------------------------------------------------------
@@ -73,9 +73,9 @@ OCO_ORDER_STATUS = Literal["EXECUTING", "ALL_DONE", "REJECT"]
 #------------------------------------------------------------
 
 
-RATE_LIMITE_TYPE = Literal["REQUEST_WEIGHT", "ORDERS", "RAW_REQUEST"]
+RATE_LIMIT_TYPE = Literal["REQUEST_WEIGHT", "ORDERS", "RAW_REQUEST"]
 
-RATE_LIMITE_INTERVAL = Literal["SECOND", "MINUTE", "DAY"]
+RATE_LIMIT_INTERVAL = Literal["SECOND", "MINUTE", "DAY"]
 
 
 #------------------------------------------------------------

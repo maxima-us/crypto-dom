@@ -70,5 +70,5 @@ class Response:
         price : Decimal
     """
 
-    def __call__(self, response):
+    def __new__(_cls):
         return _AveragePriceResp
