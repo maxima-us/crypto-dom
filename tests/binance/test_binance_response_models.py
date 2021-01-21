@@ -16,12 +16,17 @@ from crypto_dom.binance.market_data.orderbook_ticker import Response as OBTicker
 from crypto_dom.binance.market_data.price_ticker import Response as PTickerResp, URL as PTickerURL
 from crypto_dom.binance.market_data.trades import Response as TradesResp, URL as TradesURL
 
+# Auth
+from crypto_dom.binance.__sign import get_keys, auth_signature, auth_headers, auth_timestamp, EmptyEnv
+
+# Private Endpoints
+from crypto_dom.binance.wallet.withdraw_history import Response as WiHiResp, URL as WiHiURL
+
 
 # CONSTANTS
 symbol = "BTCUSDT"
-pairs = ["XXBTZUSD", "XETHZUSD", "XZECZUSD"]
-asset = "XETH"
-assets = ["XXBT", "XETH", "XTZ"]
+asset = "DOT"
+coin = "DOT"
 
 
 def make_nonce():
@@ -38,20 +43,30 @@ async def _httpx_request(method, url, payload, response_model):
     """
     # return
 
-    # TODO write binance auth
-    headers = {}
-
+    if method in ["POST"]:
+        try:
+            keyset = get_keys() # returns a set of tuples (key, secret) 
+        except EmptyEnv:
+            # do not proceed to send a test request in this case
+            return
+        key, secret = keyset.pop()
+        payload["timestamp"] = auth_timestamp()
+        payload["signature"] = auth_signature(url, payload, secret=secret)
+        headers = auth_headers(key)
+    else:
+        headers = {}
 
     async with httpx.AsyncClient() as client:
         if method in ["POST"]:
-            r = await client.request(method, url, data=payload, headers=headers)
+            # TODO fix again later, this is just to test WithdrawHistory
+            r = await client.request("GET", url, params=payload, headers=headers)
         else:
             r = await client.request(method, url, params=payload)
         
         rjson = r.json()
         # print("response.json", rjson)
 
-        assert r.status_code == 200
+        assert r.status_code == 200, f"Json Response {rjson} \nPayload {payload} \nHeaders {headers}"
 
         if isinstance(rjson, list) or isinstance(rjson, tuple):
             response_model(rjson)
@@ -162,12 +177,12 @@ async def test_trades_response_model():
 #------------------------------------------------------------
 
 
-# @pytest.mark.asyncio
-# # @pytest.mark.default_cassette("private/test_accountbalance_response_model.yaml")
-# # @pytest.mark.vcr()
-# async def test_accountbalance_response_model():
-#     payload = {"nonce": make_nonce()}
-#     await _httpx_request("POST", ABURL, payload, AccountBalanceResp())
+@pytest.mark.asyncio
+@pytest.mark.default_cassette("private/test_withdrawhistory_response_model.yaml")
+@pytest.mark.vcr()
+async def test_withdrawhistory_response_model():
+    payload = {"coin": coin}
+    await _httpx_request("POST", WiHiURL, payload, WiHiResp())
 
 
 # @pytest.mark.asyncio
@@ -243,6 +258,6 @@ async def test_trades_response_model():
 
 
 if __name__ == '__main__':
-    pytest.main(['-s', __file__, '--block-network'])
+    # pytest.main(['-s', __file__, '--block-network'])
     # To record cassettes uncomment below line
-    # pytest.main(['-s', __file__, '--record-mode=new_episodes'])
+    pytest.main(['-s', __file__, '--record-mode=new_episodes'])

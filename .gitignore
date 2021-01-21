@@ -129,4 +129,5 @@ dmypy.json
 .pyre/
 
 # Recorded http cassettes
-tests/kraken/cassettes/test_response_models/private
+tests/kraken/cassettes/test_kraken_response_models/private
+tests/binance/cassettes/test_binance_response_models/private
