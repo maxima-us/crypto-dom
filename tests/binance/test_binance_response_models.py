@@ -1,3 +1,4 @@
+from urllib.parse import urlencode
 import pytest
 import httpx
 import time
@@ -59,6 +60,8 @@ async def _httpx_request(method, url, payload, response_model):
     async with httpx.AsyncClient() as client:
         if method in ["POST"]:
             # TODO fix again later, this is just to test WithdrawHistory
+
+            payload = sorted([(k, v) for k, v in payload.items()], reverse=False)
             r = await client.request("GET", url, params=payload, headers=headers)
         else:
             r = await client.request(method, url, params=payload)
@@ -66,7 +69,7 @@ async def _httpx_request(method, url, payload, response_model):
         rjson = r.json()
         # print("response.json", rjson)
 
-        assert r.status_code == 200, f"Json Response {rjson} \nPayload {payload} \nHeaders {headers}"
+        assert r.status_code == 200, f"Json Response {rjson} \nPayload {payload} \nHeaders {headers} \nRequest {r.request}"
 
         if isinstance(rjson, list) or isinstance(rjson, tuple):
             response_model(rjson)
@@ -178,8 +181,8 @@ async def test_trades_response_model():
 
 
 @pytest.mark.asyncio
-@pytest.mark.default_cassette("private/test_withdrawhistory_response_model.yaml")
-@pytest.mark.vcr()
+# @pytest.mark.default_cassette("private/test_withdrawhistory_response_model.yaml")
+# @pytest.mark.vcr()
 async def test_withdrawhistory_response_model():
     payload = {"coin": coin}
     await _httpx_request("POST", WiHiURL, payload, WiHiResp())

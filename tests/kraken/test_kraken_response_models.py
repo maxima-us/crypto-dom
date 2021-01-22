@@ -64,10 +64,9 @@ async def _httpx_request(method, url, payload, response_model):
             r = await client.request(method, url, params=payload)
         
         rjson = r.json()
-        print("response.json", rjson)
 
-        assert r.status_code == 200
-        assert rjson["error"] == []
+        assert r.status_code == 200, f"Response json {rjson}"
+        assert rjson["error"] == [], f"Response json {rjson}"
 
         result = rjson["result"]
         response_model(**result)
@@ -214,6 +213,6 @@ async def test_tradeshistory_response_model():
 
 
 if __name__ == '__main__':
-    pytest.main(['-s', __file__, '--block-network'])
+    # pytest.main(['-s', __file__, '--block-network'])
     # To record cassettes uncomment below line
-    # pytest.main(['-s', __file__, '--record-mode=new_episodes'])
+    pytest.main(['-s', __file__, '--record-mode=new_episodes'])

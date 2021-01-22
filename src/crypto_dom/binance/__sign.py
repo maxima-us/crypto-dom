@@ -42,9 +42,9 @@ def get_keys():
 def auth_signature(url:str, data:dict, *, secret:str):
 
     sorted_data= sorted([(k, v) for k, v in data.items()], reverse=False)
-    print(sorted_data)
+    print("Sorted data", sorted_data, "\n")
     postdata = urlencode(sorted_data)
-
+    print("Query String", postdata, "\n")
     signature = hmac.new(
             secret.encode(),
             postdata.encode(),
