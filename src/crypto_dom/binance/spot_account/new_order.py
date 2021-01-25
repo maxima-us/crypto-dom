@@ -207,7 +207,7 @@ class Request(pydantic.BaseModel):
                 unexpected_fields.append("quoteOrderQty")
 
 
-        if v in ["STOP-LOSS", "TAKE-PROFIT"]:
+        if v in ["STOP_LOSS", "TAKE_PROFIT"]:
             # mandatory params
             if qty is None:
                 missing_fields.append("quantity")
@@ -223,7 +223,7 @@ class Request(pydantic.BaseModel):
                 unexpected_fields.append("timeInForce")
 
 
-        if v in ["STOP-LOSS-LIMIT", "TAKE-PROFIT-LIMIT"]:
+        if v in ["STOP_LOSS_LIMIT", "TAKE_PROFIT_LIMIT"]:
             # mandatory params
             if qty is None:
                 missing_fields.append("quantity")

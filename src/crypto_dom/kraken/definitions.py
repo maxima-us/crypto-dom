@@ -73,5 +73,5 @@ class ORDERID(KrakenID): pass
 class LEDGERID(KrakenID): pass
 
 
-
+LEVERAGE = Literal[0,1,2,3,4,5]
 
