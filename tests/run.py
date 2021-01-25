@@ -6,7 +6,7 @@ if __name__ == "__main__":
     # print(globals())
     # for m in sys.modules:
     #     print(m)
-    pytest.main(["-vv", "tests/binance/test_binance_response_models.py"])
+    # pytest.main(["-vv", "tests/binance/test_binance_response_models.py"])
     # print(globals())
     # for m in sys.modules:
     #     print(m)

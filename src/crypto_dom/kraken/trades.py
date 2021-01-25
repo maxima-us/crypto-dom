@@ -132,6 +132,34 @@ class TradesResp:
             Id to be used as since when polling for new trade dat
     """
 
-    def __new__(_cls, pair: str):
+    # def __new__(_cls, pair: str):
+    #     model = _generate_model(pair)
+    #     return model
+
+    def __call__(self, response: dict):
+        
+        pairs = list({k:v for k,v in response.items() if k not in ["last"]}.keys())
+        if len(pairs) > 1:
+            raise ValueError("More than 1 pair in response keys")
+        else:
+            pair = pairs[0]
         model = _generate_model(pair)
-        return model
+        print("\nFields", model.__fields__, "\n")
+        return model(**response)
+
+
+
+
+
+if __name__ == "__main__":
+
+    data = {
+            "XETHXXBT": [
+                ["0.032310","4.28169434",1541390792.763,"s","l",""]
+            ],
+            "last": "1541439421200678657"
+        }
+
+    expected = TradesResp()
+    valid = expected(data)
+    print("Validated model", valid, "\n")

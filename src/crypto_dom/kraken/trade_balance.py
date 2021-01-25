@@ -1,8 +1,6 @@
 import typing
-from datetime import date
 from decimal import Decimal
 
-from typing_extensions import Literal
 import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
@@ -93,5 +91,8 @@ class TradeBalanceResp:
             margin level = (equity / initial margin) * 100 (optional)
    """
 
-    def __new__(cls):
-        return _TradeBalance
+    # def __new__(cls):
+    #     return _TradeBalance
+    
+    def __call__(self, response: dict):
+        return _TradeBalance(**response)

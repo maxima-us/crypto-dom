@@ -67,7 +67,7 @@ class AccountBalanceResp:
             Array of asset name and corresponding balance amount
     """
 
-    def __call__(self, **kwargs):
-        model = _generate_model(list(kwargs.keys()))
+    def __call__(self, response: dict):
+        model = _generate_model(list(response.keys()))
         print("\nFields", model.__fields__, "\n")
-        return model(**kwargs)
+        return model(**response)

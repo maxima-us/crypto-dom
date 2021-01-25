@@ -69,7 +69,8 @@ async def _httpx_request(method, url, payload, response_model):
         assert rjson["error"] == [], f"Response json {rjson}"
 
         result = rjson["result"]
-        response_model(**result)
+        # response_model(**result)  # we want syntax for all endpoints to be the same, so no unpacking (in case we have lists)
+        response_model(result)
 
         return result
 
@@ -84,7 +85,7 @@ async def _httpx_request(method, url, payload, response_model):
 @pytest.mark.vcr()
 async def test_ohlc_response_model():
     payload = {"pair": pair}
-    await _httpx_request("GET", OHLCURL, payload, OhlcResp(pair))
+    await _httpx_request("GET", OHLCURL, payload, OhlcResp())
 
 
 @pytest.mark.asyncio
@@ -92,7 +93,7 @@ async def test_ohlc_response_model():
 @pytest.mark.vcr()
 async def test_orderbook_response_model():
     payload = {"pair": pair}
-    await _httpx_request("GET", OBURL, payload, OrderBookResp(pair))
+    await _httpx_request("GET", OBURL, payload, OrderBookResp())
 
 
 @pytest.mark.asyncio
@@ -124,7 +125,7 @@ async def test_ticker_response_model():
 @pytest.mark.vcr()
 async def test_spread_response_model():
     payload = {"pair": pair}
-    await _httpx_request("GET", SURL, payload, SpreadResp(pair))
+    await _httpx_request("GET", SURL, payload, SpreadResp())
 
 
 #------------------------------------------------------------

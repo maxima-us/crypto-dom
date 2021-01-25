@@ -1,5 +1,4 @@
 import typing
-from datetime import date
 from decimal import Decimal
 
 from typing_extensions import Literal
@@ -125,7 +124,9 @@ class QueryTradesResp(pydantic.BaseModel):
     -------
    """
 
-    def __new__(cls):
-        return _QueryTrades
+    # def __new__(cls):
+    #     return _QueryTrades
 
+    def __call__(self, response: dict):
+        return _QueryTrades(**response)
 

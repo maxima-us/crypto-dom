@@ -1,9 +1,7 @@
 
 import typing
-from datetime import date
 from decimal import Decimal
 
-from typing_extensions import Literal
 import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
@@ -222,5 +220,54 @@ class ClosedOrdersResp(pydantic.BaseModel):
                 Array of trade ids related to order (if trades info requested and data available)
    """
 
-    def __new__(cls):
-        return _ClosedOrders
+    # def __new__(cls):
+    #     return _ClosedOrders
+
+    def __call__(self, response: dict):
+        return _ClosedOrders(**response)
+
+
+
+
+
+if __name__ == "__main__":
+
+    data = {
+            "closed": {
+                "OETZYO-UL524-QJMXCT":{
+                    "refid":None,
+                    "userref":None,
+                    "status":"canceled",
+                    "reason":"User requested",
+                    "opentm":1601489313.3898,
+                    "closetm":1601489346.5507,
+                    "starttm":0,
+                    "expiretm":0,
+                    "descr":{
+                        "pair":"ETHUSDT",
+                        "type":"buy",
+                        "ordertype":"limit",
+                        "price":"330.00",
+                        "price2":"0",
+                        "leverage":"none",
+                        "order":"buy 0.02100000 ETHUSDT @ limit 330.00",
+                        "close":""
+                    },
+                    "vol":"0.02100000",
+                    "vol_exec":"0.00000000",
+                    "cost":"0.00000",
+                    "fee":"0.00000",
+                    "price":"0.00000",
+                    "stopprice":"0.00000",
+                    "limitprice":"0.00000",
+                    "misc":"",
+                    "oflags":"fciq"
+                },
+            },
+            "count":16
+    }
+
+    expected = ClosedOrdersResp()
+    valid = expected(data)
+
+    print("Validated model", valid, "\n")

@@ -23,6 +23,22 @@ METHOD = "GET"
 
 
 # ------------------------------
+# Sample Response
+# ------------------------------
+
+
+# {
+#     "error":[],
+#     "result":{
+#         "XXBTZUSD":[
+#             [1610997022,"35803.90000","35804.10000"],
+#             [1610997022,"35803.20000","35804.10000"],
+#             [1610997022,"35803.30000","35804.10000"]],
+#         "last":1610997148}
+# }
+
+
+# ------------------------------
 # Request Model
 # ------------------------------
 
@@ -111,6 +127,35 @@ class SpreadResp:
             Id to be used as since when polling for new spread dat
     """
 
-    def __new__(_cls, pair: str):
+    # def __new__(_cls, pair: str):
+    #     model = _generate_model(pair)
+    #     return model
+
+    def __call__(self, response: dict):
+        
+        pairs = list({k:v for k,v in response.items() if k not in ["last"]}.keys())
+        if len(pairs) > 1:
+            raise ValueError("More than 1 pair in response keys")
+        else:
+            pair = pairs[0]
         model = _generate_model(pair)
-        return model
+        print("\nFields", model.__fields__, "\n")
+        return model(**response)
+        
+        
+
+
+
+if __name__ == "__main__":
+
+    data = {
+        "XXBTZUSD":[
+            [1610997022,"35803.90000","35804.10000"],
+            [1610997022,"35803.20000","35804.10000"],
+            [1610997022,"35803.30000","35804.10000"]],
+        "last":1610997148
+    }
+
+    expected = SpreadResp()
+    valid = expected(data)
+    print("Validated model", valid, "\n")

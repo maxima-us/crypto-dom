@@ -1,8 +1,6 @@
 import typing
-from datetime import date
 from decimal import Decimal
 
-from typing_extensions import Literal
 import pydantic
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
@@ -159,6 +157,8 @@ class OpenOrdersResp(pydantic.BaseModel):
                 Array of trade ids related to order (if trades info requested and data available)
    """
 
-    def __new__(cls):
-        return _OpenOrders
+    # def __new__(cls):
+    #     return _OpenOrders
 
+    def __call__(self, response: dict):
+        return _OpenOrders(**response)

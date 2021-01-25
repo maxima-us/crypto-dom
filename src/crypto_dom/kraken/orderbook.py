@@ -115,6 +115,40 @@ class OrderBookResp:
             Which are array of array entries(price, volume, timestamp)
     """
 
-    def __new__(_cls, pair: str):
+    # def __new__(_cls, pair: str):
+    #     model = _generate_model(pair)
+    #     return model
+
+    def __call__(self, response: dict):
+        
+        pairs = list({k:v for k,v in response.items() if k not in ["last"]}.keys())
+        if len(pairs) > 1:
+            raise ValueError("More than 1 pair in response keys")
+        else:
+            pair = pairs[0]
         model = _generate_model(pair)
-        return model
+        print("\nFields", model.__fields__, "\n")
+        return model(**response)
+        
+        
+        
+if __name__ == "__main__":
+
+    data = {
+            "XETHXXBT":{
+                "asks":[
+                    ["0.023480","4.000",1586321307],
+                    ["0.023490","50.095",1586321306],
+                    ["0.023500","28.535",1586321302],
+                ],
+                "bids":[
+                    ["0.023470","59.580",1586321307],
+                    ["0.023460","20.000",1586321301],
+                    ["0.023440","67.832",1586321306],
+                ]
+            }
+    }
+
+    expected = OrderBookResp()
+    valid = expected(data)
+    print("Validated model", valid, "\n")

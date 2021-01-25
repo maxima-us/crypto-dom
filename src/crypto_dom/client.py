@@ -270,8 +270,6 @@ class _TypedAioHttpClient(aiohttp.ClientSession):
 if __name__ == "__main__":
 
 
-    # ! httpx Client can be instantiated anywhere
-    httpx_client = _TypedHttpxClient()
     
     payload = {
         "pair": "XXBTZUSD",
@@ -282,14 +280,27 @@ if __name__ == "__main__":
         async with client:
             r = await client.safe_request(METHOD, URL, t_in=_OhlcReq, t_out=_OhlcResp("XXBTZUSD"), params=payload)
         
-        # ! also works if we do not provide models (but will return value wrapped in Result)
+        # ! also works if we do not provide models (but will still return value wrapped in Result)
         # r = await client.request(METHOD, URL, params=payload)
         
         return r
 
+
+    # --------------------
+    # HTTPX
+    # --------------------
+    
+    # ! httpx Client can be instantiated anywhere
+    httpx_client = _TypedHttpxClient()
+
     result= asyncio.run(ohlc(httpx_client))
     print("httpx response", result)
     print("httpx response type", type(result))
+    
+    
+    # --------------------
+    # AIOHTTP
+    # --------------------
 
     # ! aiohttp session NEEDS to be instantiated inside a coroutine
     #   see: https://stackoverflow.com/a/55186375

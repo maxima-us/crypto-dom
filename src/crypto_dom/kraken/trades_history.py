@@ -187,7 +187,8 @@ class TradesHistoryResp(pydantic.BaseModel):
                 List of closing trades for position (if available)
    """
 
-    def __new__(cls):
-        return _TradesHistory
+    # def __new__(cls):
+    #     return _TradesHistory
 
-
+    def __call__(self, response: dict):
+        return _TradesHistory(**response)

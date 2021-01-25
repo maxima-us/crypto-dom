@@ -144,7 +144,52 @@ class OhlcResp:
             id to be used as since when polling for new, committed OHLC data)
     """
 
-    def __new__(_cls, pair: str):
-        model = _generate_model(pair)
-        return model
+    # def __new__(_cls, pair: str):
+    #     model = _generate_model(pair)
+    #     return model
 
+
+    def __call__(self, response: dict):
+        
+        pairs = list({k:v for k,v in response.items() if k not in ["last"]}.keys())
+        if len(pairs) > 1:
+            raise ValueError("More than 1 pair in response keys")
+        else:
+            pair = pairs[0]
+        model = _generate_model(pair)
+        print("\nFields", model.__fields__, "\n")
+        return model(**response)
+
+
+
+
+
+if __name__ == "__main__":
+
+
+    data = {
+            "XETHXXBT":[
+                [1591475580,"0.02499","0.02499","0.02499","0.02499","0.00000","0.00000000",0],
+                [1591475640,"0.02500","0.02500","0.02500","0.02500","0.02500","9.12201000",5],
+                [1591475700,"0.02499","0.02499","0.02499","0.02499","0.02499","1.28681415",2],
+                [1591475760,"0.02499","0.02499","0.02499","0.02499","0.02499","0.08800000",1],
+            ],
+            "last":1591517580
+    }
+
+    data2 = {
+            "XETHXXBT":[
+                [1591475581,"0.02499","0.02499","0.02499","0.02499","0.00000","0.00000000",0],
+                [1591475641,"0.02500","0.02500","0.02500","0.02500","0.02500","9.12201000",5],
+                [1591475701,"0.02499","0.02499","0.02499","0.02499","0.02499","1.28681415",2],
+                [1591475761,"0.02499","0.02499","0.02499","0.02499","0.02499","0.08800000",1],
+            ],
+            "last":1591517580
+    }
+
+    expect = OhlcResp()
+    valid = expect(data)
+    print("Validated model", valid, "\n")
+    
+    valid2 = expect(data2)
+    print("Validated model", valid2, "\n")
