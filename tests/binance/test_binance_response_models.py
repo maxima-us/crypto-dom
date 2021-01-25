@@ -1,10 +1,13 @@
 from urllib.parse import urlencode
+import pydantic
 import pytest
 import httpx
 import time
 
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
+
+from typing_extensions import Literal
 
 # Public endpoints
 from crypto_dom.binance.market_data.aggtrades import Response as AggTradesResp, URL as AggTradesURL
@@ -21,7 +24,21 @@ from crypto_dom.binance.market_data.trades import Response as TradesResp, URL as
 from crypto_dom.binance.__sign import get_keys, auth_signature, auth_headers, auth_timestamp, EmptyEnv
 
 # Private Endpoints
+## Wallet
 from crypto_dom.binance.wallet.withdraw_history import Response as WiHiResp, URL as WiHiURL
+from crypto_dom.binance.wallet.deposit_history import Response as DepHiResp, URL as DepHiURL
+from crypto_dom.binance.wallet.getall import Response as GetAllResp, URL as GetAllURL
+from crypto_dom.binance.wallet.account_snapshot import Response as AccSnapResp, URL as AccSnapURL
+from crypto_dom.binance.wallet.asset_dividend import Response as ADivResp, URL as ADivURL
+from crypto_dom.binance.wallet.deposit_address import Response as DepAdResp, URL as DepAdURL
+
+## Spot Account
+from crypto_dom.binance.spot_account.account_information import Response as AccInfoResp, URL as AccInfoURL
+from crypto_dom.binance.spot_account.account_trade_list import Response as AccTrLResp, URL as AccTrLURL
+from crypto_dom.binance.spot_account.all_orders import Response as AllOResp, URL as AllOURL
+from crypto_dom.binance.spot_account.open_orders import Response as OpenOResp, URL as OpenOURL
+from crypto_dom.binance.spot_account.query_all_oco import Response as AllOCOResp, URL as AllOCOURL
+from crypto_dom.binance.spot_account.query_open_oco import Response as OpenOCOResp, URL as OpenOCOURL
 
 
 # CONSTANTS
@@ -39,12 +56,12 @@ def make_nonce():
 #------------------------------------------------------------
 
 
-async def _httpx_request(method, url, payload, response_model):
+async def _httpx_request(method: Literal["GET", "POST", "DELETE"], url: str, payload: dict, response_model: pydantic.BaseModel, private: bool=False):
     """tuples of (url, payload)
     """
     # return
 
-    if method in ["POST"]:
+    if private:
         try:
             keyset = get_keys() # returns a set of tuples (key, secret) 
         except EmptyEnv:
@@ -58,11 +75,14 @@ async def _httpx_request(method, url, payload, response_model):
         headers = {}
 
     async with httpx.AsyncClient() as client:
-        if method in ["POST"]:
-            # TODO fix again later, this is just to test WithdrawHistory
-
+        if private:
+            signature = payload.pop("signature")
             payload = sorted([(k, v) for k, v in payload.items()], reverse=False)
-            r = await client.request("GET", url, params=payload, headers=headers)
+            payload.append(("signature", signature))    #! needs to always be last param
+            if method in ["POST", "DELETE"]:
+                r = await client.request(method, url, data=payload, headers=headers)
+            else:
+                r = await client.request(method, url, params=payload, headers=headers)
         else:
             r = await client.request(method, url, params=payload)
         
@@ -116,13 +136,29 @@ async def test_exchange_info_response_model():
     await _httpx_request("GET", ExchInfoURL, payload, ExchInfoResp())
 
 
-# ! REQUIRES API KEY (X-MBX-APIKEY as defined in doc)
-# @pytest.mark.asyncio
-# @pytest.mark.default_cassette("public/test_historical_trades_response_model.yaml")
-# @pytest.mark.vcr()
-# async def test_historical_trades_response_model():
-#     payload = {"symbol": symbol}
-#     await _httpx_request("GET", HTradesURL, payload, HTradesResp())
+@pytest.mark.asyncio
+@pytest.mark.default_cassette("public/test_historical_trades_response_model.yaml")
+@pytest.mark.vcr()
+async def test_historical_trades_response_model():
+    payload = {"symbol": symbol}
+
+    # ! REQUIRES API KEY (X-MBX-APIKEY as defined in doc)
+    try:
+        keyset = get_keys() # returns a set of tuples (key, secret) 
+    except EmptyEnv:
+        # do not proceed to send a test request in this case
+        return
+    key, _ = keyset.pop()
+    headers = auth_headers(key)
+
+    async with httpx.AsyncClient() as client:
+        r = await client.request("GET", HTradesURL, params=payload, headers=headers)
+        
+        rjson = r.json()
+
+        assert r.status_code == 200, f"JSON Response {rjson} --- Payload {payload} --- Headers {headers}"
+        _model = HTradesResp()
+        _model(rjson)
 
 
 @pytest.mark.asyncio
@@ -139,13 +175,12 @@ async def test_klines_response_model():
 async def test_obticker_response_model():
     payload = {"symbol": symbol}
 
-
     async with httpx.AsyncClient() as client:
         r = await client.request("GET", OBTickerURL, params=payload)
         
         rjson = r.json()
 
-        assert r.status_code == 200
+        assert r.status_code == 200, rjson
         _model = OBTickerResp()
         _model(rjson)
 
@@ -161,7 +196,7 @@ async def test_pticker_response_model():
         
         rjson = r.json()
 
-        assert r.status_code == 200
+        assert r.status_code == 200, rjson
         _model = PTickerResp()
         _model(rjson)
 
@@ -176,83 +211,107 @@ async def test_trades_response_model():
 
 #------------------------------------------------------------
 # Private Endpoints 
-# ! FROM KRAKEN = NOT YET UPDATED
 #------------------------------------------------------------
 
+# ------ Wallet
 
 @pytest.mark.asyncio
 # @pytest.mark.default_cassette("private/test_withdrawhistory_response_model.yaml")
 # @pytest.mark.vcr()
 async def test_withdrawhistory_response_model():
     payload = {"coin": coin}
-    await _httpx_request("POST", WiHiURL, payload, WiHiResp())
+    await _httpx_request("GET", WiHiURL, payload, WiHiResp(), private=True)
 
 
-# @pytest.mark.asyncio
-# # @pytest.mark.default_cassette("private/test_tradebalance_response_model.yaml")
+@pytest.mark.asyncio
+# # @pytest.mark.default_cassette("private/test_deposithistory_response_model.yaml")
 # # @pytest.mark.vcr()
-# async def test_tradebalance_response_model():
-#     payload = {"nonce": make_nonce(), "asset": asset}
-#     await _httpx_request("POST", TBURL, payload, TradeBalanceResp())
+async def test_deposithistory_response_model():
+    payload = {"coin": coin}
+    await _httpx_request("GET", DepHiURL, payload, DepHiResp(), private=True)
 
 
-# @pytest.mark.asyncio
-# # @pytest.mark.default_cassette("private/test_closedorders_response_model.yaml")
+@pytest.mark.asyncio
+# # @pytest.mark.default_cassette("private/test_getall_response_model.yaml")
 # # @pytest.mark.vcr()
-# async def test_closedorders_response_model():
-#     payload = {"nonce": make_nonce()}
-#     await _httpx_request("POST", COURL, payload, ClosedOrdersResp())
+async def test_getall_response_model():
+    payload = {}
+    await _httpx_request("GET", GetAllURL, payload, GetAllResp(), private=True)
 
 
-# @pytest.mark.asyncio
-# # @pytest.mark.default_cassette("private/test_openpositions_response_model.yaml")
+@pytest.mark.asyncio
+# # @pytest.mark.default_cassette("private/test_accountsnapshot_response_model.yaml")
 # # @pytest.mark.vcr()
-# async def test_openpositions_response_model():
-#     payload = {"nonce": make_nonce()}
-#     await _httpx_request("POST", OPURL, payload, OpenPositionsResp())
+async def test_accountsnapshot_response_model():
+    payload = {"type": "SPOT"}
+    await _httpx_request("GET", AccSnapURL, payload, AccSnapResp(), private=True)
 
 
-# @pytest.mark.asyncio
-# # @pytest.mark.default_cassette("private/test_openorders_response_model.yaml")
-# # @pytest.mark.vcr()
-# async def test_openorders_response_model():
-#     payload = {"nonce": make_nonce()}
-#     await _httpx_request("POST", OOURL, payload, OpenOrdersResp())
-
-
-# TODO which IDs to query ?
-# @pytest.mark.asyncio
-# @pytest.mark.default_cassette("private/test_queryorders_response_model.yaml")
+@pytest.mark.asyncio
+# # @pytest.mark.default_cassette("private/test_assetdividend_response_model.yaml")
 # @pytest.mark.vcr()
-# async def test_queryorders_response_model():
-#     payload = {"nonce": make_nonce()}
-#     await _httpx_request("POST", QOURL, payload, QueryOrdersResp())
+async def test_assetdividend_response_model():
+    payload = {"asset": coin}
+    await _httpx_request("GET", ADivURL, payload, ADivResp(), private=True)
 
 
-# TODO which IDs to query ?
-# @pytest.mark.asyncio
-# @pytest.mark.default_cassette("private/test_queryledgers_response_model.yaml")
+@pytest.mark.asyncio
+# @pytest.mark.default_cassette("private/test_depositaddress_response_model.yaml")
 # @pytest.mark.vcr()
-# async def test_queryledgers_response_model():
-#     payload = {"nonce": make_nonce()}
-#     await _httpx_request("POST", QLURL, payload, QueryLedgersResp())
+async def test_depositaddress_response_model():
+    payload = {"coin": coin}
+    await _httpx_request("GET", DepAdURL, payload, DepAdResp(), private=True)
 
 
-# # TODO which IDs to query ?
-# @pytest.mark.asyncio
-# @pytest.mark.default_cassette("private/test_querytrades_response_model.yaml")
+
+# ------ Spot Account
+
+@pytest.mark.asyncio
+# @pytest.mark.default_cassette("private/test_accountinformation_response_model.yaml")
 # @pytest.mark.vcr()
-# async def test_querytrades_response_model():
-#     payload = {"nonce": make_nonce()}
-#     await _httpx_request("POST", QTURL, payload, QueryTradessResp()
+async def test_accountinformation_response_model():
+    payload = {}
+    await _httpx_request("GET", AccInfoURL, payload, AccInfoResp(), private=True)
 
 
-# @pytest.mark.asyncio
-# @pytest.mark.default_cassette("private/test_tradeshistory_response_model.yaml")
+@pytest.mark.asyncio
+# @pytest.mark.default_cassette("private/test_accounttradelist_response_model.yaml")
 # @pytest.mark.vcr()
-# async def test_tradeshistory_response_model():
-#     payload = {"nonce": make_nonce()}
-#     await _httpx_request("POST", THURL, payload, TradesHistoryResp())
+async def test_accounttradelist_response_model():
+    payload = {"symbol": symbol}
+    await _httpx_request("GET", AccTrLURL, payload, AccTrLResp(), private=True)
+
+
+@pytest.mark.asyncio
+# @pytest.mark.default_cassette("private/test_allorders_response_model.yaml")
+# @pytest.mark.vcr()
+async def test_allorders_response_model():
+    payload = {"symbol": symbol}
+    await _httpx_request("GET", AllOURL, payload, AllOResp(), private=True)
+    
+
+@pytest.mark.asyncio
+# @pytest.mark.default_cassette("private/test_openorders_response_model.yaml")
+# @pytest.mark.vcr()
+async def test_openorders_response_model():
+    payload = {"symbol": symbol}
+    await _httpx_request("GET", OpenOURL, payload, OpenOResp(), private=True)
+
+
+@pytest.mark.asyncio
+# @pytest.mark.default_cassette("private/test_queryallOCO_response_model.yaml")
+# @pytest.mark.vcr()
+async def test_allOCOorders_response_model():
+    payload = {}
+    await _httpx_request("GET", AllOCOURL, payload, AllOCOResp(), private=True)
+
+
+@pytest.mark.asyncio
+# @pytest.mark.default_cassette("private/test_queryopenOCO_response_model.yaml")
+# @pytest.mark.vcr()
+async def test_openOCOorders_response_model():
+    payload = {}
+    await _httpx_request("GET", OpenOCOURL, payload, OpenOCOResp(), private=True)
 
 
 #------------------------------------------------------------

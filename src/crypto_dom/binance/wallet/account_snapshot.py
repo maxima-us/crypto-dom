@@ -161,7 +161,7 @@ class Request(pydantic.BaseModel):
 class _SpotData(pydantic.BaseModel):
 
     class _Balance(pydantic.BaseModel):
-        asset: ASSET
+        asset: str  #! ASSET missing TWT
         free: Decimal
         locked: Decimal
 
@@ -172,17 +172,17 @@ class _SpotData(pydantic.BaseModel):
 class _MarginData(pydantic.BaseModel):
 
     class _UserAsset(pydantic.BaseModel):
-        asset: ASSET
+        asset: str  #! ASSET missing TWT
         borrowed: Decimal
         free: Decimal
         interest: Decimal
         locked: Decimal
         netAsset: Decimal
 
-    marginLevel: Decimal
-    totalAssetOfBtc : Decimal
-    totalLiabilityOfBtc: Decimal
-    totalNetAssetOfBtc: Decimal
+    marginLevel: typing.Optional[Decimal]
+    totalAssetOfBtc : typing.Optional[Decimal]
+    totalLiabilityOfBtc: typing.Optional[Decimal]
+    totalNetAssetOfBtc: typing.Optional[Decimal]
     userAssets: typing.Tuple[_UserAsset, ...]
 
 

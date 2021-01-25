@@ -113,18 +113,18 @@ class Request(pydantic.BaseModel):
 class _Network (pydantic.BaseModel):
 
     addressRegex: str
-    coin: ASSET
+    coin: str   # ASSET type missing: INR, CBK, CBM, HKD, GHS, NVT, ADXOLD, REPV1, DEXE, ETHBNT, PERLOLD, LLT, NOK, HCC, IDR, JEX
     despositDesc: typing.Optional[str]
     depositEnable: bool
     insertTime: typing.Optional[TIMESTAMP_MS]
     isDefault: bool
     memoRegex: str
-    minConfirm: pydantic.PositiveInt
+    minConfirm: pydantic.conint(ge=0)
     name: str
     network: str
     resetAddressStatus: bool
-    specialTips: str
-    unLockConfirm: int
+    specialTips: typing.Optional[str]
+    unLockConfirm: typing.Optional[int]
     updateTime: typing.Optional[TIMESTAMP_MS]
     withdrawDesc: typing.Optional[str]
     withdrawEnable: bool
@@ -135,7 +135,7 @@ class _Network (pydantic.BaseModel):
 
 class _CoinSpecs(pydantic.BaseModel):
 
-    coin: ASSET
+    coin: str   # ASSET type missing: INR, CBK, CBM, HKD, GHS, NVT, ADXOLD, REPV1, DEXE, ETHBNT, PERLOLD, LLT, NOK, HCC, IDR, JEX
     depositAllEnable: bool
     free: Decimal
     ipoable: Decimal

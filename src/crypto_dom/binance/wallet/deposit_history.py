@@ -17,7 +17,7 @@ from crypto_dom.binance.definitions import RECV_WINDOW, ASSET
 
 # doc: https://binance-docs.github.io/apidocs/spot/en/#deposit-history-supporting-network-user_data
 
-URL = "https://api.binance.com/sapi/v1/capital/deposit/hiscrec"
+URL = "https://api.binance.com/sapi/v1/capital/deposit/hisrec"
 METHOD = "GET"
 WEIGHT = 1
 

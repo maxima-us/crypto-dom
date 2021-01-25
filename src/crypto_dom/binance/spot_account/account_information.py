@@ -81,7 +81,7 @@ class Request(pydantic.BaseModel):
 
 
 class _Balance(pydantic.BaseModel):
-    asset: ASSET
+    asset: str # ASSET missing DEXE
     free: Decimal
     locked: Decimal
 
@@ -95,7 +95,7 @@ class _AccountInformationResp(pydantic.BaseModel):
     canWithdraw: bool
     canDeposit: bool
     updateTime: TIMESTAMP_MS
-    accountType: Literal["SPOT"]
+    accountType: Literal["SPOT", "MARGIN"]
     balances: typing.Tuple[_Balance, ...]
     permissions: typing.List[SYMBOL_PERMISSIONS]
 
