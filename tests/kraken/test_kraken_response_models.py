@@ -1,28 +1,33 @@
+from typing import Awaitable
 import pytest
 import httpx
 import time
 
 # Public endpoints
-from crypto_dom.kraken.ohlc import OhlcResp, URL as OHLCURL
-from crypto_dom.kraken.orderbook import OrderBookResp, URL as OBURL
-from crypto_dom.kraken.asset_pairs import AssetPairsResp, URL as APURL
-from crypto_dom.kraken.assets import AssetsResp, URL as AURL
-from crypto_dom.kraken.ticker import TickerResp, URL as TURL
-from crypto_dom.kraken.spread import SpreadResp, URL as SURL
+from crypto_dom.kraken.market_data.ohlc import OhlcResp, URL as OHLCURL
+from crypto_dom.kraken.market_data.orderbook import OrderBookResp, URL as OBURL
+from crypto_dom.kraken.market_data.asset_pairs import AssetPairsResp, URL as APURL
+from crypto_dom.kraken.market_data.assets import AssetsResp, URL as AURL
+from crypto_dom.kraken.market_data.ticker import TickerResp, URL as TURL
+from crypto_dom.kraken.market_data.spread import SpreadResp, URL as SURL
 
 # Auth
 from crypto_dom.kraken.__sign import get_keys, auth_headers, EmptyEnv
 
 # Private endpoints
-from crypto_dom.kraken.account_balance import AccountBalanceResp, URL as ABURL
-from crypto_dom.kraken.trade_balance import TradeBalanceResp, URL as TBURL
-from crypto_dom.kraken.open_positions import OpenPositionsResp, URL as OPURL
-from crypto_dom.kraken.open_orders import OpenOrdersResp, URL as OOURL
-from crypto_dom.kraken.closed_orders import ClosedOrdersResp, URL as COURL
-from crypto_dom.kraken.query_orders import QueryOrdersResp, URL as QOURL
-from crypto_dom.kraken.query_ledgers import QueryLedgersResp, URL as QLURL
-from crypto_dom.kraken.query_trades import QueryTradesResp, URL as QTURL
-from crypto_dom.kraken.trades_history import TradesHistoryResp, URL as THURL
+from crypto_dom.kraken.user_data.account_balance import AccountBalanceResp, URL as ABURL
+from crypto_dom.kraken.user_data.trade_balance import TradeBalanceResp, URL as TBURL
+from crypto_dom.kraken.user_data.open_positions import OpenPositionsResp, URL as OPURL
+from crypto_dom.kraken.user_data.open_orders import OpenOrdersResp, URL as OOURL
+from crypto_dom.kraken.user_data.closed_orders import ClosedOrdersResp, URL as COURL
+from crypto_dom.kraken.user_data.query_orders import QueryOrdersResp, URL as QOURL
+from crypto_dom.kraken.user_data.query_ledgers import QueryLedgersResp, URL as QLURL
+from crypto_dom.kraken.user_data.query_trades import QueryTradesResp, URL as QTURL
+from crypto_dom.kraken.user_data.trades_history import TradesHistoryResp, URL as THURL
+from crypto_dom.kraken.user_funding.deposit_methods import Response as DepMetResp, URL as DepMetURL
+from crypto_dom.kraken.user_funding.deposit_addresses import Response as DepAddResp, URL as DepAddURL
+from crypto_dom.kraken.user_funding.withdraw_info import Response as WdInfoResp, URL as WdInfoURL
+from crypto_dom.kraken.user_trading.add_order import Response as AddOrdResp, URL as AddOrdURL
 
 
 # CONSTANTS
@@ -132,6 +137,7 @@ async def test_spread_response_model():
 # Private Endpoints 
 #------------------------------------------------------------
 
+# ------ User Data
 
 @pytest.mark.asyncio
 # @pytest.mark.default_cassette("private/test_accountbalance_response_model.yaml")
@@ -206,6 +212,47 @@ async def test_openorders_response_model():
 async def test_tradeshistory_response_model():
     payload = {"nonce": make_nonce()}
     await _httpx_request("POST", THURL, payload, TradesHistoryResp())
+
+
+# ------ User Funding
+
+
+@pytest.mark.asyncio
+async def test_depositmethods_reponse_model():
+    payload = {"asset": asset, "nonce": make_nonce()}
+    r = await _httpx_request("POST", DepMetURL, payload, DepMetResp())
+    print(r)
+
+
+@pytest.mark.asyncio
+async def test_depositaddresses_reponse_model():
+    payload = {"asset": asset, "nonce": make_nonce(), "method": "Ether (Hex)"}
+    r = await _httpx_request("POST", DepAddURL, payload, DepAddResp())
+    print(r)
+
+
+# ? where to get "key" param
+# @pytest.mark.asyncio
+# async def test_withdrawinfo_reponse_model():
+#     payload = {"asset": asset, "nonce": make_nonce(), "amount": 0.1, "key": "test"}
+#     r = await _httpx_request("POST", WdInfoURL, payload, WdInfoResp())
+#     print(r)
+
+
+# @pytest.mark.asyncio
+# async def test_addorder_response_model():
+#     payload = {
+#         "pair": pair,
+#         "type": "buy",
+#         "price": 10_000,
+#         "volume": 0.01,
+#         "ordertype": "limit",
+#         "nonce": make_nonce(),
+#         "_validate": True
+#     }
+#     r = await _httpx_request("POST", AddOrdURL, payload, AddOrdResp())
+#     print(r)
+
 
 
 #------------------------------------------------------------

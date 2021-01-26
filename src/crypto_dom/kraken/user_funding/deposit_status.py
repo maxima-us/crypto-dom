@@ -77,6 +77,7 @@ class _DepositStatusResp(pydantic.BaseModel):
     # placeholder
     data: typing.Tuple[_DepositStatus, ...]
 
+
 #  this class is just to be consistent with our API
 class Response:
     """Validated Response for endpoint POST https://api.kraken.com/0/private/DepositStatus

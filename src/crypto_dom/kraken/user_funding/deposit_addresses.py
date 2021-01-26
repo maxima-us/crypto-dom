@@ -25,6 +25,13 @@ METHOD = "POST"
 # ------------------------------
 
 
+# [
+#   {
+#       'address': '0x28c80ba9fb362b4117128f7e0dd3400f2f131514', 
+#       'expiretm': '0'
+#   }
+# ]
+
 
 # ------------------------------
 # Request Model
@@ -61,17 +68,23 @@ class Request(pydantic.BaseModel):
 # ------------------------------
 
 
-class _DepositAddressesResponse(pydantic.BaseModel):
+class _DepositAddress(pydantic.BaseModel):
     address: str
     expiretm: TIMESTAMP_S
-    new: bool
+    new: typing.Optional[bool]
+
+
+class _DepositAddressesResp(pydantic.BaseModel):
+
+    # placeholder
+    data: typing.Tuple[_DepositAddress, ...]
 
 
 #  this class is just to be consistent with our API
 class Response:
     """Validated Response for endpoint POST https://api.kraken.com/0/private/DepositAddresses
 
-    Type: pydantic Model
+    Type: list of pydantic Models
 
     Model Fields:
     -------------
@@ -79,11 +92,12 @@ class Response:
             Deposit Address
         expiretm : float
             Expiration timestamp in seconds (0 if not expiring)
-        new : boool
-            Wether or not address has ever been used
+        new : bool
+            Wether or not address has ever been used (optional)
     """
 
     def __call__(self, response: dict):
-        return _DepositAddressesResponse(**response)
+        _valid = _DepositAddressesResp(data=response)
+        return _valid.data
         
     

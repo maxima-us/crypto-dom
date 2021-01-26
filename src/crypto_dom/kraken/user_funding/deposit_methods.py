@@ -24,6 +24,15 @@ METHOD = "POST"
 # ------------------------------
 
 
+#[
+# {
+#   'fee': '0.0000000000', 
+#   'gen-address': True, 
+#   'limit': False, 
+#   'method': 'Ether (Hex)'
+#  }
+# ]
+
 
 # ------------------------------
 # Request Model
@@ -53,18 +62,26 @@ class Request(pydantic.BaseModel):
 # ------------------------------
 
 
-class _DepositMethodsResponse(pydantic.BaseModel):
+class _Method(pydantic.BaseModel):
     method: str     # TODO should be Literal
     limit: typing.Union[Decimal, bool]
     fee: Decimal
     address_setup_fee: typing.Optional[bool] = pydantic.Field(alias="address-setup-fee")
 
 
+class _DepositMethodsResponse(pydantic.BaseModel):
+
+    # placeholder
+    data: typing.Tuple[_Method, ...]
+
+
+
+
 #  this class is just to be consistent with our API
 class Response:
     """Validated Response for endpoint POST https://api.kraken.com/0/private/DepositMethods
 
-    Type: pydantic Model
+    Type: list of pydantic models
 
     Model Fields:
     -------------
@@ -78,6 +95,7 @@ class Response:
     """
 
     def __call__(self, response: dict):
-        return _DepositMethodsResponse(**response)
+        _valid = _DepositMethodsResponse(data=response)
+        return _valid.data
         
     

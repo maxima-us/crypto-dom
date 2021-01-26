@@ -89,7 +89,7 @@ class Request(pydantic.BaseModel):
 
     """
 
-    symbol: PAIR 
+    pair: PAIR 
     type: ORDERSIDE
     price: typing.Optional[Decimal]
     price2: typing.Optional[Decimal]
@@ -99,7 +99,7 @@ class Request(pydantic.BaseModel):
     starttm: typing.Optional[TIMESTAMP_S]
     expiretm: typing.Optional[TIMESTAMP_S]
     userref: typing.Optional[pydantic.PositiveInt]
-    validate: typing.Optional[bool]
+    _validate: typing.Optional[bool] = pydantic.Field(alias="validate")
 
     nonce: pydantic.PositiveInt
 
