@@ -39,6 +39,7 @@ from crypto_dom.binance.spot_account.all_orders import Response as AllOResp, URL
 from crypto_dom.binance.spot_account.open_orders import Response as OpenOResp, URL as OpenOURL
 from crypto_dom.binance.spot_account.query_all_oco import Response as AllOCOResp, URL as AllOCOURL
 from crypto_dom.binance.spot_account.query_open_oco import Response as OpenOCOResp, URL as OpenOCOURL
+from crypto_dom.binance.spot_account.test_new_order import Response as TestNewOResp, URL as TestNewOURL
 
 
 # CONSTANTS
@@ -80,23 +81,27 @@ async def _httpx_request(method: Literal["GET", "POST", "DELETE"], url: str, pay
             payload = sorted([(k, v) for k, v in payload.items()], reverse=False)
             payload.append(("signature", signature))    #! needs to always be last param
             if method in ["POST", "DELETE"]:
-                r = await client.request(method, url, data=payload, headers=headers)
+                r = await client.request(method, url, data=dict(payload), headers=headers)
             else:
                 r = await client.request(method, url, params=payload, headers=headers)
         else:
             r = await client.request(method, url, params=payload)
         
         rjson = r.json()
-        # print("response.json", rjson)
+        print("response.json", rjson)
 
         assert r.status_code == 200, f"Json Response {rjson} \nPayload {payload} \nHeaders {headers} \nRequest {r.request}"
 
+        # if empty response, return directly without validation
+        # (this might be what we expected, so assertion has to take place in the test function not here)
+        if not rjson:
+            return rjson
+
+        # else we validate
         if isinstance(rjson, list) or isinstance(rjson, tuple):
             response_model(rjson)
         else:
             response_model(**rjson)
-
-        return rjson
 
 
 #------------------------------------------------------------
@@ -312,6 +317,22 @@ async def test_allOCOorders_response_model():
 async def test_openOCOorders_response_model():
     payload = {}
     await _httpx_request("GET", OpenOCOURL, payload, OpenOCOResp(), private=True)
+
+
+@pytest.mark.asyncio
+# @pytest.mark.default_cassette("private/test_testneworder_response_model.yaml")
+# @pytest.mark.vcr()
+async def test_testneworder_response_model():
+    payload = {
+        "symbol": symbol,
+        "side": "BUY",
+        "timeInForce": "GTC",
+        "quantity": 0.01,
+        "price": 30000,
+        "type": "LIMIT"
+    }
+    r = await _httpx_request("POST", TestNewOURL, payload, TestNewOResp(), private=True)
+    assert r == {}
 
 
 #------------------------------------------------------------
