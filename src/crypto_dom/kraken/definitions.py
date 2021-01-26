@@ -26,6 +26,9 @@ except ImportError:
     ASSET = str
 
 
+ASSETCLASS = Literal["currency"]    #TODO verify this
+
+
 #------------------------------------------------------------
 # TImeframes
 #------------------------------------------------------------

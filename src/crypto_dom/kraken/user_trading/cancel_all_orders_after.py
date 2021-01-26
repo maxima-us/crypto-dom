@@ -3,11 +3,10 @@ import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import COUNT, TIMESTAMP_S
-from crypto_dom.kraken.definitions import ORDERID
 
 
 # ============================================================
-# ADD STANDARD ORDER 
+# CANCEL ALL ORDERS AFTER 
 # ============================================================
 
 
