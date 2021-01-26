@@ -7,7 +7,7 @@ import aiohttp
 from pydantic import ValidationError
 from returns.io import IOFailure, IOSuccess
 
-from crypto_dom.kraken.ohlc import _OhlcReq, _OhlcResp, URL, METHOD
+from crypto_dom.kraken.market_data.ohlc import OhlcReq, OhlcResp, URL, METHOD
 
 
 
@@ -100,7 +100,7 @@ class _TypedHttpxClient(httpx.AsyncClient):
             try:
                 # TODO this is specific to kraken (the result key)
                 result = rjson["result"]
-                valid_resp = t_out(**result)
+                valid_resp = t_out(result)  # TODO verify after model syntax update
                 # print("Valid Resp", type(valid_resp))
                 # TODO should this be wrapped in a Result ???
                 _new_content = IOSuccess(valid_resp)
@@ -180,7 +180,7 @@ class _TypedAioHttpClient(aiohttp.ClientSession):
                 # for methods: GET, DELETE, HEAD, OPTIONS
                 # validate query params
                 try:
-                    valid_req = t_in(**params)
+                    valid_req = t_in(**params)  # TODO verify after model syntax update
                     _new_params = valid_req.dict(exclude_none=True)
                 except ValidationError as e:
                     return IOFailure(e)
@@ -190,7 +190,7 @@ class _TypedAioHttpClient(aiohttp.ClientSession):
                 # for methods: POST, PUT, PATCH
                 # valid request body
                 try:
-                    valid_req = t_in(**data)
+                    valid_req = t_in(**data)    # TODO verify after model syntax update
                     _new_data = valid_req.dict(exclude_none=True)
                 except ValidationError as e:
                     return IOFailure(e)
@@ -237,7 +237,7 @@ class _TypedAioHttpClient(aiohttp.ClientSession):
             try:
                 # TODO this is specific to kraken (the result key)
                 result = rjson["result"]
-                valid_resp = t_out(**result)
+                valid_resp = t_out(result)  # TODO verify after model syntax update
                 # print("Valid Resp", type(valid_resp))
                 # TODO should this be wrapped in a Result ???
                 _new_content = IOSuccess(valid_resp)
@@ -257,9 +257,11 @@ class _TypedAioHttpClient(aiohttp.ClientSession):
 #================================================================================
 
 
+class HttypeClient:
 
-
-
+    number = 1
+    httpx = _TypedHttpxClient
+    aiohttp = _TypedAioHttpClient
 
 
 #================================================================================
@@ -278,7 +280,7 @@ if __name__ == "__main__":
 
     async def ohlc(client):
         async with client:
-            r = await client.safe_request(METHOD, URL, t_in=_OhlcReq, t_out=_OhlcResp("XXBTZUSD"), params=payload)
+            r = await client.safe_request(METHOD, URL, t_in=OhlcReq, t_out=OhlcResp("XXBTZUSD"), params=payload)
         
         # ! also works if we do not provide models (but will still return value wrapped in Result)
         # r = await client.request(METHOD, URL, params=payload)
