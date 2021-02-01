@@ -1,8 +1,0 @@
-aiohttp
-httpx
-pydantic
-pytest-asyncio
-pytest-recording
-python-dotenv
-stackprinter
-typing_extensions

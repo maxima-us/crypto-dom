@@ -1,10 +1,12 @@
 [[source]]
-name = "pypi"
-url = "https://pypi.org/simple"
-verify_ssl = true
+url = "https://test.pypi.org/simple/"
+verify_ssl = false
+name = "test.pypi.org"
 
 [dev-packages]
 crypto-dom = {editable = true, path = "."}
+hypothesis = "*"
+hypothesis-jsonschema = "*"
 pytest = "*"
 pytest-asyncio = "*"
 pytest-recording = "*"
@@ -13,9 +15,7 @@ python-dotenv = "*"
 [packages]
 aiohttp = "*"
 httpx = "*"
-hypothesis = "*"
-hypothesis-jsonschema = "*"
-mypy="*"
+mypy = "*"
 pydantic = "*"
 returns = "*"
 stackprinter = "*"

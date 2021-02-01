@@ -13,14 +13,10 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
-# Get exact dependencies
-with open('requirements.txt') as f:
-    required = f.read().splitlines()
-
 
 setup(
     name='crypto-dom',  # Required
-    version='0.0.0',  # Required
+    version='0.0.4',  # Required
     description='',  # Optional
     long_description=long_description,  # Optional
     long_description_content_type='text/markdown',  # Optional
@@ -36,8 +32,16 @@ setup(
     ],
     package_dir={'': 'src'},  # Optional
     packages=find_packages(where='src'),  # Required
-    python_requires='>=3.7, <4',
-    # install_requires=required,    # not need since we use pipenv
+    python_requires='>=3.8, <4',
+    install_requires=[
+        "aiohttp",
+        "httpx",
+        "mypy",
+        "pydantic",
+        "returns",
+        "stackprinter",
+        "typing-extensions"
+    ],
     entry_points={  # Optional
     },
 )
