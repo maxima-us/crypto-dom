@@ -239,7 +239,7 @@ class Request(pydantic.BaseModel):
                 unexpected_fields.append("quoteOrderQty")
 
 
-        if any(missing_fields, unexpected_fields):
+        if any([missing_fields, unexpected_fields]):
             raise ValueError("Missing fields :", *missing_fields, "\n", "Unexpected fields :", *unexpected_fields)
 
 

@@ -134,7 +134,7 @@ class Request(pydantic.BaseModel):
             if not price2:
                 missing_fields.append("price2")
 
-        if any(missing_fields, unexpected_fields):
+        if any([missing_fields, unexpected_fields]):
             raise ValueError("Missing fields :", *missing_fields, "\n", "Unexpected fields :", *unexpected_fields)
 
         return v
