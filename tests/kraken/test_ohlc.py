@@ -1,6 +1,5 @@
 import random
 import asyncio
-from _pytest import python
 
 import pytest
 import httpx
@@ -8,7 +7,7 @@ import httpx
 from hypothesis import given, settings, HealthCheck
 from hypothesis_jsonschema import from_schema
 
-from crypto_dom.kraken.ohlc import OhlcReq, OhlcResp, METHOD, URL
+from crypto_dom.kraken.market_data.ohlc import OhlcReq, OhlcResp, METHOD, URL
 from crypto_dom.kraken.definitions import TIMEFRAME
 
 

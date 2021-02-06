@@ -1,6 +1,7 @@
 import asyncio
+import time
 from typing import Optional, Mapping, Any, Iterable, Awaitable, Callable, Union
-from aiohttp.payload import register_payload
+import functools
 
 import httpx
 import aiohttp
@@ -8,7 +9,8 @@ from pydantic import ValidationError
 from returns.io import IOFailure, IOSuccess
 
 from crypto_dom.kraken.market_data.ohlc import OhlcReq, OhlcResp, URL, METHOD
-
+from crypto_dom.kraken.user_trading.add_order import METHOD as NO_METH, URL as NO_URL, Request as NO_Req, Response as NO_Resp
+from crypto_dom.kraken.__sign import get_keys, auth_headers
 
 
 
@@ -34,7 +36,8 @@ class _TypedHttpxClient(httpx.AsyncClient):
         files=None,
         json=None,
         params = None,
-        headers= None,
+        headers = None,
+        auth_headers: Callable = None,
         cookies= None,
         auth= None,
         allow_redirects: bool = True,
@@ -49,8 +52,10 @@ class _TypedHttpxClient(httpx.AsyncClient):
         # See also: 
         # https://specs.openstack.org/openstack/api-wg/guidelines/http/methods.html#http-methods
 
+       
         _new_params = params
         _new_data = data
+        _new_headers = None
 
         if t_in:
 
@@ -70,6 +75,20 @@ class _TypedHttpxClient(httpx.AsyncClient):
                 try:
                     valid_req = t_in(**data)
                     _new_data = valid_req.dict(exclude_none=True)
+                    
+                    # print("\nNew post data", _new_data)     # debugging
+
+                    # BELOW IS FOR DEBUGGING
+                    # TODO: auth headers need to use `_new_data`, not `data`
+                    # ! BUT: hashing will change from one exchange to another, and input param to hashing/generating the signature will too
+                    # ? pass partial function, only param that is always there is `data` (payload dict)
+                    # keyset = get_keys()
+                    # key, secret = keyset.pop()
+                    # _new_headers = auth_headers(url, _new_data, key=key, secret=secret)
+                    # print("\nNew hears", _new_headers)
+
+                    _new_headers = auth_headers(_new_data)
+
                 except ValidationError as e:
                     return IOFailure(e)
                 except Exception as e:
@@ -84,7 +103,7 @@ class _TypedHttpxClient(httpx.AsyncClient):
                 files=files,
                 json=json,
                 params = _new_params,
-                headers= headers,
+                headers= _new_headers if _new_headers else headers,
                 cookies= cookies,
                 auth= auth,
                 allow_redirects = allow_redirects,
@@ -99,14 +118,18 @@ class _TypedHttpxClient(httpx.AsyncClient):
         if t_out:
             try:
                 # TODO this is specific to kraken (the result key)
-                result = rjson["result"]
-                valid_resp = t_out(result)  # TODO verify after model syntax update
-                # print("Valid Resp", type(valid_resp))
-                # TODO should this be wrapped in a Result ???
-                _new_content = IOSuccess(valid_resp)
-                # print("Updated content", type(_new_content))
-                # print("Updated content inner value", type(_new_content._inner_value))
-                # print("Updated content inner value **2", type(_new_content._inner_value._inner_value))
+                # print(rjson)
+                if not rjson.get("error"):
+                    result = rjson["result"]
+                    valid_resp = t_out(result)  # TODO verify after model syntax update
+                    # print("Valid Resp", type(valid_resp))
+                    # TODO should this be wrapped in a Result ???
+                    _new_content = IOSuccess(valid_resp)
+                    # print("Updated content", type(_new_content))
+                    # print("Updated content inner value", type(_new_content._inner_value))
+                    # print("Updated content inner value **2", type(_new_content._inner_value._inner_value))
+                else:
+                    return IOSuccess(rjson["error"])
             except ValidationError as e:
                 return IOFailure(e)
             except Exception as e:
@@ -272,6 +295,7 @@ class HttypeClient:
 if __name__ == "__main__":
 
 
+    # ----- OHLC 
     
     payload = {
         "pair": "XXBTZUSD",
@@ -280,12 +304,43 @@ if __name__ == "__main__":
 
     async def ohlc(client):
         async with client:
-            r = await client.safe_request(METHOD, URL, t_in=OhlcReq, t_out=OhlcResp("XXBTZUSD"), params=payload)
+            r = await client.safe_request(METHOD, URL, t_in=OhlcReq, t_out=OhlcResp(), params=payload)
         
         # ! also works if we do not provide models (but will still return value wrapped in Result)
         # r = await client.request(METHOD, URL, params=payload)
         
         return r
+
+
+    # ----- NEW ORDER
+    
+
+    def make_nonce():
+        return int(time.time()*10**3)
+
+    order_data = {
+        "pair": "XZECZUSD",
+        "type": "sell",
+        "ordertype": "limit",
+        "price": 100,
+        "volume": 1,
+        "nonce": make_nonce()
+    }
+
+    keyset = get_keys()
+    key, secret = keyset.pop()
+    headers = auth_headers(NO_URL, order_data, key=key, secret=secret)
+    print("\nReceived Headers :", headers)
+
+    kraken_auth_headers = functools.partial(auth_headers, NO_URL, key=key, secret=secret)
+
+
+    async def new_order(client):
+        global headers
+        print("\nGlobal var headers", headers)
+        async with client:
+            r = await client.safe_request(NO_METH, NO_URL, t_in=NO_Req, t_out=NO_Resp(), data=order_data, auth_headers=kraken_auth_headers)
+            return r
 
 
     # --------------------
@@ -295,11 +350,18 @@ if __name__ == "__main__":
     # ! httpx Client can be instantiated anywhere
     httpx_client = _TypedHttpxClient()
 
-    result= asyncio.run(ohlc(httpx_client))
-    print("httpx response", result)
-    print("httpx response type", type(result))
-    
-    
+    # result= asyncio.run(ohlc(httpx_client))
+    # print("\nHttpx response", result)
+    # print("\nHttpx response type", type(result))
+
+
+    order = asyncio.run(new_order(httpx_client))
+    print("\nNew order response layer 0", order) 
+    print("\nNew order response layer 1", order.unwrap()) 
+    print("\nNew order response layer 2", order.unwrap()._inner_value.json()) 
+
+
+
     # --------------------
     # AIOHTTP
     # --------------------
@@ -311,5 +373,5 @@ if __name__ == "__main__":
         return await ohlc(client)
 
     result = asyncio.run(aiohttp_req()) 
-    print("aiohttp response", result)
-    print("aiohttp response type", type(result))
+    print("\naiohttp response", result)
+    print("\naiohttp response type", type(result))

@@ -16,7 +16,7 @@ def get_keys():
     
     environ = {k: v for k, v in dict(os.environ).items()}
     creds = {k: v for k, v in environ.items() if any(i in k for i in ["API_KEY", "API_SECRET"])}
-    print("Env Creds", creds)
+    # print("Env Creds", creds)
 
     if not creds:
         raise EmptyEnv("Missing credentiels in .env file")
