@@ -181,5 +181,3 @@ class Response:
 
     def __call__(self, response: dict):
         return _AddOrderResponse(**response)
-        
-    

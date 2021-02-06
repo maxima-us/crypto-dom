@@ -157,7 +157,7 @@ class OhlcResp:
         else:
             pair = pairs[0]
         model = _generate_model(pair)
-        print("\nFields", model.__fields__, "\n")
+        # print("\nFields", model.__fields__, "\n")
         return model(**response)
 
 
