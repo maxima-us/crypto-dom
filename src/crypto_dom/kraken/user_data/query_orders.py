@@ -1,10 +1,9 @@
 import typing
-from datetime import date
 from decimal import Decimal
 
-from typing_extensions import Literal
 import pydantic
 import stackprinter
+
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import TIMESTAMP_S
@@ -13,7 +12,7 @@ from crypto_dom.kraken.definitions import (
     ORDERSTATUS,
     ORDERTYPE,
     ORDERSIDE,
-    FLAGS
+    FLAGS,
 )
 
 
@@ -75,11 +74,11 @@ METHOD = "POST"
 # ------------------------------
 
 
-class QueryOrdersReq(pydantic.BaseModel):
+class Request(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/private/QueryOrders
 
     Model Fields:
-    -------
+    -------------
         trades: bool
             Whether or not to include trades in output (optional)
                 default = false
@@ -105,22 +104,19 @@ class QueryOrdersReq(pydantic.BaseModel):
 def _generate_model(keys: typing.List[ORDERID]) -> typing.Type[pydantic.BaseModel]:
     "dynamically create the model. Returns a new pydantic model class"
 
-
     class _Descr(pydantic.BaseModel):
-        pair: str   # not necessarily of the same format as assetpairs keys
+        pair: str  # not necessarily of the same format as assetpairs keys
         type: ORDERSIDE
-        ordertype: ORDERTYPE 
+        ordertype: ORDERTYPE
         price: Decimal
-        leverage: str   # will be of format "5:1"
+        leverage: str  # will be of format "5:1"
         order: str
         close: typing.Union[str, Decimal]
 
-
     class _ClosedOrder(pydantic.BaseModel):
 
-
         #  shared with open order info
-        refid: typing.Optional[str] #references order ID (string)
+        refid: typing.Optional[str]  # references order ID (string)
         userref: typing.Optional[int]
         status: ORDERSTATUS
         opentm: TIMESTAMP_S
@@ -142,29 +138,22 @@ def _generate_model(keys: typing.List[ORDERID]) -> typing.Type[pydantic.BaseMode
         reason: typing.Optional[str]
 
     # we do not know the keys in advance, only the type of their value
-    kwargs = {
-        **{k: (_ClosedOrder, ...) for k in keys},
-        "__base__": pydantic.BaseModel
-    }
+    kwargs = {**{k: (_ClosedOrder, ...) for k in keys}, "__base__": pydantic.BaseModel}
 
-    model = pydantic.create_model(
-        '_QueryOrdersResp',
-        **kwargs    #type: ignore
-    )
+    model = pydantic.create_model("_QueryOrdersResponse", **kwargs)  # type: ignore
 
     return model
 
 
-
 # TODO fill fields in docstring
-class QueryOrdersResp(pydantic.BaseModel):
+class Response(pydantic.BaseModel):
     """Response Model for endpoint https://api.kraken.com/0/public/QueryOrders
 
     Model Fields:
     -------
-   """
+    """
 
     def __call__(self, response: dict):
         model = _generate_model(list(response.keys()))
-        print("\nFields", model.__fields__, "\n")
+        # print("\nFields", model.__fields__, "\n")
         return model(**response)

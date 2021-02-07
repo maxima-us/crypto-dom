@@ -1,10 +1,10 @@
 import typing
-from datetime import date
 from decimal import Decimal
 
 from typing_extensions import Literal
 import pydantic
 import stackprinter
+
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import COUNT
@@ -16,7 +16,7 @@ from crypto_dom.kraken.definitions import PAIR
 # ============================================================
 
 
-# doc: https://www.kraken.com/features/api#get-tradable-pairs 
+# doc: https://www.kraken.com/features/api#get-tradable-pairs
 
 URL = "https://api.kraken.com/0/public/AssetPairs"
 METHOD = "GET"
@@ -80,7 +80,7 @@ METHOD = "GET"
 # ------------------------------
 
 
-class AssetPairsReq(pydantic.BaseModel):
+class Request(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/public/AssetPairs
 
     Model Fields:
@@ -106,14 +106,13 @@ class AssetPairsReq(pydantic.BaseModel):
 
 def _generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
     """dynamically create the model. Returns a new pydantic model class
-    
+
     Args:
     ----
         key: List[str]
             List of assetpair names that map to their info
 
     """
-
 
     class _AssetPair(pydantic.BaseModel):
 
@@ -138,26 +137,19 @@ def _generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
         margin_stop: pydantic.PositiveInt
         ordermin: typing.Optional[Decimal]
 
-
     # we do not know the keys in advance, only the type of their value
-    kwargs = {
-        **{k: (_AssetPair, ...) for k in keys},
-        "__base__": pydantic.BaseModel
-    }
+    kwargs = {**{k: (_AssetPair, ...) for k in keys}, "__base__": pydantic.BaseModel}
 
-    model = pydantic.create_model(
-        '_AssetPairsResp',
-        **kwargs    #type: ignore
-    )
+    model = pydantic.create_model("_AssetPairsResponse", **kwargs)  # type: ignore
 
     return model
 
 
-class AssetPairsResp:
-    """Response Model for endpoint https://api.kraken.com/0/public/Trades
+class Response:
+    """Response Model for endpoint https://api.kraken.com/0/public/AssetPairs
 
     Model Fields:
-    -------
+    -------------
         `pair_name` : dict
             Array of pair name and corresponding info
                 altname = alternate pair name
@@ -179,9 +171,13 @@ class AssetPairsResp:
                 margin_stop = stop-out/liquidation margin level
                 ordermin = minimum order volume for pair
 
+    Usage:
+    ------
+        model = Response()
+        validated_response = model(JSON_response_content)
     """
 
     def __call__(self, response: dict):
         model = _generate_model(list(response.keys()))
-        print("\nFields", model.__fields__, "\n")
+        # print("\nFields", model.__fields__, "\n")
         return model(**response)

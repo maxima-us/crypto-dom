@@ -5,6 +5,7 @@ from decimal import Decimal
 from typing_extensions import Literal
 import pydantic
 import stackprinter
+
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import TIMESTAMP_S
@@ -16,7 +17,7 @@ from crypto_dom.kraken.definitions import PAIR
 # ============================================================
 
 
-# doc: https://www.kraken.com/features/api#get-recent-spread-data 
+# doc: https://www.kraken.com/features/api#get-recent-spread-data
 
 URL = "https://api.kraken.com/0/public/Spread"
 METHOD = "GET"
@@ -42,14 +43,15 @@ METHOD = "GET"
 # Request Model
 # ------------------------------
 
-class SpreadReq(pydantic.BaseModel):
+
+class Request(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/public/Spread
 
     Model Fields:
     -------
-        pair : str 
+        pair : str
             Asset pair to get spread data for
-        since : int 
+        since : int
             Timestamp in seconds
             Return trade data since given id (optional)
     """
@@ -57,7 +59,7 @@ class SpreadReq(pydantic.BaseModel):
     pair: PAIR
     since: typing.Optional[TIMESTAMP_S]
 
-    @pydantic.validator('since', allow_reuse=True)
+    @pydantic.validator("since", allow_reuse=True)
     def check_year_from_timestamp(cls, v):
         if v == 0 or v is None:
             return v
@@ -82,7 +84,7 @@ def _generate_model(pair: str) -> typing.Type[pydantic.BaseModel]:
         # timestamp received from kraken in s
         last: TIMESTAMP_S
 
-        @pydantic.validator('last', allow_reuse=True)
+        @pydantic.validator("last", allow_reuse=True)
         def check_year_from_timestamp(cls, v, values):
             # convert from ns to s
 
@@ -94,68 +96,62 @@ def _generate_model(pair: str) -> typing.Type[pydantic.BaseModel]:
 
     _Spread = typing.Tuple[Decimal, Decimal, Decimal]
 
-    kwargs = {
-        pair: (typing.Tuple[_Spread, ...], ...),
-        "__base__": _BaseSpreadResp
-    }
+    kwargs = {pair: (typing.Tuple[_Spread, ...], ...), "__base__": _BaseSpreadResp}
 
-    model = pydantic.create_model(
-        '_SpreadResp',
-        **kwargs    #type: ignore
-    )
+    model = pydantic.create_model("_SpreadResponse", **kwargs)  # type: ignore
 
     return model
 
 
-class SpreadResp:
+class Response:
     """Response Model for endpoint https://api.kraken.com/0/public/Spread
-   
-    Args:
-    -----
-        pair : str 
 
     Returns:
     --------
         Spread Response Model
-    
+
     Model Fields:
-    -------
+    -------------
         `pair_name` : str
             Array of array entries (time, bid, ask)
         last: int
             Timestamp in seconds
-            Id to be used as since when polling for new spread dat
+            Id to be used as since when polling for new spread data
+
+    Usage:
+    ------
+        model = Response()
+        validated_response = model(JSON_response_content)
     """
 
-    # def __new__(_cls, pair: str):
-    #     model = _generate_model(pair)
-    #     return model
-
     def __call__(self, response: dict):
-        
-        pairs = list({k:v for k,v in response.items() if k not in ["last"]}.keys())
+
+        pairs = list({k: v for k, v in response.items() if k not in ["last"]}.keys())
         if len(pairs) > 1:
             raise ValueError("More than 1 pair in response keys")
         else:
             pair = pairs[0]
         model = _generate_model(pair)
-        print("\nFields", model.__fields__, "\n")
+        # print("\nFields", model.__fields__, "\n")
         return model(**response)
-        
-        
 
+
+# ------------------------------
+# Test with Sample Response
+# ------------------------------
 
 
 if __name__ == "__main__":
 
     data = {
-        "XXBTZUSD":[
-            [1610997022,"35803.90000","35804.10000"],
-            [1610997022,"35803.20000","35804.10000"],
-            [1610997022,"35803.30000","35804.10000"]],
-        "last":1610997148
+        "XXBTZUSD": [
+            [1610997022, "35803.90000", "35804.10000"],
+            [1610997022, "35803.20000", "35804.10000"],
+            [1610997022, "35803.30000", "35804.10000"],
+        ],
+        "last": 1610997148,
     }
 
-    expected = SpreadResp()
+    expected = Response()
     valid = expected(data)
     print("Validated model", valid, "\n")

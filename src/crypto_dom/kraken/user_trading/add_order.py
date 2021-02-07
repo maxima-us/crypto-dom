@@ -161,7 +161,6 @@ class Response:
 
     Type: pydantic Model
 
-
     Model Fields:
     -------------
         descr : dict

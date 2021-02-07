@@ -4,6 +4,7 @@ from decimal import Decimal
 from typing_extensions import Literal
 import pydantic
 import stackprinter
+
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import TIMESTAMP_S, COUNT
@@ -15,13 +16,12 @@ from crypto_dom.kraken.definitions import (
 )
 
 
-
 # ============================================================
 # QUERY TRADES
 # ============================================================
 
 
-# doc: https://www.kraken.com/features/api#query-trades-info 
+# doc: https://www.kraken.com/features/api#query-trades-info
 
 URL = "https://api.kraken.com/0/public/QueryTrades"
 METHOD = "POST"
@@ -62,7 +62,7 @@ METHOD = "POST"
 # ------------------------------
 
 
-class QueryTradesReq(pydantic.BaseModel):
+class Request(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/public/QueryTrades
 
     Model Fields:
@@ -75,6 +75,7 @@ class QueryTradesReq(pydantic.BaseModel):
         nonce: int
             Always increasing unsigned 64 bit integer
     """
+
     txid: typing.List[TRADEID]
     trades: typing.Optional[bool]
     nonce: pydantic.PositiveInt
@@ -90,7 +91,7 @@ class _Trade(pydantic.BaseModel):
     postxid: TRADEID
     pair: str
     time: TIMESTAMP_S
-    type: ORDERSIDE 
+    type: ORDERSIDE
     ordertype: ORDERTYPE
     price: Decimal
     cost: Decimal
@@ -110,23 +111,19 @@ class _Trade(pydantic.BaseModel):
     trades: typing.Optional[typing.Tuple[typing.Any, ...]]
 
 
-class _QueryTrades(pydantic.BaseModel):
+class _QueryTradesResponse(pydantic.BaseModel):
     trades: typing.Mapping[TRADEID, _Trade]
     count: COUNT
 
 
 #  this class is just to be consistent with our API
 # TODO fill fields in docstring
-class QueryTradesResp(pydantic.BaseModel):
+class Response(pydantic.BaseModel):
     """Response Model for endpoint https://api.kraken.com/0/public/QueryTrades
 
     Model Fields:
     -------
-   """
-
-    # def __new__(cls):
-    #     return _QueryTrades
+    """
 
     def __call__(self, response: dict):
-        return _QueryTrades(**response)
-
+        return _QueryTradesResponse(**response)

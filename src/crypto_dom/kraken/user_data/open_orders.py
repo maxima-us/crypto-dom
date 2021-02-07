@@ -3,6 +3,7 @@ from decimal import Decimal
 
 import pydantic
 import stackprinter
+
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import TIMESTAMP_S
@@ -11,7 +12,7 @@ from crypto_dom.kraken.definitions import (
     ORDERSIDE,
     ORDERTYPE,
     ORDERSTATUS,
-    ORDERID
+    ORDERID,
 )
 
 
@@ -31,11 +32,11 @@ METHOD = "POST"
 # ------------------------------
 
 
-class _OpenOrdersReq(pydantic.BaseModel):
+class Request(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/private/OpenOrders
 
     Model Fields:
-    -------
+    -------------
         trades : bool
             Whether or not to include trades in output (optional)
                 default = false
@@ -43,7 +44,7 @@ class _OpenOrdersReq(pydantic.BaseModel):
             Restrict results to given user reference id (optional)
         nonce: int
             Always increasing unsigned 64 bit integer
-    
+
     """
 
     trades: typing.Optional[bool]
@@ -57,19 +58,19 @@ class _OpenOrdersReq(pydantic.BaseModel):
 
 
 class _Descr(pydantic.BaseModel):
-    
-    pair: str # different format than assetpairs keys (see example: ETHUSDT vs XETHZUSD)
+
+    pair: str  # different format than assetpairs keys (see example: ETHUSDT vs XETHZUSD)
     type: ORDERSIDE
-    ordertype: ORDERTYPE 
+    ordertype: ORDERTYPE
     price: Decimal
-    leverage: str   # will be of format "5:1"
+    leverage: str  # will be of format "5:1"
     order: str
     close: typing.Union[str, Decimal]
 
 
 class _OpenOrder(pydantic.BaseModel):
 
-    refid: typing.Optional[str] #references order ID (string)
+    refid: typing.Optional[str]  # references order ID (string)
     userref: typing.Optional[int]
     status: ORDERSTATUS
     opentm: TIMESTAMP_S
@@ -87,21 +88,22 @@ class _OpenOrder(pydantic.BaseModel):
     oflags: FLAGS
 
 
-class _OpenOrders(pydantic.BaseModel):
+class _OpenOrdersResponse(pydantic.BaseModel):
 
     open: typing.Mapping[ORDERID, _OpenOrder]
 
 
 #  this class is just to be consistent with our API
-class OpenOrdersResp(pydantic.BaseModel):
+class Response(pydantic.BaseModel):
     """Response Model for endpoint https://api.kraken.com/0/private/OpenOrders
 
     Model Fields:
-    -------
+    -------------
         open: dict
             mapping of txid to their order info
                 txid : str
                 order info : dict
+
     Note:
     -----
         Order Info dict type
@@ -155,10 +157,7 @@ class OpenOrdersResp(pydantic.BaseModel):
                     nompp = no market price protection
             trades : List[str]
                 Array of trade ids related to order (if trades info requested and data available)
-   """
-
-    # def __new__(cls):
-    #     return _OpenOrders
+    """
 
     def __call__(self, response: dict):
-        return _OpenOrders(**response)
+        return _OpenOrdersResponse(**response)

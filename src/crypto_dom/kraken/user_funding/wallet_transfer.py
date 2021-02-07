@@ -60,7 +60,7 @@ class Request(pydantic.BaseModel):
 # ------------------------------
 
 
-class _WalletTransferResp(pydantic.BaseModel):
+class _WalletTransferResponse(pydantic.BaseModel):
     refid: str 
 
 
@@ -78,4 +78,4 @@ class Response:
     """
 
     def __call__(self, response: dict):
-        return _WalletTransferResp(response)
+        return _WalletTransferResponse(response)

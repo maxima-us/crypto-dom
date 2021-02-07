@@ -73,7 +73,7 @@ class _WithdrawStatus(pydantic.BaseModel):
     status_prop: typing.Optional[Literal["cancel-pending", "canceled", "cancel-denied", "return", "onhold"]] = pydantic.Field(alias="status-prop")
 
 
-class _WithdrawStatusResp(pydantic.BaseModel):
+class _WithdrawStatusResponse(pydantic.BaseModel):
     
     #placeholder
     data: typing.Tuple[_WithdrawStatus, ...]
@@ -117,6 +117,6 @@ class Response:
     """
 
     def __call__(self, response: dict):
-        _valid = _WithdrawStatusResp(data=response)
+        _valid = _WithdrawStatusResponse(data=response)
         return _valid.data
     

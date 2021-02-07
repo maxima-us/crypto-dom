@@ -74,7 +74,7 @@ class _DepositAddress(pydantic.BaseModel):
     new: typing.Optional[bool]
 
 
-class _DepositAddressesResp(pydantic.BaseModel):
+class _DepositAddressesResponse(pydantic.BaseModel):
 
     # placeholder
     data: typing.Tuple[_DepositAddress, ...]
@@ -97,7 +97,7 @@ class Response:
     """
 
     def __call__(self, response: dict):
-        _valid = _DepositAddressesResp(data=response)
+        _valid = _DepositAddressesResponse(data=response)
         return _valid.data
         
     

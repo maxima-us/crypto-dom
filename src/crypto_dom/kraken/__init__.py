@@ -1,6 +1,8 @@
 import typing
 
 import pydantic
+import stackprinter
+stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.result import Err, Ok
 
@@ -19,11 +21,15 @@ class KrakenFullResponse:
     def __call__(self, full_response: dict):
 
         if not "result" in full_response.keys():
-            try:
-                _err = ErrorResponse(**full_response["error"])
-                return Err(_err)
-            except pydantic.ValidationError as e:
-                return Err(e)
+            if full_response["error"]:
+                try:
+                    _err = ErrorResponse(**full_response)
+                    return Err(_err)
+                except pydantic.ValidationError as e:
+                    return Err(e)
+            else:
+                return Err(f"Empty Response : {full_response}")
+
 
         else:
             try:

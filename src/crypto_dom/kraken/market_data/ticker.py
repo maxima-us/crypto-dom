@@ -1,10 +1,9 @@
 import typing
-from datetime import date
 from decimal import Decimal
 
-from typing_extensions import Literal
 import pydantic
 import stackprinter
+
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.kraken.definitions import PAIR
@@ -25,18 +24,20 @@ METHOD = "GET"
 # Request Model
 # ------------------------------
 
-class TickerReq(pydantic.BaseModel):
+
+class Request(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/public/Ticker
 
     Model Fields:
     -------
         pair : List[str]
-            comma delimited list of asset pairs to get info on (optional)
+            comma delimited list of asset pairs to get info on
             default = all
     """
 
-    pair: typing.Optional[typing.List[PAIR]]
-
+    pair: pydantic.conlist(
+        PAIR, min_items=1
+    )  # TODO solve: EQuery:Invalid asset pair:XETHXXBT.d'
 
 
 # ------------------------------
@@ -46,14 +47,13 @@ class TickerReq(pydantic.BaseModel):
 
 def _generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
     """dynamically create the model. Returns a new pydantic model class.
-    
+
     Args:
     ----
         key: List[str]
             List of assetpair names that map to their ticker info
 
     """
-
 
     class _Ticker(pydantic.BaseModel):
 
@@ -67,27 +67,19 @@ def _generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
         h: typing.Tuple[Decimal, Decimal]
         o: Decimal
 
-
     # we do not know the keys in advance, only the type of their value
-    kwargs = {
-        **{k: (_Ticker, ...) for k in keys},
-        "__base__": pydantic.BaseModel
-    }
+    kwargs = {**{k: (_Ticker, ...) for k in keys}, "__base__": pydantic.BaseModel}
 
-    model = pydantic.create_model(
-        '_TickerResp',
-        **kwargs    #type: ignore
-    )
+    model = pydantic.create_model("_TickerResponse", **kwargs)  # type: ignore
 
     return model
 
 
-
-class TickerResp:
+class Response:
     """Response Model for endpoint https://api.kraken.com/0/public/Ticker
 
     Model Fields:
-    -------
+    -------------
         `pair_name` : dict
             Array of pair name and corresponding info
                 a = ask array(<price>, <whole lot volume>, <lot volume>),
@@ -98,11 +90,15 @@ class TickerResp:
                 t = number of trades array(<today>, <last 24 hours>),
                 l = low array(<today>, <last 24 hours>),
                 h = high array(<today>, <last 24 hours>),
-                o = today's opening price 
+                o = today's opening price
 
+    Usage:
+    ------
+        model = Response()
+        validated_response = model(JSON_response_content)
     """
 
     def __call__(self, response: dict):
         model = _generate_model(list(response.keys()))
-        print("\nFields", model.__fields__, "\n")
+        # print("\nFields", model.__fields__, "\n")
         return model(**response)

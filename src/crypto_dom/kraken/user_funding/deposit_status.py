@@ -72,7 +72,7 @@ class _DepositStatus(pydantic.BaseModel):
     status_prop: typing.Optional[Literal["return", "onhold"]] = pydantic.Field(alias="status-prop")
 
 
-class _DepositStatusResp(pydantic.BaseModel):
+class _DepositStatusResponse(pydantic.BaseModel):
 
     # placeholder
     data: typing.Tuple[_DepositStatus, ...]
@@ -113,7 +113,7 @@ class Response:
     """
 
     def __call__(self, response: dict):
-        _valid = _DepositStatusResp(data=response)
+        _valid = _DepositStatusResponse(data=response)
         return _valid.data
         
     

@@ -1,10 +1,10 @@
 import typing
-from datetime import date
 from decimal import Decimal
 
 from typing_extensions import Literal
 import pydantic
 import stackprinter
+
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import (
@@ -17,7 +17,6 @@ from crypto_dom.kraken.definitions import (
     ORDERTYPE,
     ORDERSIDE,
 )
-
 
 
 # ============================================================
@@ -66,11 +65,11 @@ METHOD = "POST"
 # ------------------------------
 
 
-class TradesHistoryReq(pydantic.BaseModel):
+class Request(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/private/TradesHistory
 
     Model Fields:
-    -------
+    -------------
         type : Literal[all, any position, closed position, closing position, no position]
             type of trade (optional)
                 default = all
@@ -81,13 +80,17 @@ class TradesHistoryReq(pydantic.BaseModel):
             Starting unix timestamp (in seconds) or order tx id of results (optional)
         end : int
             Ending unix timestamp (in seconds) or order tx id of results (optional)
-        ofs : int 
+        ofs : int
             Result offset
         nonce: int
             Always increasing unsigned 64 bit integer
     """
 
-    type: typing.Optional[Literal["all", "any position", "closed position", "closing position", "no position"]]
+    type: typing.Optional[
+        Literal[
+            "all", "any position", "closed position", "closing position", "no position"
+        ]
+    ]
     trades: typing.Optional[bool]
     start: typing.Optional[TIMESTAMP_S]
     end: typing.Optional[TIMESTAMP_S]
@@ -105,7 +108,7 @@ class _Trade(pydantic.BaseModel):
     postxid: TRADEID
     pair: str
     time: TIMESTAMP_S
-    type: ORDERSIDE 
+    type: ORDERSIDE
     ordertype: ORDERTYPE
     price: Decimal
     cost: Decimal
@@ -125,17 +128,17 @@ class _Trade(pydantic.BaseModel):
     trades: typing.Optional[typing.Tuple[typing.Any, ...]]
 
 
-class _TradesHistory(pydantic.BaseModel):
+class _TradesHistoryResponse(pydantic.BaseModel):
     trades: typing.Mapping[TRADEID, _Trade]
     count: COUNT
 
 
 #  this class is just to be consistent with our API
-class TradesHistoryResp(pydantic.BaseModel):
+class Response(pydantic.BaseModel):
     """Response Model for endpoint https://api.kraken.com/0/private/TradesHistory
 
     Model Fields:
-    -------
+    -------------
         trades : dict
             Array of trade info with txid as the key
         count : int
@@ -185,10 +188,7 @@ class TradesHistoryResp(pydantic.BaseModel):
                 Net profit/loss of closed portion of position (quote currency, quote currency scale)
             trades : List[str]
                 List of closing trades for position (if available)
-   """
-
-    # def __new__(cls):
-    #     return _TradesHistory
+    """
 
     def __call__(self, response: dict):
-        return _TradesHistory(**response)
+        return _TradesHistoryResponse(**response)

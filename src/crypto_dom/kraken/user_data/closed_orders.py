@@ -1,9 +1,9 @@
-
 import typing
 from decimal import Decimal
 
 import pydantic
 import stackprinter
+
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import (
@@ -77,11 +77,12 @@ METHOD = "POST"
 # Request Model
 # ------------------------------
 
-class ClosedOrdersReq(pydantic.BaseModel):
+
+class Request(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/private/ClosedOrders
 
     Model Fields:
-    -------
+    -------------
         trades : bool
             Whether or not to include trades in output (optional)
                 default = false
@@ -91,13 +92,13 @@ class ClosedOrdersReq(pydantic.BaseModel):
             Starting unix timestamp (in seconds) or order tx id of results (optional)
         end : int
             Ending unix timestamp (in seconds) or order tx id of results (optional)
-        ofs : int 
+        ofs : int
             Result offset
         closetime: Literal[open, close, both]
             Which time to use (default=both)
         nonce: int
             Always increasing unsigned 64 bit integer
-    
+
     """
 
     trades: typing.Optional[bool]
@@ -112,13 +113,14 @@ class ClosedOrdersReq(pydantic.BaseModel):
 # Response Model
 # ------------------------------
 
+
 class _Descr(pydantic.BaseModel):
-    
-    pair: str # different format than assetpairs keys (see example: ETHUSDT vs XETHZUSD)
+
+    pair: str  # different format than assetpairs keys (see example: ETHUSDT vs XETHZUSD)
     type: ORDERSIDE
-    ordertype: ORDERTYPE 
+    ordertype: ORDERTYPE
     price: Decimal
-    leverage: str   # will be of format "5:1"
+    leverage: str  # will be of format "5:1"
     order: str
     close: typing.Union[str, Decimal]
 
@@ -126,7 +128,7 @@ class _Descr(pydantic.BaseModel):
 class _ClosedOrder(pydantic.BaseModel):
 
     #  shared with open order info
-    refid: typing.Optional[str] #references order ID (string)
+    refid: typing.Optional[str]  # references order ID (string)
     userref: typing.Optional[int]
     status: ORDERSTATUS
     opentm: TIMESTAMP_S
@@ -148,23 +150,24 @@ class _ClosedOrder(pydantic.BaseModel):
     reason: typing.Optional[str]
 
 
-class _ClosedOrders(pydantic.BaseModel):
+class _ClosedOrdersResponse(pydantic.BaseModel):
 
     closed: typing.Mapping[ORDERID, _ClosedOrder]
     count: COUNT
 
 
 #  this class is just to be consistent with our API
-class ClosedOrdersResp(pydantic.BaseModel):
+class Response(pydantic.BaseModel):
     """Response Model for endpoint https://api.kraken.com/0/private/ClosedOrders
 
     Model Fields:
-    -------
+    -------------
         closed: dict
             mapping of txid to their order info
                 txid : str
                 order info : dict
         count: int
+
     Note:
     -----
         Order Info dict type
@@ -218,56 +221,55 @@ class ClosedOrdersResp(pydantic.BaseModel):
                     nompp = no market price protection
             trades : List[str]
                 Array of trade ids related to order (if trades info requested and data available)
-   """
-
-    # def __new__(cls):
-    #     return _ClosedOrders
+    """
 
     def __call__(self, response: dict):
-        return _ClosedOrders(**response)
+        return _ClosedOrdersResponse(**response)
 
 
-
+# ------------------------------
+# Test with Sample Response
+# ------------------------------
 
 
 if __name__ == "__main__":
 
     data = {
-            "closed": {
-                "OETZYO-UL524-QJMXCT":{
-                    "refid":None,
-                    "userref":None,
-                    "status":"canceled",
-                    "reason":"User requested",
-                    "opentm":1601489313.3898,
-                    "closetm":1601489346.5507,
-                    "starttm":0,
-                    "expiretm":0,
-                    "descr":{
-                        "pair":"ETHUSDT",
-                        "type":"buy",
-                        "ordertype":"limit",
-                        "price":"330.00",
-                        "price2":"0",
-                        "leverage":"none",
-                        "order":"buy 0.02100000 ETHUSDT @ limit 330.00",
-                        "close":""
-                    },
-                    "vol":"0.02100000",
-                    "vol_exec":"0.00000000",
-                    "cost":"0.00000",
-                    "fee":"0.00000",
-                    "price":"0.00000",
-                    "stopprice":"0.00000",
-                    "limitprice":"0.00000",
-                    "misc":"",
-                    "oflags":"fciq"
+        "closed": {
+            "OETZYO-UL524-QJMXCT": {
+                "refid": None,
+                "userref": None,
+                "status": "canceled",
+                "reason": "User requested",
+                "opentm": 1601489313.3898,
+                "closetm": 1601489346.5507,
+                "starttm": 0,
+                "expiretm": 0,
+                "descr": {
+                    "pair": "ETHUSDT",
+                    "type": "buy",
+                    "ordertype": "limit",
+                    "price": "330.00",
+                    "price2": "0",
+                    "leverage": "none",
+                    "order": "buy 0.02100000 ETHUSDT @ limit 330.00",
+                    "close": "",
                 },
+                "vol": "0.02100000",
+                "vol_exec": "0.00000000",
+                "cost": "0.00000",
+                "fee": "0.00000",
+                "price": "0.00000",
+                "stopprice": "0.00000",
+                "limitprice": "0.00000",
+                "misc": "",
+                "oflags": "fciq",
             },
-            "count":16
+        },
+        "count": 16,
     }
 
-    expected = ClosedOrdersResp()
+    expected = Response()
     valid = expected(data)
 
     print("Validated model", valid, "\n")

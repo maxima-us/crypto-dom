@@ -4,15 +4,11 @@ from decimal import Decimal
 from typing_extensions import Literal
 import pydantic
 import stackprinter
+
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import TIMESTAMP_S
-from crypto_dom.kraken.definitions import (
-    ORDERID,
-    ORDERTYPE,
-    ORDERSIDE,
-    FLAGS
-)
+from crypto_dom.kraken.definitions import ORDERID, ORDERTYPE, ORDERSIDE, FLAGS
 
 
 # ============================================================
@@ -31,13 +27,13 @@ METHOD = "POST"
 # ------------------------------
 
 
-class OpenPositionsReq(pydantic.BaseModel):
+class Request(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/private/OpenPositions
 
     Model Fields:
-    -------
+    -------------
         txid : List[str]
-            Comma delimited list of transaction ids to restrict output to 
+            Comma delimited list of transaction ids to restrict output to
         docalcs: bool
             Whether or not to include profit/loss calculations (optional)
                 default = false
@@ -62,7 +58,6 @@ class OpenPositionsReq(pydantic.BaseModel):
 def _generate_model(keys: typing.List[ORDERID]) -> typing.Type[pydantic.BaseModel]:
     "dynamically create the model"
 
-
     class _Position(pydantic.BaseModel):
 
         ordertxid: ORDERID
@@ -80,36 +75,28 @@ def _generate_model(keys: typing.List[ORDERID]) -> typing.Type[pydantic.BaseMode
         misc: typing.List[typing.Any]
         oflags: FLAGS
 
-        #FIXME! not in kraken doc
+        # FIXME! not in kraken doc
         terms: str
         rollovertm: Decimal
 
-       
-
     # we do not know the keys in advance, only the type of their value
-    kwargs = {
-        **{k: (_Position, ...) for k in keys},
-        "__base__": pydantic.BaseModel
-    }
+    kwargs = {**{k: (_Position, ...) for k in keys}, "__base__": pydantic.BaseModel}
 
-    model = pydantic.create_model(
-        '_OpenPositionsResp',
-        **kwargs    #type: ignore
-    )
+    model = pydantic.create_model("_OpenPositionsResponse", **kwargs)  # type: ignore
 
     return model
 
 
-class OpenPositionsResp(pydantic.BaseModel):
+class Response(pydantic.BaseModel):
     """Response Model for endpoint https://api.kraken.com/0/private/OpenPositions
 
     Model Fields:
-    -------
+    -------------
         `Position TxId`: open position info
             mapping of position txid to their info
                 position txid : str
                 position info : dict
-    
+
     Note:
     -----
         Order Info dict type:
@@ -143,9 +130,9 @@ class OpenPositionsResp(pydantic.BaseModel):
                  comma delimited list of order flags
             terms: str
             rollovertm: Decimal
-   """
+    """
 
     def __call__(self, response: dict):
         model = _generate_model(list(response.keys()))
-        print("\nFields", model.__fields__, "\n")
+        # print("\nFields", model.__fields__, "\n")
         return model(**response)

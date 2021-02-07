@@ -5,11 +5,11 @@ from decimal import Decimal
 from typing_extensions import Literal
 import pydantic
 import stackprinter
+
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import COUNT, TIMESTAMP_S
 from crypto_dom.kraken.definitions import PAIR
-
 
 
 # ============================================================
@@ -17,7 +17,7 @@ from crypto_dom.kraken.definitions import PAIR
 # ============================================================
 
 
-# doc: https://www.kraken.com/features/api#get-order-book 
+# doc: https://www.kraken.com/features/api#get-order-book
 
 URL = "https://api.kraken.com/0/public/Depth"
 METHOD = "GET"
@@ -51,15 +51,16 @@ METHOD = "GET"
 # Request Model
 # ------------------------------
 
-class OrderBookReq(pydantic.BaseModel):
+
+class Request(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/public/Depth
 
     Model Fields:
     -------
-        pair : str 
+        pair : str
             Asset pair to get OHLC data for
-        count : int 
-            maximum number of asks/bids (optional) 
+        count : int
+            maximum number of asks/bids (optional)
     """
 
     pair: PAIR
@@ -78,77 +79,70 @@ def _generate_model(pair: str) -> typing.Type[pydantic.BaseModel]:
 
     class _Book(pydantic.BaseModel):
 
-         # tuples of price, volume, time
+        # tuples of price, volume, time
         asks: typing.Tuple[_BidAskItem, ...]
         bids: typing.Tuple[_BidAskItem, ...]
 
-    
-    kwargs = {
-        pair: (_Book, ...),
-        "__base__": pydantic.BaseModel
-    }
+    kwargs = {pair: (_Book, ...), "__base__": pydantic.BaseModel}
 
-    model = pydantic.create_model(
-        '_OrderBookResp',
-        **kwargs    #type: ignore
-    )
+    model = pydantic.create_model("_OrderBookResponse", **kwargs)  # type: ignore
 
     return model
 
 
-
-class OrderBookResp:
+class Response:
     """Response Model for endpoint https://api.kraken.com/0/public/Depth
-    
-    Args:
-    -----
-        pair : str 
 
     Returns:
     --------
         OrderBook Response Model
 
     Model Fields:
-    -------
+    -------------
         `pair_name` : str
             Dict of `asks` and `bids`
             Which are array of array entries(price, volume, timestamp)
+
+    Usage:
+    ------
+        model = Response()
+        validated_response = model(JSON_response_content)
     """
 
-    # def __new__(_cls, pair: str):
-    #     model = _generate_model(pair)
-    #     return model
-
     def __call__(self, response: dict):
-        
-        pairs = list({k:v for k,v in response.items() if k not in ["last"]}.keys())
+
+        pairs = list({k: v for k, v in response.items() if k not in ["last"]}.keys())
         if len(pairs) > 1:
             raise ValueError("More than 1 pair in response keys")
         else:
             pair = pairs[0]
         model = _generate_model(pair)
-        print("\nFields", model.__fields__, "\n")
+        # print("\nFields", model.__fields__, "\n")
         return model(**response)
-        
-        
-        
+
+
+# ------------------------------
+# Test with Sample Response
+# ------------------------------
+
+
 if __name__ == "__main__":
 
     data = {
-            "XETHXXBT":{
-                "asks":[
-                    ["0.023480","4.000",1586321307],
-                    ["0.023490","50.095",1586321306],
-                    ["0.023500","28.535",1586321302],
-                ],
-                "bids":[
-                    ["0.023470","59.580",1586321307],
-                    ["0.023460","20.000",1586321301],
-                    ["0.023440","67.832",1586321306],
-                ]
-            }
+        "XETHXXBT": {
+            "asks": [
+                ["0.023480", "4.000", 1586321307],
+                ["0.023490", "50.095", 1586321306],
+                ["0.023500", "28.535", 1586321302],
+            ],
+            "bids": [
+                ["0.023470", "59.580", 1586321307],
+                ["0.023460", "20.000", 1586321301],
+                ["0.023440", "67.832", 1586321306],
+            ],
+        }
     }
 
-    expected = OrderBookResp()
+    expected = Response()
     valid = expected(data)
     print("Validated model", valid, "\n")

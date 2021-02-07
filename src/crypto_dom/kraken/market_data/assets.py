@@ -1,10 +1,9 @@
 import typing
-from datetime import date
-from decimal import Decimal
 
 from typing_extensions import Literal
 import pydantic
 import stackprinter
+
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.kraken.definitions import ASSET
@@ -41,7 +40,7 @@ METHOD = "GET"
 # ------------------------------
 
 
-class AssetsReq(pydantic.BaseModel):
+class Request(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/public/Assets
 
     Model Fields:
@@ -69,14 +68,13 @@ class AssetsReq(pydantic.BaseModel):
 
 def _generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
     """dynamically create the model. Returns a new pydantic model class
-    
+
     Args:
     ----
         key: List[str]
             List of asset names that map to their info
 
     """
-
 
     class _Asset(pydantic.BaseModel):
 
@@ -86,33 +84,32 @@ def _generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
         display_decimals: int
 
     # we do not know the keys in advance, only the type of their value
-    kwargs = {
-        **{k: (_Asset, ...) for k in keys},
-        "__base__": pydantic.BaseModel
-    }
+    kwargs = {**{k: (_Asset, ...) for k in keys}, "__base__": pydantic.BaseModel}
 
-    model = pydantic.create_model(
-        '_AssetsResp',
-        **kwargs    #type: ignore
-    )
+    model = pydantic.create_model("_AssetsResponse", **kwargs)  # type: ignore
 
     return model
 
 
-class AssetsResp:
+class Response:
     """Response Model for endpoint https://api.kraken.com/0/public/Assets
 
     Model Fields:
-    -------
+    -------------
         `asset_name` : dict
             Array of asset name and corresponding info
                 altname = alternate name
                 aclass = asset class
                 decimals = scaling decimal places for record keeping
                 display_decimals = scaling decimal places for output display
+
+    Usage:
+    ------
+        model = Response()
+        validated_response = model(JSON_response_content)
     """
 
     def __call__(self, response: dict):
         model = _generate_model(list(response.keys()))
-        print("\nFields", model.__fields__, "\n")
+        # print("\nFields", model.__fields__, "\n")
         return model(**response)

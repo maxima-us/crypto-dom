@@ -4,26 +4,26 @@ import httpx
 import time
 
 # Public endpoints
-from crypto_dom.kraken.market_data.ohlc import OhlcResp, URL as OHLCURL
-from crypto_dom.kraken.market_data.orderbook import OrderBookResp, URL as OBURL
-from crypto_dom.kraken.market_data.asset_pairs import AssetPairsResp, URL as APURL
-from crypto_dom.kraken.market_data.assets import AssetsResp, URL as AURL
-from crypto_dom.kraken.market_data.ticker import TickerResp, URL as TURL
-from crypto_dom.kraken.market_data.spread import SpreadResp, URL as SURL
+from crypto_dom.kraken.market_data.ohlc import Response as OhlcResp, URL as OHLCURL
+from crypto_dom.kraken.market_data.orderbook import Response as OrderBookResp, URL as OBURL
+from crypto_dom.kraken.market_data.asset_pairs import Response as AssetPairsResp, URL as APURL
+from crypto_dom.kraken.market_data.assets import Response as AssetsResp, URL as AURL
+from crypto_dom.kraken.market_data.ticker import Response as TickerResp, URL as TURL
+from crypto_dom.kraken.market_data.spread import Response as SpreadResp, URL as SURL
 
 # Auth
 from crypto_dom.kraken.__sign import get_keys, auth_headers, EmptyEnv
 
 # Private endpoints
-from crypto_dom.kraken.user_data.account_balance import AccountBalanceResp, URL as ABURL
-from crypto_dom.kraken.user_data.trade_balance import TradeBalanceResp, URL as TBURL
-from crypto_dom.kraken.user_data.open_positions import OpenPositionsResp, URL as OPURL
-from crypto_dom.kraken.user_data.open_orders import OpenOrdersResp, URL as OOURL
-from crypto_dom.kraken.user_data.closed_orders import ClosedOrdersResp, URL as COURL
-from crypto_dom.kraken.user_data.query_orders import QueryOrdersResp, URL as QOURL
-from crypto_dom.kraken.user_data.query_ledgers import QueryLedgersResp, URL as QLURL
-from crypto_dom.kraken.user_data.query_trades import QueryTradesResp, URL as QTURL
-from crypto_dom.kraken.user_data.trades_history import TradesHistoryResp, URL as THURL
+from crypto_dom.kraken.user_data.account_balance import Response as AccountBalanceResp, URL as ABURL
+from crypto_dom.kraken.user_data.trade_balance import Response as TradeBalanceResp, URL as TBURL
+from crypto_dom.kraken.user_data.open_positions import Response as OpenPositionsResp, URL as OPURL
+from crypto_dom.kraken.user_data.open_orders import Response as OpenOrdersResp, URL as OOURL
+from crypto_dom.kraken.user_data.closed_orders import Response as ClosedOrdersResp, URL as COURL
+from crypto_dom.kraken.user_data.query_orders import Response as QueryOrdersResp, URL as QOURL
+from crypto_dom.kraken.user_data.query_ledgers import Response as QueryLedgersResp, URL as QLURL
+from crypto_dom.kraken.user_data.query_trades import Response as QueryTradesResp, URL as QTURL
+from crypto_dom.kraken.user_data.trades_history import Response as TradesHistoryResp, URL as THURL
 from crypto_dom.kraken.user_funding.deposit_methods import Response as DepMetResp, URL as DepMetURL
 from crypto_dom.kraken.user_funding.deposit_addresses import Response as DepAddResp, URL as DepAddURL
 from crypto_dom.kraken.user_funding.withdraw_info import Response as WdInfoResp, URL as WdInfoURL
@@ -53,7 +53,7 @@ async def _httpx_request(method, url, payload, response_model):
 
     if method in ["POST"]:
         try:
-            keyset = get_keys() # returns a set of tuples (key, secret) 
+            keyset = get_keys() # returns a set of tuples (key, secret)
         except EmptyEnv:
             # do not proceed to send a test request in this case
             return
@@ -67,7 +67,7 @@ async def _httpx_request(method, url, payload, response_model):
             r = await client.request(method, url, data=payload, headers=headers)
         else:
             r = await client.request(method, url, params=payload)
-        
+
         rjson = r.json()
 
         assert r.status_code == 200, f"Response json {rjson}"
@@ -134,7 +134,7 @@ async def test_spread_response_model():
 
 
 #------------------------------------------------------------
-# Private Endpoints 
+# Private Endpoints
 #------------------------------------------------------------
 
 # ------ User Data

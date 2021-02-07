@@ -56,7 +56,7 @@ class Request(pydantic.BaseModel):
 # ------------------------------
 
 
-class _WithdrawCancelResp(pydantic.BaseModel):
+class _WithdrawCancelResponse(pydantic.BaseModel):
     
     #placeholder
     data: bool 
@@ -70,6 +70,6 @@ class Response:
     """
 
     def __call__(self, response: dict):
-        _valid = _WithdrawCancelResp(data=response)
+        _valid = _WithdrawCancelResponse(data=response)
         return _valid.data
     

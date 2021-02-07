@@ -3,6 +3,7 @@ from decimal import Decimal
 
 import pydantic
 import stackprinter
+
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import TIMESTAMP_S
@@ -25,15 +26,15 @@ METHOD = "POST"
 # ------------------------------
 
 
-class TradeBalanceReq(pydantic.BaseModel):
+class Request(pydantic.BaseModel):
     """Request Model for endpoint https://api.kraken.com/0/private/TradeBalance
 
     Model Fields:
-    -------
-        aclass : str 
+    -------------
+        aclass : str
             Asset Class (optional)
                 currency (default)
-        asset : str 
+        asset : str
             Base asset used to determine balance
                 (default = ZUSD)
         nonce : int
@@ -50,7 +51,7 @@ class TradeBalanceReq(pydantic.BaseModel):
 # ------------------------------
 
 
-class _TradeBalance(pydantic.BaseModel):
+class _TradeBalanceResponse(pydantic.BaseModel):
 
     eb: Decimal
     tb: Decimal
@@ -64,7 +65,7 @@ class _TradeBalance(pydantic.BaseModel):
 
 
 #  this class is just to be consistent with our API
-class TradeBalanceResp:
+class Response:
     """Validated Response for endpoint https://api.kraken.com/0/private/TradeBalance
 
     Type: pydantic.BaseModel
@@ -89,10 +90,7 @@ class TradeBalanceResp:
             free margin = equity - initial margin (maximum margin available to open new positions)
         ml : Decimal
             margin level = (equity / initial margin) * 100 (optional)
-   """
+    """
 
-    # def __new__(cls):
-    #     return _TradeBalance
-    
     def __call__(self, response: dict):
-        return _TradeBalance(**response)
+        return _TradeBalanceResponse(**response)
