@@ -37,7 +37,7 @@ class _TypedHttpxClient(httpx.AsyncClient):
         json=None,
         params = None,
         headers = None,
-        auth_headers: Callable = None,
+        auth_headers: Optional[Callable] = None,
         cookies= None,
         auth= None,
         allow_redirects: bool = True,
@@ -179,6 +179,7 @@ class _TypedAioHttpClient(aiohttp.ClientSession):
         json: Any = None,
         cookies: Optional[LooseCookies] = None,
         headers: Optional[LooseHeaders] = None,
+        auth_headers: Optional[Callable] = None,
         skip_auto_headers: Optional[Iterable[str]] = None,
         auth: Optional[BasicAuth] = None,
         allow_redirects: bool = True,
@@ -201,6 +202,7 @@ class _TypedAioHttpClient(aiohttp.ClientSession):
 
         _new_params = params
         _new_data = data
+        _new_headers = None
 
         if t_in:
 
@@ -220,6 +222,7 @@ class _TypedAioHttpClient(aiohttp.ClientSession):
                 try:
                     valid_req = t_in(**data)    # TODO verify after model syntax update
                     _new_data = valid_req.dict(exclude_none=True)
+                    _new_headers = auth_headers(_new_data)
                 except ValidationError as e:
                     return Err(e)
                 except Exception as e:
@@ -235,7 +238,7 @@ class _TypedAioHttpClient(aiohttp.ClientSession):
                 data=_new_data,
                 json=json,
                 cookies=cookies,
-                headers=headers,
+                headers=_new_headers if _new_headers else headers,
                 skip_auto_headers=skip_auto_headers,
                 auth=auth,
                 allow_redirects=allow_redirects,
