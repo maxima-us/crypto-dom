@@ -1,25 +1,30 @@
 [[source]]
 url = "https://test.pypi.org/simple/"
 verify_ssl = false
-name = "test.pypi.org"
+name = "test.pypi"
+
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
 
 [dev-packages]
 crypto-dom = {editable = true, path = "."}
-hypothesis = "*"
-hypothesis-jsonschema = "*"
-pytest = "*"
-pytest-asyncio = "*"
-pytest-recording = "*"
-python-dotenv = "*"
+hypothesis = {version="*", index="pypi"}
+hypothesis-jsonschema = {version="*", index="pypi"}
+pytest = {version="*", index="pypi"}
+pytest-asyncio = {version="*", index="pypi"}
+pytest-recording = {version="*", index="pypi"}
+python-dotenv = {version="*", index="pypi"}
 
 [packages]
-aiohttp = "*"
-httpx = "*"
-mypy = "*"
-pydantic = "*"
-returns = "*"
-stackprinter = "*"
-typing-extensions = "*"
+aiohttp = {version="*", index="pypi"}
+httpx = {version="*", index="pypi"}
+mypy = {version="*", index="pypi"}
+pydantic = {version="*", index="pypi"}
+returns = {version="*", index="pypi"}
+stackprinter = {version="*", index="pypi"}
+typing-extensions = {version="*", index="pypi"}
 
 [requires]
 python_version = "3.9"
