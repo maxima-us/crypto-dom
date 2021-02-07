@@ -10,9 +10,6 @@ from pydantic import ValidationError
 
 from crypto_dom.result import Ok, Err
 
-from crypto_dom.kraken import KrakenFullResponse
-from crypto_dom.kraken.market_data.ohlc import OhlcReq, OhlcResp, URL, METHOD
-from crypto_dom.kraken.user_trading.add_order import METHOD as NO_METH, URL as NO_URL, Request as NO_Req, Response as NO_Resp, _AddOrderResponse
 from crypto_dom.kraken.__sign import get_keys, auth_headers
 
 
@@ -305,7 +302,9 @@ class HttypeClient:
 
 
 if __name__ == "__main__":
-
+    from crypto_dom.kraken.market_data.ohlc import Request, Response, URL, METHOD
+    from crypto_dom.kraken.user_trading.add_order import METHOD as NO_METH, URL as NO_URL, Request as NO_Req, Response as NO_Resp, _AddOrderResponse
+    from crypto_dom.kraken import KrakenFullResponse
 
     # ----- OHLC 
     
@@ -317,7 +316,7 @@ if __name__ == "__main__":
     async def ohlc(client):
         async with client:
             #! update client to now take in Full Response model (including error)
-            r = await client.safe_request(METHOD, URL, t_in=OhlcReq, t_out=KrakenFullResponse(OhlcResp()), params=payload)
+            r = await client.safe_request(METHOD, URL, t_in=Request, t_out=KrakenFullResponse(Response()), params=payload)
         
         # ! also works if we do not provide models (but will still return value wrapped in Result)
         # r = await client.request(METHOD, URL, params=payload)
