@@ -78,11 +78,12 @@ class Request(pydantic.BaseModel):
 
     """
 
-    symbol: typing.Optional[SYMBOL]
+    symbol: SYMBOL
     orderId: typing.Optional[pydantic.PositiveInt]
     startTime: typing.Optional[TIMESTAMP_MS]
     endTime: typing.Optional[TIMESTAMP_MS]
     limit: typing.Optional[pydantic.conint(ge=0, le=1000)]
+
     timestamp: TIMESTAMP_MS
     recvWindow: typing.Optional[RECV_WINDOW]
 

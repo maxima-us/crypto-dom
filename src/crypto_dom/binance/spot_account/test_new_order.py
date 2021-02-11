@@ -25,7 +25,7 @@ WEIGHT = 1
 # Sample Response (doc)
 # ------------------------------
 
-
+# Note: will be empty response
 #     {
 #     }
 
@@ -88,7 +88,7 @@ class Request(pydantic.BaseModel):
     type: ORDER_TYPE
 
 
-    @pydantic.validator("type")
+    @pydantic.validator("type", allow_reuse=True)
     def _check_mandatory_args(cls, v, values):
 
         missing_fields = []
@@ -99,18 +99,23 @@ class Request(pydantic.BaseModel):
         tif = values.get("timeInForce", None)
         price = values.get("price", None)
         stop = values.get("stopPrice", None)
+        iceberg = values.get("icebergQty", None)
 
 
         if v == "MARKET":
             # one of orderQty or quoteOrderQty
             if (qty is None and quoteOrderQty is None) or (qty and quoteOrderQty):
-                raise ValueError(f"Must set one of [orderQty, quoteOrderQty] - Given: {qty} {quoteOrderQty}")
+                raise ValueError(f"Must set one of [quantity quoteOrderQty] - Given: {qty} {quoteOrderQty}")
 
             # no additional params
             if tif:
                 unexpected_fields.append("timeInForce")
             if price:
                 unexpected_fields.append("price")
+            if stop:
+                unexpected_fields.append("stopPrice")
+            if iceberg:
+                unexpected_fields.append("icebergQty")
 
 
         if v == "LIMIT":
@@ -127,9 +132,12 @@ class Request(pydantic.BaseModel):
                 unexpected_fields.append("stopPrice")
             if quoteOrderQty:
                 unexpected_fields.append("quoteOrderQty")
+            if iceberg:
+                if not tif == "GTC":
+                    unexpected_fields.append("icebergQty set : timeInForce must be GTC")
 
 
-        if v in ["STOP-LOSS", "TAKE-PROFIT"]:
+        if v in ["STOP_LOSS", "TAKE_PROFIT"]:
             # mandatory params
             if qty is None:
                 missing_fields.append("quantity")
@@ -143,9 +151,11 @@ class Request(pydantic.BaseModel):
                 unexpected_fields.append("quoteOrderQty")
             if tif:
                 unexpected_fields.append("timeInForce")
+            if iceberg:
+                unexpected_fields.append("icebergQty")
 
 
-        if v in ["STOP-LOSS-LIMIT", "TAKE-PROFIT-LIMIT"]:
+        if v in ["STOP_LOSS_LIMIT", "TAKE_PROFIT_LIMIT"]:
             # mandatory params
             if qty is None:
                 missing_fields.append("quantity")
@@ -159,6 +169,17 @@ class Request(pydantic.BaseModel):
             #no additional params
             if quoteOrderQty:
                 unexpected_fields.append("quoteOrderQty")
+
+        if v in ["LIMIT_MAKER"]:
+            # mandatory params
+            if qty is None:
+                missing_fields.append("quantity")
+            if price is None:
+                missing_fields.append("price")
+
+            # no additional params
+            if stop:
+                unexpected_fields.append("stopPrice")
 
 
         if any([missing_fields, unexpected_fields]):

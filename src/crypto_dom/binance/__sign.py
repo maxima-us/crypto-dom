@@ -4,6 +4,7 @@ import hashlib
 import hmac
 import os
 
+
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -15,7 +16,7 @@ class EmptyEnv(Exception):
 def get_keys():
     
     environ = {k: v for k, v in dict(os.environ).items()}
-    creds = {k: v for k, v in environ.items() if any(i in k for i in ["API_KEY", "API_SECRET"])}
+    creds = {k: v for k, v in environ.items() if any(i in k for i in ["BINANCE_API_KEY", "BINANCE_API_SECRET"])}
     print("Env Creds", creds)
 
     if not creds:
@@ -39,12 +40,12 @@ def get_keys():
 
 
 # see: https://binance-docs.github.io/apidocs/spot/en/#signed-trade-user_data-and-margin-endpoint-security
-def auth_signature(url:str, data:dict, *, secret:str):
+def auth_signature(url: str, data: dict, *, secret: str):
 
-    sorted_data= sorted([(k, v) for k, v in data.items()], reverse=False)
-    print("Sorted data", sorted_data, "\n")
+    sorted_data = sorted([(k, v) for k, v in data.items()], reverse=False)
+    # print("Sorted data", sorted_data, "\n")
     postdata = urlencode(sorted_data)
-    print("Query String", postdata, "\n")
+    # print("Query String", postdata, "\n")
     signature = hmac.new(
             secret.encode(),
             postdata.encode(),
@@ -54,7 +55,16 @@ def auth_signature(url:str, data:dict, *, secret:str):
     return signature.hexdigest()
 
 
-def auth_headers(key:str):
+def auth_payload(url: str, data: dict, *, secret: str):
+    sorted_data = sorted([(k, v) for k, v in data.items()], reverse=False)
+    sig = auth_signature(url, data, secret=secret)
+    sorted_data.append(("signature", sig))
+
+    print("Query String", sorted_data, "\n")
+    return sorted_data 
+
+
+def auth_headers(key: str):
     return {
         "X-MBX-APIKEY": key
     }

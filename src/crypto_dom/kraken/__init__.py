@@ -20,6 +20,7 @@ class KrakenFullResponse:
 
     def __call__(self, full_response: dict):
 
+        # check is response is an error
         if not "result" in full_response.keys():
             if full_response["error"]:
                 try:
@@ -33,7 +34,7 @@ class KrakenFullResponse:
 
         else:
             try:
-                # its a pydantic model
+                # check if its a pydantic model
                 if hasattr(self.success_model, "__fields__"):
                     _res = self.success_model(**full_response["result"])
                     return Ok(_res)

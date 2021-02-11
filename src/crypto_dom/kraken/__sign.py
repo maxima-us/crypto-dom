@@ -15,7 +15,7 @@ class EmptyEnv(Exception):
 def get_keys():
     
     environ = {k: v for k, v in dict(os.environ).items()}
-    creds = {k: v for k, v in environ.items() if any(i in k for i in ["API_KEY", "API_SECRET"])}
+    creds = {k: v for k, v in environ.items() if any(i in k for i in ["KRAKEN_API_KEY", "KRAKEN_API_SECRET"])}
     # print("Env Creds", creds)
 
     if not creds:

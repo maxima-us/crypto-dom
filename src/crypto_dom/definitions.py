@@ -63,10 +63,16 @@ class Gt0Float(NFloat):
     ge=0.0
     strict=False
 
-class _Timestamp(Gt0Float):
+class Gt0Int(NInt):
+    ge=0
+    strict=False
+
+class _IntTimestamp(Gt0Int):
     pass
 
+class _FloatTimestamp(Gt0Float):
+    pass
 
-TIMESTAMP_S = _Timestamp 
-TIMESTAMP_MS = _Timestamp
-TIMESTAMP_NS = _Timestamp
+TIMESTAMP_S = _FloatTimestamp 
+TIMESTAMP_MS = _IntTimestamp
+TIMESTAMP_NS = _IntTimestamp

@@ -1,16 +1,22 @@
-import sys
-
+import click
 import pytest
 
-if __name__ == "__main__":
 
-    # ------ Test Binance
-    # pytest.main(["-vv", "tests/binance/test_binance_response_models.py"])
-
-    # ------ Test Kraken
+@click.command()
+@click.option("--signed", "-s", default=False, help="Test Private Endpoints", required=True, type=bool)
+def run_tests(signed):
+    # ---- Kraken Unsigned
     pytest.main(["-vv", "tests/kraken/test_kraken_response_models.py"])
     pytest.main(["-vv", "tests/kraken/test_kraken_hypothesis_market_data.py"])
 
-    # ------ Test Httype Client
-    # pytest.main(["-vv", "tests/test_client.py"])
+    # # ---- Binance Unsigned
+    pytest.main(["-vv", "tests/binance/test_binance_response_models.py"])
+    pytest.main(["-vv", "tests/binance/test_binance_hypothesis_market_data.py"])
 
+    if signed:
+        # ---- Kraken Signed
+        pytest.main(["-vv", "tests/binance/test_binance_hypothesis_spot_account.py"])
+
+
+if __name__ == "__main__":
+    run_tests()

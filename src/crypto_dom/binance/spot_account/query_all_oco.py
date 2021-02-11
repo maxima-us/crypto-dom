@@ -105,7 +105,7 @@ class Request(pydantic.BaseModel):
     recvWindow: typing.Optional[RECV_WINDOW]
     
     
-    @pydantic.validator("endTime")
+    @pydantic.validator("endTime", allow_reuse=True)
     def _check_mandatory_args(cls, v, values):
 
         if v or values.get("startTime"):

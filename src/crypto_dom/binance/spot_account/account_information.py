@@ -7,7 +7,7 @@ import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import TIMESTAMP_MS
-from crypto_dom.binance.definitions import RECV_WINDOW, ASSET, SYMBOL_PERMISSIONS
+from crypto_dom.binance.definitions import RECV_WINDOW, SYMBOL_PERMISSIONS
 
 
 # ============================================================
