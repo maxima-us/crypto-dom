@@ -40,21 +40,57 @@ class BinanceFull:
                         return Err(e)
 
                 else:
-                    return Err(f"No error message : {full_response}") 
+                    return Err(f"No error message : {full_response}")
+            
+            elif not full_response:
+                return Err("Empty response: {full_response}")
 
 
-        else:
+        # its either a list, or a dict that isnt an error msg
+        if True:
             try:
                 # check if it is a pydantic model
                 if hasattr(self.success_model, "__fields__"):
-                    _res = self.success_model(**full_response)
-                    return Ok(_res)
+                    try:
+                        _res = self.success_model(**full_response)
+                        return Ok(_res)
+                    except pydantic.ValidationError as e:
+                        return Err(e)
 
                 # else its a wrapper around pydantic that we defined 
                 else: 
-                    _res = self.success_model(full_response)
-                    return Ok(_res)
-                
+                    try:
+                        _res = self.success_model(full_response)
+                        return Ok(_res)
+                    except pydantic.ValidationError as e:
+                        return Err(e)
+
             except pydantic.ValidationError as e:
                 return Err(e)
     
+
+if __name__ == "__main__":
+
+    import asyncio
+    import httpx
+    from crypto_dom.binance.market_data.depth import METHOD, URL, Request, Response
+
+    payload = {
+        "symbol": "DOTUSDT",
+        "limit": 10
+    }
+
+    async def book():
+        async with httpx.AsyncClient() as client:
+
+            r = await client.request(METHOD, URL, params=payload)
+            rjson = r.json()
+
+            try:
+                _model = BinanceFull(Response())
+                _valid = _model(rjson)
+                print(_valid)
+            except pydantic.ValidationError as e:
+                print(e)
+
+    asyncio.run(book())
