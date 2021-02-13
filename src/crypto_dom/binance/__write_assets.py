@@ -6,7 +6,7 @@ import httpx
 from crypto_dom.binance.market_data.exchange_info import URL
 
 
-async def _write_binance_assets():
+async def _write_binance_assets(folder):
 
     async with httpx.AsyncClient() as client:
         r = await client.get(URL)
@@ -16,7 +16,10 @@ async def _write_binance_assets():
         quoteassets = set(k["quoteAsset"] for k in symbols_data)
         assets = baseassets.union(quoteassets)
 
-        with open("_definitions_assets.py", "w") as file:
+        with open(f'{folder}_data_assets.json', 'w') as file:
+            json.dump(symbols_data, file)
+        
+        with open(f"{folder}_definitions_assets.py", "w") as file:
             file.write("# This file is auto-generated\n\n")
             file.write("from typing_extensions import Literal\n\n")
             file.write("ASSET = Literal[\n")

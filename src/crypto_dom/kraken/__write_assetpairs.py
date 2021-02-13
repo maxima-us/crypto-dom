@@ -3,10 +3,10 @@ import json
 
 import httpx
 
-from crypto_dom.kraken.asset_pairs import URL
+from crypto_dom.kraken.market_data.asset_pairs import URL
 
 
-async def _write_kraken_pairs():
+async def _write_kraken_pairs(folder: str):
     async with httpx.AsyncClient() as client:
         r = await client.get(URL)
         rjson = r.json()
@@ -14,11 +14,11 @@ async def _write_kraken_pairs():
         pairs = list(result.keys())
         
         # json data
-        with open('_data_assetpairs.json', 'w') as file:
+        with open(f'{folder}_data_assetpairs.json', 'w') as file:
             json.dump(result, file)
         
         # type definition (Literal)
-        with open('_definitions_assetpairs.py', 'w') as file:
+        with open(f'{folder}_definitions_assetpairs.py', 'w') as file:
             file.write("# This file is auto-generated\n\n")
             file.write("from typing_extensions import Literal\n\n")
             file.write("PAIR = Literal[\n")

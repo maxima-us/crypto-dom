@@ -352,6 +352,7 @@ if __name__ == "__main__":
     async def new_order(client):
         async with client:
             #! update client to now take in Full Response model (including error)
+            #! auth_headers is a function
             r = await client.safe_request(NO_METH, NO_URL, t_in=NO_Req, t_out=KrakenFullResponse(NO_Resp()), data=order_data, auth_headers=kraken_auth_headers)
             return r
 

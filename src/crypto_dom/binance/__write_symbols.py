@@ -5,7 +5,7 @@ import httpx
 
 from crypto_dom.binance.market_data.exchange_info import URL
 
-async def _write_binance_symbols():
+async def _write_binance_symbols(folder):
 
     async with httpx.AsyncClient() as client:
         r = await client.get(URL)
@@ -13,10 +13,10 @@ async def _write_binance_symbols():
         symbols_data = rjson["symbols"]
         symbols_list = [k["symbol"] for k in symbols_data]
 
-        with open("_data_symbols.json", "w") as file:
+        with open(f"{folder}_data_symbols.json", "w") as file:
             json.dump(symbols_data, file)
 
-        with open("_definitions_symbols.py", "w") as file:
+        with open(f"{folder}_definitions_symbols.py", "w") as file:
             file.write("# This file is auto-generated\n\n")
             file.write("from typing_extensions import Literal\n\n")
             file.write("SYMBOL = Literal[\n")
