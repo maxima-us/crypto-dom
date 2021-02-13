@@ -8,10 +8,9 @@ import httpx
 from hypothesis import given, settings
 from hypothesis_jsonschema import from_schema
 
+from crypto_dom.result import Err, Ok
 from crypto_dom.binance import BinanceFull
 from crypto_dom.hypothesis_settings import DEADLINE, MAX_EXAMPLES, SUPPRESS_HEALTH_CHECK, VERBOSITY
-
-
 
 
 #------------------------------------------------------------
@@ -20,36 +19,30 @@ from crypto_dom.hypothesis_settings import DEADLINE, MAX_EXAMPLES, SUPPRESS_HEAL
 
 async def _hypothesis_request(method, url, generated_payload, request_model, response_model):
 
-    testcases = 0
     async with httpx.AsyncClient() as client:
-        # global testcases
-        testcases += 1
 
-        if testcases > 5:
-            print("Skipping Test Case")
-            assert True
+            print("Generated", generated_payload)
 
-        print("Tested Cases", testcases)
-        print("Generated", generated_payload)
+            # binance does not accept extra query parameters
+            # hypothesis will sometimes generate random key/value pairs that dont match any model field
+            # = we need to filter them out
+            valid_params = request_model(**generated_payload).dict(exclude_none=True)
 
-        # binance does not accept extra query parameters
-        # hypothesis will sometimes generate random key/value pairs that dont match any model field
-        # = we need to filter them out
-        valid_params = request_model(**generated_payload).dict(exclude_none=True)
+            print("Valid params", valid_params)
 
-        print("Valid params", valid_params)
+            r = await client.request(method, url, params=valid_params)
+            rjson = r.json()
 
-        r = await client.request(method, url, params=valid_params)
-        rjson = r.json()
+            # validate
+            _valid = response_model(rjson)
+            assert isinstance(_valid, Ok), _valid.value
+            assert _valid.is_ok(), _valid.value
 
-        # validate
-        response_model(rjson)
+            assert r.status_code == 200, f"{rjson}-{r.request}"
+            if hasattr(rjson, "keys"):
+                assert not "code" in rjson.keys()
 
-        assert r.status_code == 200, f"{rjson}-{r.request}"
-        if hasattr(rjson, "keys"):
-            assert not "code" in rjson.keys()
-
-        await asyncio.sleep(random.randint(2, 5))
+            await asyncio.sleep(random.randint(2, 5))
 
 
 

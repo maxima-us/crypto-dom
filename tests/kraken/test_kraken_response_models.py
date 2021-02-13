@@ -1,4 +1,3 @@
-from typing import Awaitable
 import pytest
 import httpx
 import time

@@ -17,10 +17,9 @@ from crypto_dom.binance.__sign import (
     EmptyEnv
 )
 
+from crypto_dom.result import Err, Ok
 from crypto_dom.binance.definitions import ORDER_RESP_TYPE, SYMBOL, ORDER_SIDE, ORDER_TIF, ORDER_TYPE
 from crypto_dom.hypothesis_settings import DEADLINE, MAX_EXAMPLES, SUPPRESS_HEALTH_CHECK, VERBOSITY
-
-
 
 
 #------------------------------------------------------------
@@ -29,69 +28,65 @@ from crypto_dom.hypothesis_settings import DEADLINE, MAX_EXAMPLES, SUPPRESS_HEAL
 
 async def _hypothesis_request(method, url, generated_payload, request_model, response_model):
 
-    testcases = 0
+   
     async with httpx.AsyncClient() as client:
-        # global testcases
-        testcases += 1
-
-        if testcases > 5:
-            print("Skipping Test Case")
-            assert True
-
-        print("Tested Cases", testcases)
-        print("Generated", generated_payload)
-
-        # binance does not accept extra query parameters
-        # hypothesis will sometimes generate random key/value pairs that dont match any model field
-        # = we need to filter them out
-        generated_payload["timestamp"] = auth_timestamp()
-        valid_params = request_model(**generated_payload).dict(exclude_none=True)
-
-        print("Valid params", valid_params)
-
-        # get keys from env
-        try:
-            keyset = b_get_keys()
-        except EmptyEnv as e:
-            raise e
-            
-        # auth
-        key, secret = keyset.pop()
-        headers = b_auth_headers(key=key)
-        signed_payload = auth_payload(url, valid_params, secret=secret)
         
-        # send req
-        if method in ["POST"]:
-            # data has to be a dict, cant accept list of tuples
-            if isinstance(signed_payload, list):
-                signed_payload = dict(signed_payload)
-                print("Signed payload", signed_payload)
-            r = await client.request(method, url, data=signed_payload, headers=headers)
-        else:
-            r = await client.request(method, url, params=signed_payload, headers=headers)
+            # binance does not accept extra query parameters
+            # hypothesis will sometimes generate random key/value pairs that dont match any model field
+            # = we need to filter them out
+            generated_payload["timestamp"] = auth_timestamp()
+            valid_params = request_model(**generated_payload).dict(exclude_none=True)
 
-        rjson = r.json()
+            print("Valid params", valid_params)
 
-        # validate
-        response_model(rjson)
-
-        if hasattr(rjson, "keys"):
-            # its an error
-            if "code" in rjson.keys():
-                # we accept filter failures, since
-                # we cant really generate test cases that will pass that
-                assert rjson["code"] == -1013, f"{rjson}-{r.request}"
+            # get keys from env
+            try:
+                keyset = b_get_keys()
+            except EmptyEnv as e:
+                raise e
+                
+            # auth
+            key, secret = keyset.pop()
+            headers = b_auth_headers(key=key)
+            signed_payload = auth_payload(url, valid_params, secret=secret)
             
-            # its a valid dict response
+            # send req
+            if method in ["POST"]:
+                # data has to be a dict, cant accept list of tuples
+                if isinstance(signed_payload, list):
+                    signed_payload = dict(signed_payload)
+                    print("Signed payload", signed_payload)
+                r = await client.request(method, url, data=signed_payload, headers=headers)
+            else:
+                r = await client.request(method, url, params=signed_payload, headers=headers)
+
+            rjson = r.json()
+
+            # validate
+            _valid = response_model(rjson)
+            if _valid.is_err():
+                # accept filter failures code 1013
+                assert _valid.value.code == -1013
+
+
+            if hasattr(rjson, "keys"):
+                # its an error
+                if "code" in rjson.keys():
+                    # we accept filter failures (code 1013), since
+                    # we cant really generate test cases that will pass that
+                    # for ex price too far from current
+                    assert rjson["code"] == -1013, f"{rjson}-{r.request}"
+                
+                # its a valid dict response
+                else:
+                    assert r.status_code == 200, f"{rjson}-{r.request}"
+
+            # response is a list
             else:
                 assert r.status_code == 200, f"{rjson}-{r.request}"
+                
 
-        # response is a list
-        else:
-            assert r.status_code == 200, f"{rjson}-{r.request}"
-            
-
-        await asyncio.sleep(random.randint(2, 5))
+            await asyncio.sleep(random.randint(2, 5))
 
 
 

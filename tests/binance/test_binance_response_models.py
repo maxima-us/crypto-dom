@@ -1,4 +1,3 @@
-from urllib.parse import urlencode
 import pydantic
 import pytest
 import httpx
