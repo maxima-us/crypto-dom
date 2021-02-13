@@ -94,7 +94,7 @@ class _OpenOrdersResponse(pydantic.BaseModel):
 
 
 #  this class is just to be consistent with our API
-class Response(pydantic.BaseModel):
+class Response:
     """Response Model for endpoint https://api.kraken.com/0/private/OpenOrders
 
     Model Fields:

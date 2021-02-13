@@ -125,7 +125,7 @@ class _ExchangeInfoResp(pydantic.BaseModel):
     timezone: Literal["UTC"]
     serverTime: TIMESTAMP_MS
     rateLimits: typing.Tuple[_RateLimit, ...]
-    exchangeFilters: typing.List[str]   #TODO define filters in definitions
+    exchangeFilters: typing.List[typing.Optional[str]]   #TODO define filters in definitions
     symbols: typing.Tuple[_SymbolsInfo, ...]
 
 
