@@ -6,4 +6,4 @@ install:
   - pip install pipenv
   - pipenv install --dev
 scripts:
-  - python tests/run.py
+  - python tests/run.py --signed False

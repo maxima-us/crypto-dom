@@ -35,13 +35,19 @@ setup(
     python_requires='>=3.8, <4',
     install_requires=[
         "aiohttp",
+        "click",
         "httpx",
         "mypy",
+        "nox",
         "pydantic",
+        "python-dotenv",
         "returns",
         "stackprinter",
         "typing-extensions"
     ],
     entry_points={  # Optional
+        'console_scripts': [
+            'crypto-dom-tests=tests.run:run_tests'
+        ],
     },
 )

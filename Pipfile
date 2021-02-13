@@ -12,6 +12,7 @@ name = "pypi"
 crypto-dom = {editable = true, path = "."}
 hypothesis = {version="*", index="pypi"}
 hypothesis-jsonschema = {version="*", index="pypi"}
+nox = {version="*", index="pypi"}
 pytest = {version="*", index="pypi"}
 pytest-asyncio = {version="*", index="pypi"}
 pytest-recording = {version="*", index="pypi"}
