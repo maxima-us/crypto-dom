@@ -10,8 +10,12 @@ from crypto_dom.binance.__write_symbols import _write_binance_symbols
 
 
 @click.command()
+@click.option("--kraken", "-k", default=True, help="Test Kraken Endpoints", required=False, type=bool)
+@click.option("--binance", "-b", default=True, help="Test Binance Endpoints", required=False, type=bool)
 @click.option("--signed", "-s", default=False, help="Test Private Endpoints", required=True, type=bool)
-def run_tests(signed):
+def run_tests(kraken, binance, signed):
+
+    print(kraken, binance, signed)
 
     # ---- update symbols and assets
     async def update_symbols_assets():
@@ -22,21 +26,23 @@ def run_tests(signed):
 
     asyncio.run(update_symbols_assets())
 
-    # ---- Kraken Unsigned
-    pytest.main(["-vv", "tests/kraken/test_kraken_response_models.py"])
-    pytest.main(["-vv", "tests/kraken/test_kraken_hypothesis_market_data.py"])
-    
-    if signed:
-        # ---- Kraken Signed
-        pytest.main(["-vv", "tests/kraken/test_binance_hypothesis_user_data.py"])
+    if kraken:
+        # ---- Kraken Unsigned
+        pytest.main(["-vv", "tests/kraken/test_kraken_response_models.py"])
+        pytest.main(["-vv", "tests/kraken/test_kraken_hypothesis_market_data.py"])
+        
+        if signed:
+            # ---- Kraken Signed
+            pytest.main(["-vv", "tests/kraken/test_kraken_hypothesis_user_data.py"])
 
-    # # ---- Binance Unsigned
-    pytest.main(["-vv", "tests/binance/test_binance_response_models.py"])
-    pytest.main(["-vv", "tests/binance/test_binance_hypothesis_market_data.py"])
+    if binance:
+        # # ---- Binance Unsigned
+        pytest.main(["-vv", "tests/binance/test_binance_response_models.py"])
+        pytest.main(["-vv", "tests/binance/test_binance_hypothesis_market_data.py"])
 
-    if signed:
-        # ---- Binance Signed
-        pytest.main(["-vv", "tests/binance/test_binance_hypothesis_spot_account.py"])
+        if signed:
+            # ---- Binance Signed
+            pytest.main(["-vv", "tests/binance/test_binance_hypothesis_spot_account.py"])
 
 
 if __name__ == "__main__":

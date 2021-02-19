@@ -131,7 +131,7 @@ def _generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
         leverage_buy: typing.Tuple[int, ...]
         leverage_sell: typing.Tuple[int, ...]
         fees: typing.Tuple[typing.Tuple[Decimal, Decimal], ...]
-        fees_maker: typing.Tuple[typing.Tuple[Decimal, Decimal], ...]
+        fees_maker: typing.Optional[typing.Tuple[typing.Tuple[Decimal, Decimal], ...]] # no maker fees if pair is darkpool
         fee_volume_currency: str
         margin_call: pydantic.PositiveInt
         margin_stop: pydantic.PositiveInt

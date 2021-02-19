@@ -89,12 +89,11 @@ def _generate_model(pair: str) -> typing.Type[pydantic.BaseModel]:
 
         @pydantic.validator("last", allow_reuse=True)
         def check_year_from_timestamp(cls, v, values):
-            # convert from ns to s
             v_s = v * 10 ** -9
 
             y = date.fromtimestamp(v_s).year
             if not y > 2009 and y < 2050:
-                err_msg = f"Year {y} for timestamp {v} not within [2009, 2050]"
+                err_msg = f"Year {y} for timestamp {v} not within [2009, 2050] - check if timestamp is in ns"
                 raise ValueError(err_msg)
             return v
 

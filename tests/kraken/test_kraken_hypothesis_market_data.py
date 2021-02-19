@@ -21,7 +21,7 @@ from crypto_dom.hypothesis_settings import DEADLINE, MAX_EXAMPLES, SUPPRESS_HEAL
 # HYPOTHESIS BASE REQUEST
 #------------------------------------------------------------
 
-async def _hypothesis_request(method, url, generated_payload, response_model):
+async def _hypothesis_request_kraken(method, url, generated_payload, response_model):
 
     async with httpx.AsyncClient() as client:
 
@@ -56,9 +56,9 @@ schema = OHLCRequest.schema()
 @given(from_schema(schema))
 @settings(deadline=DEADLINE, max_examples=MAX_EXAMPLES, suppress_health_check=SUPPRESS_HEALTH_CHECK, verbosity=VERBOSITY)
 @pytest.mark.asyncio
-async def test_gen_request_ohlc(generated_payload):
+async def test_gen_request_ohlc_kraken(generated_payload):
 
-    await _hypothesis_request(OHLCMETHOD, OHLCURL, generated_payload, KrakenFullResponse(OHLCResponse()))
+    await _hypothesis_request_kraken(OHLCMETHOD, OHLCURL, generated_payload, KrakenFullResponse(OHLCResponse()))
 
 
 
@@ -77,9 +77,9 @@ schema = OBRequest.schema()
 @given(from_schema(schema))
 @settings(deadline=DEADLINE, max_examples=MAX_EXAMPLES, suppress_health_check=SUPPRESS_HEALTH_CHECK, verbosity=VERBOSITY)
 @pytest.mark.asyncio
-async def test_gen_request_orderbook(generated_payload):
+async def test_gen_request_orderbook_kraken(generated_payload):
 
-    await _hypothesis_request(OBMETHOD, OBURL, generated_payload, KrakenFullResponse(OBResponse()))
+    await _hypothesis_request_kraken(OBMETHOD, OBURL, generated_payload, KrakenFullResponse(OBResponse()))
 
 
 
@@ -98,9 +98,9 @@ schema = TradesRequest.schema()
 @given(from_schema(schema))
 @settings(deadline=DEADLINE, max_examples=MAX_EXAMPLES, suppress_health_check=SUPPRESS_HEALTH_CHECK, verbosity=VERBOSITY)
 @pytest.mark.asyncio
-async def test_gen_request_trades(generated_payload):
+async def test_gen_request_trades_kraken(generated_payload):
 
-    await _hypothesis_request(TradesMETHOD, TradesURL, generated_payload, KrakenFullResponse(TradesResponse()))
+    await _hypothesis_request_kraken(TradesMETHOD, TradesURL, generated_payload, KrakenFullResponse(TradesResponse()))
 
 
 
@@ -119,9 +119,9 @@ schema = SpreadRequest.schema()
 @given(from_schema(schema))
 @settings(deadline=DEADLINE, max_examples=MAX_EXAMPLES, suppress_health_check=SUPPRESS_HEALTH_CHECK, verbosity=VERBOSITY)
 @pytest.mark.asyncio
-async def test_gen_request_spread(generated_payload):
+async def test_gen_request_spread_kraken(generated_payload):
 
-    await _hypothesis_request(SpreadMETHOD, SpreadURL, generated_payload, KrakenFullResponse(SpreadResponse()))
+    await _hypothesis_request_kraken(SpreadMETHOD, SpreadURL, generated_payload, KrakenFullResponse(SpreadResponse()))
 
 
 
@@ -141,9 +141,9 @@ schema = TickerRequest.schema()
 @given(from_schema(schema))
 @settings(deadline=DEADLINE, max_examples=MAX_EXAMPLES, suppress_health_check=SUPPRESS_HEALTH_CHECK, verbosity=VERBOSITY)
 @pytest.mark.asyncio
-async def test_gen_request_ticker(generated_payload):
+async def test_gen_request_ticker_kraken(generated_payload):
 
-    await _hypothesis_request(TickerMETHOD, TickerURL, generated_payload, KrakenFullResponse(TickerResponse()))
+    await _hypothesis_request_kraken(TickerMETHOD, TickerURL, generated_payload, KrakenFullResponse(TickerResponse()))
 
 
 
@@ -162,9 +162,9 @@ schema = AssetPairsRequest.schema()
 @given(from_schema(schema))
 @settings(deadline=DEADLINE, max_examples=MAX_EXAMPLES, suppress_health_check=SUPPRESS_HEALTH_CHECK, verbosity=VERBOSITY)
 @pytest.mark.asyncio
-async def test_gen_request_assetpairs(generated_payload):
+async def test_gen_request_assetpairs_kraken(generated_payload):
 
-    await _hypothesis_request(AssetPairsMETHOD, AssetPairsURL, generated_payload, KrakenFullResponse(AssetPairsResponse()))
+    await _hypothesis_request_kraken(AssetPairsMETHOD, AssetPairsURL, generated_payload, KrakenFullResponse(AssetPairsResponse()))
 
 
 
@@ -183,6 +183,6 @@ schema = AssetsRequest.schema()
 @given(from_schema(schema))
 @settings(deadline=DEADLINE, max_examples=MAX_EXAMPLES, suppress_health_check=SUPPRESS_HEALTH_CHECK, verbosity=VERBOSITY)
 @pytest.mark.asyncio
-async def test_gen_request_assets(generated_payload):
+async def test_gen_request_assets_kraken(generated_payload):
 
-    await _hypothesis_request(AssetsMETHOD, AssetsURL, generated_payload, KrakenFullResponse(AssetsResponse()))
+    await _hypothesis_request_kraken(AssetsMETHOD, AssetsURL, generated_payload, KrakenFullResponse(AssetsResponse()))
