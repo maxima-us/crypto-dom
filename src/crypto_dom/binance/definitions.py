@@ -84,7 +84,7 @@ RATE_LIMIT_INTERVAL = Literal["SECOND", "MINUTE", "DAY"]
 
 
 class RECV_WINDOW(NInt):
-    ge=0
+    ge=1000 # FIXME doc doesnt set a lower limit but for hypothesis, shoudlnt be zero
     le=60000
     strict=False
 

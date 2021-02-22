@@ -43,7 +43,7 @@ class BinanceFull:
                     return Err(f"No error message : {full_response}")
             
             elif not full_response:
-                return Err("Empty response: {full_response}")
+                return Err(f"Empty response: {full_response}")
 
 
         # its either a list, or a dict that isnt an error msg
