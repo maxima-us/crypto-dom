@@ -19,6 +19,12 @@ def make_nonce():
     return int(time.time()*10**3)
 
 
+def update_nonce(schema):
+    schema["properties"]["nonce"]["const"] = int(make_nonce())
+    del schema["properties"]["nonce"]["exclusiveMinimum"]
+    return schema
+
+
 #------------------------------------------------------------
 # HYPOTHESIS BASE REQUEST
 #------------------------------------------------------------
@@ -71,7 +77,7 @@ from crypto_dom.kraken.user_data.closed_orders import (
 
 schema = ClORequest.schema()
 
-@given(from_schema(schema))
+@given(from_schema(update_nonce(schema)))
 @settings(deadline=DEADLINE, max_examples=MAX_EXAMPLES, suppress_health_check=SUPPRESS_HEALTH_CHECK, verbosity=VERBOSITY)
 @pytest.mark.asyncio
 async def test_gen_request_closedorders(generated_payload):
@@ -92,7 +98,7 @@ from crypto_dom.kraken.user_data.open_orders import (
 
 schema = OpORequest.schema()
 
-@given(from_schema(schema))
+@given(from_schema(update_nonce(schema)))
 @settings(deadline=DEADLINE, max_examples=MAX_EXAMPLES, suppress_health_check=SUPPRESS_HEALTH_CHECK, verbosity=VERBOSITY)
 @pytest.mark.asyncio
 async def test_gen_request_openorders(generated_payload):

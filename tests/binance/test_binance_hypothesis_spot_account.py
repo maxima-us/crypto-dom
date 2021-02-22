@@ -1,5 +1,6 @@
 import random
 import asyncio
+import time
 
 import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
@@ -20,6 +21,16 @@ from crypto_dom.binance.__sign import (
 from crypto_dom.result import Err, Ok
 from crypto_dom.binance.definitions import ORDER_RESP_TYPE, SYMBOL, ORDER_SIDE, ORDER_TIF, ORDER_TYPE
 from crypto_dom.hypothesis_settings import DEADLINE, MAX_EXAMPLES, SUPPRESS_HEALTH_CHECK, VERBOSITY
+
+
+def make_nonce():
+    return int(time.time()*10**3)
+
+
+def update_nonce(schema):
+    schema["properties"]["timestamp"]["const"] = int(make_nonce())
+    del schema["properties"]["timestamp"]["minimum"]
+    return schema
 
 
 #------------------------------------------------------------
@@ -66,7 +77,7 @@ async def _hypothesis_request(method, url, generated_payload, request_model, res
             _valid = response_model(rjson)
             if _valid.is_err():
                 # accept filter failures code 1013
-                assert _valid.value.code == -1013
+                assert getattr(_valid.value, "code", None) == -1013, _valid.value
 
 
             if hasattr(rjson, "keys"):
@@ -101,8 +112,9 @@ from crypto_dom.binance.spot_account.account_information import (
     )
 
 schema = AccountInfoRequest.schema()
+print(schema)
 
-@given(from_schema(schema))
+@given(from_schema(update_nonce(schema)))
 @settings(deadline=DEADLINE, max_examples=MAX_EXAMPLES, suppress_health_check=SUPPRESS_HEALTH_CHECK, verbosity=VERBOSITY)
 @pytest.mark.asyncio
 async def test_gen_request_accountinfo(generated_payload):
@@ -123,7 +135,7 @@ from crypto_dom.binance.spot_account.account_trade_list import (
 
 schema = AccountTradeListRequest.schema()
 
-@given(from_schema(schema))
+@given(from_schema(update_nonce(schema)))
 @settings(deadline=DEADLINE, max_examples=MAX_EXAMPLES, suppress_health_check=SUPPRESS_HEALTH_CHECK, verbosity=VERBOSITY)
 @pytest.mark.asyncio
 async def test_gen_request_accounttradelist(generated_payload):
@@ -143,7 +155,7 @@ from crypto_dom.binance.spot_account.all_orders import (
 
 schema = AllOrdersRequest.schema()
 
-@given(from_schema(schema))
+@given(from_schema(update_nonce(schema)))
 @settings(deadline=DEADLINE, max_examples=MAX_EXAMPLES, suppress_health_check=SUPPRESS_HEALTH_CHECK, verbosity=VERBOSITY)
 @pytest.mark.asyncio
 async def test_gen_request_allorders(generated_payload):
@@ -163,7 +175,7 @@ from crypto_dom.binance.spot_account.open_orders import (
 
 schema = OpenOrdersRequest.schema()
 
-@given(from_schema(schema))
+@given(from_schema(update_nonce(schema)))
 @settings(deadline=DEADLINE, max_examples=MAX_EXAMPLES, suppress_health_check=SUPPRESS_HEALTH_CHECK, verbosity=VERBOSITY)
 @pytest.mark.asyncio
 async def test_gen_request_openorders(generated_payload):
@@ -185,8 +197,7 @@ from crypto_dom.binance.spot_account.query_all_oco import (
 
 schema = AllOCORequest.schema()
 
-
-@given(from_schema(schema))
+@given(from_schema(update_nonce(schema)))
 @settings(deadline=DEADLINE, max_examples=MAX_EXAMPLES, suppress_health_check=SUPPRESS_HEALTH_CHECK, verbosity=VERBOSITY)
 @pytest.mark.asyncio
 async def skip_gen_request_alloco(generated_payload):   # ! skipping until fixed
