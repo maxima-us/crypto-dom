@@ -8,7 +8,7 @@ import aiohttp
 from pydantic import ValidationError
 
 
-from crypto_dom.result import Ok, Err
+from crypto_dom.result import Result, Ok, Err
 
 from crypto_dom.kraken.__sign import get_keys, auth_headers
 
@@ -42,7 +42,7 @@ class _TypedHttpxClient(httpx.AsyncClient):
         auth= None,
         allow_redirects: bool = True,
         timeout = None
-        ):
+        ) -> Result:
 
         # From: 
         # https://www.python-httpx.org/compatibility/
@@ -65,6 +65,10 @@ class _TypedHttpxClient(httpx.AsyncClient):
                 try:
                     valid_req = t_in(**params)
                     _new_params = valid_req.dict(exclude_none=True)
+
+                    # ! falsify (for testing)
+                    # _new_params["pair"] = "XXBTUEE"
+                    
                 except ValidationError as e:
                     return Err(e)
                 except Exception as e:
@@ -75,6 +79,7 @@ class _TypedHttpxClient(httpx.AsyncClient):
                 try:
                     valid_req = t_in(**data)
                     _new_data = valid_req.dict(exclude_none=True)
+                    
                     
                     # print("\nNew post data", _new_data)     # debugging
 
@@ -113,6 +118,10 @@ class _TypedHttpxClient(httpx.AsyncClient):
             return Err(e)
 
         rjson = r.json()
+
+        #! falsify (for testing)
+        # rjson["result"]["last"] = "random string"
+
         _new_content = rjson
 
         if t_out:
@@ -132,8 +141,14 @@ class _TypedHttpxClient(httpx.AsyncClient):
                 #     _new_content = rjson["error"]
 
                 #! general case
-                _new_content = t_out(rjson)
+                _new_content: Result = t_out(rjson)
 
+
+                # cryptodom's full response models return ValidatioNError wrapped in Err
+                # so it wont be caught by try/except block => instance check
+                # if isinstance(_new_content.value, ValidationError):
+                #     # already wrapped in Err
+                #     return _new_content
 
             except ValidationError as e:
                 return Err(e)

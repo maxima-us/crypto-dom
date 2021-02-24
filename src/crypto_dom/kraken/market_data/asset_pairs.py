@@ -8,7 +8,7 @@ import stackprinter
 stackprinter.set_excepthook(style="darkbg2")
 
 from crypto_dom.definitions import COUNT
-from crypto_dom.kraken.definitions import PAIR
+from crypto_dom.kraken.definitions import ASSETCLASS, PAIR, ASSET
 
 
 # ============================================================
@@ -120,10 +120,10 @@ def _generate_model(keys: typing.List[str]) -> typing.Type[pydantic.BaseModel]:
         # darkpools don't have a wsname
         wsname: typing.Optional[str]
         # TODO should strings always be StrictStr
-        aclass_base: str
-        base: str
-        aclass_quote: str
-        quote: str
+        aclass_base: ASSETCLASS
+        base: ASSET
+        aclass_quote: ASSETCLASS
+        quote: ASSET
         lot: str
         pair_decimals: COUNT
         lot_decimals: COUNT

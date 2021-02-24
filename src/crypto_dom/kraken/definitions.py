@@ -1,8 +1,12 @@
 import re
+import typing
+from decimal import Decimal
 
 from typing_extensions import Literal
 
-from crypto_dom.definitions import Nstr
+from crypto_dom.definitions import Nstr, TIMESTAMP_S
+
+
 
 #------------------------------------------------------------
 # Pairs
@@ -13,6 +17,16 @@ try:
     PAIR = PAIR
 except ImportError:
     PAIR = str
+
+
+PAIR_FIAT = Literal[
+    "USD",
+    "EUR",
+    "GBP",
+    "JPY",
+    "CHF",
+    "CAD"
+]
 
 
 #------------------------------------------------------------
@@ -76,5 +90,28 @@ class ORDERID(KrakenID): pass
 class LEDGERID(KrakenID): pass
 
 
+#------------------------------------------------------------
+# Margin
+#------------------------------------------------------------
+
+
 LEVERAGE = Literal[0,1,2,3,4,5]
 
+
+#------------------------------------------------------------
+# Endpoint specific
+#------------------------------------------------------------
+   
+   
+# Entries(<time>, <open>, <high>, <low>, <close>, <vwap>, <volume>, <count>)
+CANDLE = typing.Tuple[Decimal, Decimal, Decimal, Decimal, Decimal, Decimal, Decimal, int]
+
+# tuple of price, volume, time
+BID = typing.Tuple[Decimal, Decimal, TIMESTAMP_S]
+ASK = typing.Tuple[Decimal, Decimal, TIMESTAMP_S]
+
+ASKS = typing.Tuple[ASK, ...]
+BIDS = typing.Tuple[BID, ...]
+
+# array of array entries(<time>, <bid>, <ask>)
+SPREAD = typing.Tuple[TIMESTAMP_S, Decimal, Decimal]

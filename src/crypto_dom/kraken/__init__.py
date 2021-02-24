@@ -40,7 +40,12 @@ class KrakenFullResponse:
                         _res = self.success_model(**full_response["result"])
                         return Ok(_res)
                     except pydantic.ValidationError as e:
+                        # ? should we raise or return
+                        # ? if we raise, we can catch exception when composing this withing larger app
+                        # ? ==> return, so we contain error in `safe_content` attribute and still 
+                        # ?     have access to rest of response attributes
                         return Err(e)
+
                 # its a wrapper around pydantic that we defined
                 else:
                     try:
@@ -48,6 +53,7 @@ class KrakenFullResponse:
                         return Ok(_res)
                     except pydantic.ValidationError as e:
                         return Err(e)
+
                 
             except pydantic.ValidationError as e:
                 return Err(e)

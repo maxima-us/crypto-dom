@@ -1,3 +1,5 @@
+import re
+
 import pydantic
 
 
@@ -45,12 +47,23 @@ class Nstr(pydantic.ConstrainedStr):
 
 
 #------------------------------------------------------------
-# Count
+# Counting
 #------------------------------------------------------------
 
 
 class COUNT(NInt):
     ge=0
+    strict=False
+
+
+#------------------------------------------------------------
+# Percentages
+#------------------------------------------------------------
+
+
+class PERCENT(NInt):
+    ge=0
+    le=100
     strict=False
 
 
@@ -76,3 +89,23 @@ class _FloatTimestamp(Gt0Float):
 TIMESTAMP_S = _FloatTimestamp 
 TIMESTAMP_MS = _IntTimestamp
 TIMESTAMP_NS = _IntTimestamp
+
+
+#------------------------------------------------------------
+# Symbols/Pairs and Assets
+#------------------------------------------------------------
+
+
+# pydantic symbol
+#   type will only be checked upon validation of a 
+#   pydantic model which has a field of the present type
+class R_SYMBOL(Nstr):
+    regex=re.compile(r'[A-Z0-9]+-[A-Z]+')
+    strict=True
+
+# pydantic asset
+#   type will only be checked upon validation of a 
+#   pydantic model which has a field of the present type
+class R_ASSET(Nstr):
+    regex=re.compile(r'^[A-Z0-9]{2,10}$')
+    strict=True

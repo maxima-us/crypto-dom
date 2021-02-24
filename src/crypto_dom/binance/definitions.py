@@ -1,4 +1,5 @@
 import re
+import typing
 
 from typing_extensions import Literal
 
@@ -45,7 +46,7 @@ SYMBOL_STATUS = Literal["PRE_TRADING", "TRADING", "POST_TRADING", "END_OF_DAY", 
 # ? can this also be None ?
 SYMBOL_TYPE = Literal["SPOT"] 
 
-SYMBOL_PERMISSIONS = Literal["SPOT", "MARGIN", "LEVERAGED"]
+SYMBOL_PERMISSIONS = typing.Tuple[Literal["SPOT", "MARGIN", "LEVERAGED"], ...]
 
 
 #------------------------------------------------------------
