@@ -100,6 +100,10 @@ TIMESTAMP_NS = _IntTimestamp
 #   type will only be checked upon validation of a 
 #   pydantic model which has a field of the present type
 class R_SYMBOL(Nstr):
+    """
+    Constrained string matching defined regex.
+    Mostly meant for use with pydantic models and type annotations.
+    """
     regex=re.compile(r'[A-Z0-9]+-[A-Z]+')
     strict=True
 
@@ -107,5 +111,9 @@ class R_SYMBOL(Nstr):
 #   type will only be checked upon validation of a 
 #   pydantic model which has a field of the present type
 class R_ASSET(Nstr):
+    """
+    Constrained string matching defined regex.
+    Mostly meant for use with pydantic models and type annotations.
+    """
     regex=re.compile(r'^[A-Z0-9]{2,10}$')
     strict=True

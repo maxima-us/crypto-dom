@@ -17,7 +17,7 @@ stackprinter.set_excepthook(style="darkbg2")
 # doc: https://www.kraken.com/features/api#get-account-balance
 
 URL = "https://api.kraken.com/0/private/Balance"
-METHOD = "GET"
+METHOD = "POST"
 
 
 # ------------------------------
