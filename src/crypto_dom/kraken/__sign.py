@@ -3,16 +3,17 @@ import hashlib
 import base64
 import hmac
 import os
+import typing
+from collections import deque
 
 from dotenv import load_dotenv
 load_dotenv()
-
 
 class EmptyEnv(Exception):
     pass
 
 
-def get_keys():
+def get_keys() -> typing.Deque:
     
     environ = {k: v for k, v in dict(os.environ).items()}
     creds = {k: v for k, v in environ.items() if any(i in k for i in ["KRAKEN_API_KEY", "KRAKEN_API_SECRET"])}
@@ -35,7 +36,7 @@ def get_keys():
     # print('Returned set', key_pairs)
     
     # returns a set of tuples (key, secret)
-    return key_pairs
+    return deque(key_pairs)
 
 
 # see: https://www.kraken.com/features/api#general-usage
@@ -47,6 +48,7 @@ def auth_headers(url, data, *, key, secret):
         nonce = data["nonce"]
 
     path = getattr(urlparse(url), "path")
+    # print("Path", path)
 
     encoded_data = (str(nonce) + urlencode(data)).encode()
     message = path.encode() + hashlib.sha256(encoded_data).digest()

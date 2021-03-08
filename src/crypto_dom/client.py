@@ -80,7 +80,6 @@ class _TypedHttpxClient(httpx.AsyncClient):
                     valid_req = t_in(**data)
                     _new_data = valid_req.dict(exclude_none=True)
                     
-                    
                     # print("\nNew post data", _new_data)     # debugging
 
                     # BELOW IS FOR DEBUGGING
@@ -92,12 +91,12 @@ class _TypedHttpxClient(httpx.AsyncClient):
                     # _new_headers = auth_headers(url, _new_data, key=key, secret=secret)
                     # print("\nNew hears", _new_headers)
 
-                    _new_headers = auth_headers(_new_data)
+                    _new_headers = auth_headers(url=url, data=_new_data)
 
                 except ValidationError as e:
                     return Err(e)
                 except Exception as e:
-                    return Err(e)
+                    raise Err(e)
             
         try:
             r = await self.request(
@@ -107,11 +106,11 @@ class _TypedHttpxClient(httpx.AsyncClient):
                 data=_new_data,
                 files=files,
                 json=json,
-                params = _new_params,
-                headers= _new_headers if _new_headers else headers,
-                cookies= cookies,
-                auth= auth,
-                allow_redirects = allow_redirects,
+                params=_new_params,
+                headers=_new_headers if _new_headers else headers,
+                cookies=cookies,
+                auth=auth,
+                allow_redirects=allow_redirects,
                 timeout=timeout
             )
         except Exception as e:
@@ -237,7 +236,7 @@ class _TypedAioHttpClient(aiohttp.ClientSession):
                 try:
                     valid_req = t_in(**data)    # TODO verify after model syntax update
                     _new_data = valid_req.dict(exclude_none=True)
-                    _new_headers = auth_headers(_new_data)
+                    _new_headers = auth_headers(url=str_or_url, data=_new_data)
                 except ValidationError as e:
                     return Err(e)
                 except Exception as e:
