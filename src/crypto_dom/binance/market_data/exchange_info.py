@@ -110,7 +110,7 @@ class _SymbolsInfo(pydantic.BaseModel):
     isSpotTradingAllowed: bool
     isMarginTradingAllowed: bool
     filters: list
-    permissions: typing.List[SYMBOL_PERMISSIONS]
+    permissions: SYMBOL_PERMISSIONS
 
 
 class _RateLimit(pydantic.BaseModel):
