@@ -6,8 +6,9 @@ import os
 import typing
 from collections import deque
 
-from dotenv import load_dotenv
-load_dotenv()
+# !!!! comment out for use in other libs
+# from dotenv import load_dotenv
+# load_dotenv()
 
 class EmptyEnv(Exception):
     pass
