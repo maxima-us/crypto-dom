@@ -1389,4 +1389,13 @@ SYMBOL = Literal[
     'TKOBIDR',
     'TKOBUSD',
     'TKOUSDT',
+    'PUNDIXETH',
+    'PUNDIXUSDT',
+    'BTTBRL',
+    'BTTEUR',
+    'HOTEUR',
+    'WINEUR',
+    'TLMBTC',
+    'TLMBUSD',
+    'TLMUSDT',
 ]

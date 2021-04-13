@@ -47,7 +47,8 @@ setup(
     ],
     entry_points={  # Optional
         'console_scripts': [
-            'crypto-dom-tests=tests.run:run_tests'
+            'crypto-dom-tests=tests.run:run_tests',
+            'crypto-dom-update=crypto_dom.update_symbols:run'
         ],
     },
 )

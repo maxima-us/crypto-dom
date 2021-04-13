@@ -15,8 +15,10 @@ class ErrorResponse(pydantic.BaseModel):
 
 class BybtFull:
 
+
     def __init__(self, success_model):
         self.success_model = success_model
+
 
     def __call__(self, full_response: dict):
 
@@ -33,7 +35,8 @@ class BybtFull:
 
 
             if "data" in full_response.keys():                
-
+                
+                # data can be either array or dict
                 data = full_response["data"]
                 
                 # check if it is a pydantic model
