@@ -11,6 +11,7 @@ from crypto_dom.binance.__write_symbols import _write_binance_symbols
 @click.command()
 def run():
 
+    print(APP_PATH)
     # ---- update symbols and assets
     async def update_symbols_assets():
         await _write_kraken_pairs(f"{APP_PATH}/kraken/")

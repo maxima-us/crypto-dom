@@ -16,7 +16,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='crypto-dom',  # Required
-    version='0.0.5',  # Required
+    version='0.0.7',  # Required
     description='',  # Optional
     long_description=long_description,  # Optional
     long_description_content_type='text/markdown',  # Optional
